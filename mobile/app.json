@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "War Room",
+    "slug": "war-room-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "warroom",
+    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#080B12"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.dimeg.warroom",
+      "infoPlist": {
+        "UIBackgroundModes": ["fetch", "remote-notification"]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#080B12"
+      },
+      "package": "com.dimeg.warroom"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#4F7CFF",
+          "sounds": []
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "backgroundColor": "#080B12",
+          "resizeMode": "contain"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

@@ -3319,6 +3319,16 @@ function init(){
     const body=document.getElementById('gantt-body');
     if(body)body.scrollLeft=Math.max(0,px+parseInt(getComputedStyle(document.documentElement).getPropertyValue('--label-w')||260)-window.innerWidth/2);
   },500);
+  // ── AUTO-SYNC: recarrega do Sheets a cada 2 minutos ──
+  // Garante que atualizações feitas no app mobile aparecem automaticamente no web.
+  setInterval(async()=>{
+    if(!state.sheetsUrl)return;
+    try{
+      await loadFromSheets();
+    }catch(e){
+      // Silencia erro de polling — não interrompe o usuário
+    }
+  }, 2 * 60 * 1000);
 }
 document.addEventListener('DOMContentLoaded',init);
 </script>

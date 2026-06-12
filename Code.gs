@@ -49,6 +49,10 @@ const SCHEMA = {
   USUARIOS: [
     'email', 'nome', 'role', 'ativo', 'criado_em'
   ],
+  SESSOES_TRABALHO: [
+    'id', 'etapa_id', 'proj_id', 'user_email',
+    'inicio_iso', 'fim_iso', 'duracao_min', 'nota', 'dispositivo'
+  ],
 };
 // ── FIM BLOCO ──
 
@@ -56,8 +60,9 @@ const SCHEMA = {
 function doGet(e) {
   const action = (e.parameter && e.parameter.action) || 'load';
   try {
-    if (action === 'load') return jsonOk(handleLoad());
-    if (action === 'ping') return jsonOk({ ok: true, ts: new Date().toISOString() });
+    if (action === 'load')              return jsonOk(handleLoad());
+    if (action === 'ping')              return jsonOk({ ok: true, ts: new Date().toISOString() });
+    if (action === 'get_sessoes_hoje')  return jsonOk(handleGetSessoesHoje(e.parameter));
     return jsonErr('Unknown GET action: ' + action);
   } catch (err) {
     return jsonErr(err.message);
@@ -87,6 +92,9 @@ function doPost(e) {
       case 'run_alerta':    return jsonOk(handleAlerta(payload));
       case 'run_marts':     return jsonOk(handleRunMarts(payload));
       case 'run_snapshot':  return jsonOk(handleSnapshot(payload));
+      // ── MOBILE: SESSOES_TRABALHO ──
+      case 'start_sessao':  return jsonOk(handleStartSessao(payload));
+      case 'end_sessao':    return jsonOk(handleEndSessao(payload));
       default:              return jsonErr('Unknown POST action: ' + action);
     }
   } catch (err) {
@@ -688,5 +696,94 @@ function atualizarMarts() {
   if (aba.getLastRow() > 1) aba.getRange(2, 1, aba.getLastRow() - 1, 6).clearContent();
   aba.getRange(2, 1, marts.length, 6).setValues(marts);
   log_('INFO', 'MARTS atualizado: total=' + total + ' pctMedio=' + pctMedio + '%');
+}
+// ── FIM BLOCO ──
+
+// ═══ BLOCO: SESSOES_TRABALHO (Mobile) ═══
+/**
+ * Registra início de uma sessão de trabalho.
+ * payload: { id, etapa_id, proj_id, user_email, inicio_iso, nota, dispositivo }
+ */
+function handleStartSessao(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const data = {
+    id:          payload.id || Utilities.getUuid(),
+    etapa_id:    payload.etapa_id || '',
+    proj_id:     payload.proj_id || '',
+    user_email:  payload.user_email || '',
+    inicio_iso:  payload.inicio_iso || new Date().toISOString(),
+    fim_iso:     '',
+    duracao_min: 0,
+    nota:        payload.nota || '',
+    dispositivo: payload.dispositivo || 'mobile',
+  };
+  appendRaw('SESSOES_TRABALHO', data, 'mobile');
+  upsertStaging(ss, 'SESSOES_TRABALHO', data, 'id');
+  log_('INFO', 'Sessão iniciada id=' + data.id + ' etapa=' + data.etapa_id + ' user=' + data.user_email);
+  return { ok: true, id: data.id };
+}
+
+/**
+ * Registra fim de uma sessão de trabalho.
+ * payload: { id, fim_iso, duracao_min, nota }
+ */
+function handleEndSessao(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sessao = _findInStaging(ss, 'SESSOES_TRABALHO', 'id', payload.id);
+  if (!sessao) {
+    const data = {
+      id:          payload.id,
+      etapa_id:    '',
+      proj_id:     '',
+      user_email:  '',
+      inicio_iso:  '',
+      fim_iso:     payload.fim_iso || new Date().toISOString(),
+      duracao_min: payload.duracao_min || 0,
+      nota:        payload.nota || '',
+      dispositivo: 'mobile',
+    };
+    appendRaw('SESSOES_TRABALHO', data, 'mobile-end');
+    upsertStaging(ss, 'SESSOES_TRABALHO', data, 'id');
+    log_('WARN', 'End sessao sem start no staging: ' + payload.id);
+    return { ok: true };
+  }
+  sessao.fim_iso     = payload.fim_iso || new Date().toISOString();
+  sessao.duracao_min = payload.duracao_min || 0;
+  sessao.nota        = payload.nota || sessao.nota || '';
+  appendRaw('SESSOES_TRABALHO', sessao, 'mobile-end');
+  upsertStaging(ss, 'SESSOES_TRABALHO', sessao, 'id');
+  log_('INFO', 'Sessão encerrada id=' + payload.id + ' dur=' + sessao.duracao_min + 'min');
+  return { ok: true };
+}
+
+/**
+ * Retorna sessões de hoje para um usuário.
+ * GET ?action=get_sessoes_hoje&email=xxx
+ */
+function handleGetSessoesHoje(params) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const email = (params && params.email) || '';
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  const todas = _readStaging(ss, 'SESSOES_TRABALHO');
+  const sessoes = todas.filter(function(r) {
+    if (email && String(r['user_email'] || '').toLowerCase() !== email.toLowerCase()) return false;
+    const ini = r['inicio_iso'] ? new Date(r['inicio_iso']) : null;
+    return ini && ini >= hoje;
+  }).map(function(r) {
+    return {
+      id:          String(r['id'] || ''),
+      etapa_id:    Number(r['etapa_id']) || 0,
+      proj_id:     Number(r['proj_id']) || 0,
+      user_email:  String(r['user_email'] || ''),
+      inicio_iso:  String(r['inicio_iso'] || ''),
+      fim_iso:     r['fim_iso'] ? String(r['fim_iso']) : null,
+      duracao_min: Number(r['duracao_min']) || 0,
+      nota:        String(r['nota'] || ''),
+      dispositivo: String(r['dispositivo'] || 'mobile'),
+    };
+  });
+  log_('INFO', 'GetSessoesHoje: ' + sessoes.length + ' sessoes para ' + (email || 'todos'));
+  return { ok: true, sessoes: sessoes };
 }
 // ── FIM BLOCO ──
