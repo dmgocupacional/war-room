@@ -323,8 +323,19 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
 .auto-btn:hover{border-color:var(--border3);color:var(--text);}
 .auto-btn.run:hover{background:var(--auto-color,var(--purple));color:#fff;border-color:transparent;}
 .auto-btn.running{opacity:0.6;cursor:wait;}
-/* ═══ LANE COUNTER LABEL ═══ */
-.lane-count-label{font-size:0.63rem;color:var(--text4);font-family:var(--mono);opacity:0.8;white-space:nowrap;}
+.lane-count-label{display:none;}/* substituído por lane-subtitle */
+.lane-subtitle{
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  padding:3px 12px 7px 38px;
+  position:sticky;left:0;z-index:19;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  min-width:var(--label-w);
+}
+.lst-chip{
+  font-size:0.6rem;font-weight:700;font-family:var(--mono);
+  white-space:nowrap;letter-spacing:0.02em;
+}
 
 /* ═══ FILTER CHIPS ═══ */
 .filter-bar{
@@ -1271,6 +1282,7 @@ async function loadSheets(){
   }catch(e){setSyncState('offline','Offline');return false;}
 }
 async function persist(type,data){
+  persistLocal();
   if(!state.sheetsUrl)return;
   try{
     setSyncState('syncing','Salvando...');
@@ -1289,6 +1301,8 @@ async function persist(type,data){
     if(res&&!res.ok)throw new Error(res.error||'Erro');
     setSyncState('online','Salvo · '+_agora());
   }catch(e){setSyncState('offline','Erro: '+e.message.substring(0,30));}
+  // Sempre persiste localmente por usuário (fallback offline)
+  persistLocal();
 }
 function setSyncState(st,label){
   document.getElementById('sync-dot').className='sync-dot '+st;
@@ -1307,42 +1321,79 @@ async function syncSheets(){
 }
 function _agora(){return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
 
-// ═══ BLOCO: SETUP (onboarding) ═══
+// ═══ BLOCO: SETUP (onboarding multi-usuário) ═══
+function _slugUser(nome){
+  return nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'').substring(0,30);
+}
+function _dataKey(cfg){ return 'wr_data_'+_slugUser(cfg.nome); }
+
 function saveSetup(){
   const nome  = document.getElementById('setup-nome').value.trim();
   const cargo = document.getElementById('setup-cargo').value.trim();
   const titulo= document.getElementById('setup-titulo').value.trim();
   const sheets= document.getElementById('setup-sheets').value.trim();
   if(!nome){alert('Coloca seu nome 😊');return;}
-  const cfg = {nome, cargo, titulo: titulo||`War Room · ${nome}`, sheets};
-  localStorage.setItem('wr_config', JSON.stringify(cfg));
+  const cfg={nome,cargo,titulo:titulo||`War Room · ${nome}`,sheets};
+  localStorage.setItem('wr_config',JSON.stringify(cfg));
   document.getElementById('setup-overlay').classList.remove('open');
   applyConfig(cfg);
-  if(cfg.sheets){
-    state.sheetsUrl = cfg.sheets;
-    localStorage.setItem('sheetsUrl', cfg.sheets);
-    loadSheets().then(ok=>{ if(ok) renderAll(); });
+  const dataKey=_dataKey(cfg);
+  state.dataKey=dataKey;
+  const saved=localStorage.getItem(dataKey);
+  if(saved){
+    const d=JSON.parse(saved);
+    Object.assign(state,{lanes:d.lanes,projetos:d.projetos,evolucoes:d.evolucoes,
+      nextProjId:d.nextProjId,nextLaneId:d.nextLaneId});
+  } else {
+    // Novo usuário — começa com War Room limpo
+    state.lanes=[];state.projetos=[];state.evolucoes=[];
+    state.nextProjId=100;state.nextLaneId=10;
+  }
+  if(sheets){
+    state.sheetsUrl=sheets;
+    localStorage.setItem('sheetsUrl_'+dataKey,sheets);
+    loadSheets().then(ok=>{renderAll();});
+  } else {
+    renderAll();
   }
 }
 function applyConfig(cfg){
-  if(!cfg) return;
-  document.querySelector('.nav-title').textContent = cfg.titulo || 'War Room';
-  document.querySelector('.nav-sub').textContent   = cfg.nome + (cfg.cargo ? ' · ' + cfg.cargo : '');
-  document.querySelector('.nav-logo-mark').textContent = cfg.nome.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-  document.title = cfg.titulo || 'War Room';
+  if(!cfg)return;
+  document.querySelector('.nav-title').textContent=cfg.titulo||'War Room';
+  document.querySelector('.nav-sub').textContent=cfg.nome+(cfg.cargo?' · '+cfg.cargo:'');
+  document.querySelector('.nav-logo-mark').textContent=cfg.nome.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.title=cfg.titulo||'War Room';
 }
 function checkSetup(){
-  const raw = localStorage.getItem('wr_config');
+  const raw=localStorage.getItem('wr_config');
   if(!raw){
-    // Primeiro acesso — pré-preenche com dados do Henrique
-    document.getElementById('setup-nome').value  = '';
-    document.getElementById('setup-cargo').value = '';
-    document.getElementById('setup-titulo').value= '';
+    ['setup-nome','setup-cargo','setup-titulo','setup-sheets'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('setup-overlay').classList.add('open');
-    setTimeout(()=>document.getElementById('setup-nome').focus(), 150);
+    setTimeout(()=>document.getElementById('setup-nome').focus(),150);
   } else {
-    applyConfig(JSON.parse(raw));
+    const cfg=JSON.parse(raw);
+    applyConfig(cfg);
+    const dataKey=_dataKey(cfg);
+    state.dataKey=dataKey;
+    // Restaura dados locais do usuário
+    const saved=localStorage.getItem(dataKey);
+    if(saved){
+      const d=JSON.parse(saved);
+      Object.assign(state,{lanes:d.lanes,projetos:d.projetos,evolucoes:d.evolucoes,
+        nextProjId:d.nextProjId,nextLaneId:d.nextLaneId});
+    }
+    // Restaura Sheets URL do usuário
+    const sheetsUrl=localStorage.getItem('sheetsUrl_'+dataKey)||cfg.sheets||'';
+    if(sheetsUrl){state.sheetsUrl=sheetsUrl;loadSheets().then(ok=>{if(ok)renderAll();});}
   }
+}
+function persistLocal(){
+  if(!state.dataKey)return;
+  localStorage.setItem(state.dataKey,JSON.stringify({
+    lanes:state.lanes,projetos:state.projetos,evolucoes:state.evolucoes,
+    nextProjId:state.nextProjId,nextLaneId:state.nextLaneId
+  }));
 }
 // ── FIM BLOCO ──
 function toggleTheme(){
@@ -2036,9 +2087,19 @@ function renderGantt(){
     html+=`<input class="lane-name-input" value="${escHtml(lane.nome)}" ondblclick="this.readOnly=false;this.select()" onblur="renameLane(${lane.id},this.value);this.readOnly=true" onkeydown="if(event.key==='Enter')this.blur()" readonly>`;
     html+=`<span class="lane-badge">${projetos.length}p</span>`;
     html+=`<div class="lane-spacer"></div>`;
-    html+=`<span class="lane-count-label">${projetos.filter(p=>p.status==='Em andamento').length} ativo${projetos.filter(p=>p.status==='Em andamento').length!==1?'s':''} · ${projetos.filter(p=>p.status==='Concluído').length} concluído${projetos.filter(p=>p.status==='Concluído').length!==1?'s':''}</span>`;
     html+=`<button class="lane-btn del" onclick="confirmDelLane(${lane.id})">🗑</button>`;
     html+=`</div>`;
+    // Lane subtitle (segunda linha com counts)
+    const _ativos=${projetos.filter(p=>p.status==='Em andamento').length};
+    const _conc=${projetos.filter(p=>p.status==='Concluído').length};
+    const _plan=${projetos.filter(p=>p.status==='Em planejamento').length};
+    const _atras=${projetos.filter(p=>isAtrasado(p)).length};
+    html+=`<div class="lane-subtitle" style="--lc:${lc}">
+      ${_ativos?`<span class="lst-chip" style="color:var(--green-l)">●${_ativos} ativo${_ativos!==1?'s':''}</span>`:''}
+      ${_conc?`<span class="lst-chip" style="color:var(--text3)">✓${_conc} concluído${_conc!==1?'s':''}</span>`:''}
+      ${_plan?`<span class="lst-chip" style="color:var(--purple-l)">◐${_plan} planejado${_plan!==1?'s':''}</span>`:''}
+      ${_atras?`<span class="lst-chip" style="color:var(--red-l)">⚠${_atras} atrasado${_atras!==1?'s':''}</span>`:''}
+    </div>`;
     // Timeline header area
     html+=`<div class="lane-header-spacer" style="width:${tl.totalPx}px;position:relative">`;
     tl.cells.forEach((c,i)=>{
@@ -2493,24 +2554,18 @@ function init(){
   const savedTheme=localStorage.getItem('theme')||'dark';
   document.documentElement.setAttribute('data-theme',savedTheme);
   document.getElementById('theme-btn').textContent=savedTheme==='dark'?'☀':'🌙';
-  // Sheets URL
-  const savedUrl=localStorage.getItem('sheetsUrl')||'';
-  state.sheetsUrl=savedUrl;
-  // Load seed
-  const seed=getSeed();
-  Object.assign(state,{lanes:seed.lanes,projetos:seed.projetos,evolucoes:seed.evolucoes,nextProjId:seed.nextProjId,nextLaneId:seed.nextLaneId});
-  setSyncState('','Seed local · clique para conectar Sheets');
-  renderAll();
+  // Estado vazio por padrão — checkSetup carrega dados do usuário correto
+  state.lanes=[];state.projetos=[];state.evolucoes=[];
+  setSyncState('','Configurando...');
   checkSetup();
-  // Scroll to today
+  // Scroll to today após render
   setTimeout(()=>{
     const tl=buildTimeline();
+    if(!tl.cells.length)return;
     const px=dateToPx(new Date(),tl);
     const body=document.getElementById('gantt-body');
     if(body)body.scrollLeft=Math.max(0,px+parseInt(getComputedStyle(document.documentElement).getPropertyValue('--label-w')||260)-window.innerWidth/2);
-    // Auto-load sheets if URL saved
-    if(state.sheetsUrl)loadSheets().then(ok=>{if(ok)renderAll();});
-  },300);
+  },500);
 }
 document.addEventListener('DOMContentLoaded',init);
 </script>
