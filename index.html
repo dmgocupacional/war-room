@@ -232,6 +232,97 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
 .tt-obs{font-size:0.72rem;color:var(--text3);line-height:1.5;font-style:italic;}
 .tt-hint{font-size:0.63rem;color:var(--text4);margin-top:8px;opacity:0.7;}
 
+
+/* ═══ AUTOMAÇÕES ═══ */
+.auto-section{padding:0 20px 16px;}
+.auto-header{
+  display:flex;align-items:center;gap:8px;cursor:pointer;
+  padding:8px 12px 8px 0;border-radius:var(--radius);
+  transition:var(--tr);user-select:none;
+}
+.auto-header:hover .auto-header-label{color:var(--text);}
+.auto-header-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--purple);flex-shrink:0;
+  box-shadow:0 0 8px var(--purple);
+}
+.auto-header-label{
+  font-size:0.68rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.09em;color:var(--text3);flex:1;transition:var(--tr);
+}
+.auto-header-count{
+  font-size:0.63rem;font-family:var(--mono);
+  background:var(--purple-dim);color:var(--purple-l);
+  padding:2px 8px;border-radius:10px;
+}
+.auto-header-toggle{
+  font-size:0.7rem;color:var(--text4);
+  transition:transform 0.2s;
+}
+.auto-header.open .auto-header-toggle{transform:rotate(180deg);}
+.auto-body{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+  overflow:hidden;max-height:0;
+  transition:max-height 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.auto-body.open{max-height:300px;}
+@media(max-width:900px){.auto-body{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:540px){.auto-body{grid-template-columns:1fr;}}
+
+.auto-card{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:var(--radius-lg);padding:14px;
+  display:flex;flex-direction:column;gap:8px;
+  transition:var(--tr);position:relative;overflow:hidden;
+}
+.auto-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--auto-color,var(--purple));
+  opacity:0.7;
+}
+.auto-card:hover{border-color:var(--border3);}
+.auto-card.active{border-color:var(--auto-color,var(--purple));background:var(--bg3);}
+.auto-card-top{display:flex;align-items:flex-start;gap:8px;}
+.auto-icon{
+  font-size:1.1rem;flex-shrink:0;
+  width:30px;height:30px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--auto-color,var(--purple));
+  opacity:0.9;
+}
+.auto-info{flex:1;min-width:0;}
+.auto-name{font-size:0.8rem;font-weight:700;color:var(--text);margin-bottom:2px;}
+.auto-trigger{font-size:0.65rem;color:var(--text3);font-family:var(--mono);}
+.auto-toggle-wrap{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.auto-status-lbl{font-size:0.63rem;font-family:var(--mono);color:var(--text4);}
+.auto-status-lbl.active{color:var(--green-l);}
+.auto-toggle{
+  width:32px;height:18px;border-radius:9px;border:none;cursor:pointer;
+  background:var(--bg5);position:relative;transition:background 0.2s;flex-shrink:0;
+}
+.auto-toggle.on{background:var(--auto-color,var(--purple));}
+.auto-toggle::after{
+  content:'';position:absolute;top:2px;left:2px;
+  width:14px;height:14px;border-radius:50%;
+  background:#fff;transition:transform 0.2s;
+}
+.auto-toggle.on::after{transform:translateX(14px);}
+.auto-last{
+  font-size:0.62rem;color:var(--text4);font-family:var(--mono);
+  border-top:1px solid var(--border);padding-top:6px;min-height:16px;
+}
+.auto-last.ok{color:var(--green-l);}
+.auto-last.err{color:var(--red-l);}
+.auto-btns{display:flex;gap:6px;}
+.auto-btn{
+  flex:1;padding:5px 8px;border-radius:7px;border:1px solid var(--border2);
+  background:var(--bg4);color:var(--text3);
+  cursor:pointer;font-size:0.7rem;font-family:var(--font);font-weight:600;
+  transition:var(--tr);text-align:center;
+}
+.auto-btn:hover{border-color:var(--border3);color:var(--text);}
+.auto-btn.run:hover{background:var(--auto-color,var(--purple));color:#fff;border-color:transparent;}
+.auto-btn.running{opacity:0.6;cursor:wait;}
 /* ═══ LANE COUNTER LABEL ═══ */
 .lane-count-label{font-size:0.63rem;color:var(--text4);font-family:var(--mono);opacity:0.8;white-space:nowrap;}
 
@@ -919,6 +1010,17 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
     <div class="upcoming-list" id="upcoming-list"></div>
   </div>
 
+  <!-- AUTOMAÇÕES -->
+  <div class="auto-section" id="auto-section">
+    <div class="auto-header" id="auto-header" onclick="toggleAutoSection()">
+      <div class="auto-header-dot"></div>
+      <span class="auto-header-label">⚡ Automações</span>
+      <span class="auto-header-count" id="auto-active-count">0 ativas</span>
+      <span class="auto-header-toggle">▾</span>
+    </div>
+    <div class="auto-body" id="auto-body"></div>
+  </div>
+
   <!-- FILTER CHIPS -->
   <div class="filter-bar" id="filter-bar">
     <span class="fbar-label">Status</span>
@@ -1357,6 +1459,161 @@ function renderUpcoming(){
 }
 // ── FIM BLOCO ──
 
+
+// ═══ BLOCO: AUTOMAÇÕES ═══
+const AUTOMACOES_CFG = [
+  {
+    id: 'digest',
+    nome: 'Digest Semanal',
+    icon: '📧',
+    trigger: 'Seg · 08:00',
+    desc: 'Email para Thiago com % por lane, atrasados e concluídos na semana.',
+    color: '#4F7CFF',
+    gsAction: 'run_digest',
+    triggerCode: `// Apps Script → Acionadores → + Adicionar
+// Função: enviarDigestSemanal
+// Baseado em tempo → Semana → Segunda · 8-9h`,
+  },
+  {
+    id: 'alerta',
+    nome: 'Alerta de Atraso',
+    icon: '⚠️',
+    trigger: 'Diário · 09:00',
+    desc: 'Detecta projetos com fim < hoje e progresso < 100%. Registra no LOG.',
+    color: '#EF4444',
+    gsAction: 'run_alerta',
+    triggerCode: `// Apps Script → Acionadores → + Adicionar
+// Função: verificarAtrasos
+// Baseado em tempo → Diário · 9-10h`,
+  },
+  {
+    id: 'marts',
+    nome: 'MARTS Diário',
+    icon: '📊',
+    trigger: 'Diário · 06:00',
+    desc: 'Recalcula KPIs (total, andamento, concluídos, % médio) na aba MARTS.',
+    color: '#10B981',
+    gsAction: 'run_marts',
+    triggerCode: `// Apps Script → Acionadores → + Adicionar
+// Função: atualizarMarts
+// Baseado em tempo → Diário · 6-7h`,
+  },
+  {
+    id: 'snapshot',
+    nome: 'Snapshot Mensal',
+    icon: '📸',
+    trigger: 'Dia 1 · 07:00',
+    desc: 'Copia STAGING_PROJETOS → aba SNAPSHOT_YYYY_MM. Histórico imutável.',
+    color: '#8B5CF6',
+    gsAction: 'run_snapshot',
+    triggerCode: `// Apps Script → Acionadores → + Adicionar
+// Função: snapshotMensal
+// Baseado em tempo → Mês · dia 1 · 7-8h`,
+  },
+];
+
+function getAutoState() {
+  try { return JSON.parse(localStorage.getItem('wr_auto') || '{}'); } catch { return {}; }
+}
+function saveAutoState(s) { localStorage.setItem('wr_auto', JSON.stringify(s)); }
+
+function renderAutomacoes() {
+  const st = getAutoState();
+  let ativos = 0;
+  const body = document.getElementById('auto-body');
+  body.innerHTML = AUTOMACOES_CFG.map(a => {
+    const on = !!st[a.id];
+    if (on) ativos++;
+    const last = st[a.id + '_last'] || '';
+    const lastOk = st[a.id + '_ok'];
+    const lastClass = last ? (lastOk ? 'ok' : 'err') : '';
+    const lastText = last ? `${lastOk ? '✓' : '✗'} ${last}` : 'Nunca executada';
+    return `<div class="auto-card ${on ? 'active' : ''}" style="--auto-color:${a.color}" id="acard-${a.id}">
+      <div class="auto-card-top">
+        <div class="auto-icon">${a.icon}</div>
+        <div class="auto-info">
+          <div class="auto-name">${a.nome}</div>
+          <div class="auto-trigger">${a.trigger}</div>
+        </div>
+      </div>
+      <div style="font-size:0.68rem;color:var(--text3);line-height:1.4">${a.desc}</div>
+      <div class="auto-toggle-wrap">
+        <span class="auto-status-lbl ${on ? 'active' : ''}">${on ? '● Ativa' : '○ Inativa'}</span>
+        <button class="auto-toggle ${on ? 'on' : ''}" onclick="toggleAuto('${a.id}')" title="${on ? 'Desativar' : 'Ativar'}"></button>
+      </div>
+      <div class="auto-last ${lastClass}" id="alast-${a.id}">${lastText}</div>
+      <div class="auto-btns">
+        <button class="auto-btn run" id="abtn-${a.id}" onclick="testAuto('${a.id}')">▶ Testar</button>
+        <button class="auto-btn" onclick="copyAutoCode('${a.id}')">⌥ Código</button>
+      </div>
+    </div>`;
+  }).join('');
+  const countEl = document.getElementById('auto-active-count');
+  if (countEl) countEl.textContent = ativos + ' ativa' + (ativos !== 1 ? 's' : '');
+}
+
+function toggleAutoSection() {
+  const header = document.getElementById('auto-header');
+  const body = document.getElementById('auto-body');
+  header.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+function toggleAuto(id) {
+  const st = getAutoState();
+  st[id] = !st[id];
+  saveAutoState(st);
+  renderAutomacoes();
+}
+
+async function testAuto(id) {
+  if (!state.sheetsUrl) {
+    alert('Conecte o Google Sheets primeiro (badge "Seed local" no header).');
+    return;
+  }
+  const btn = document.getElementById('abtn-' + id);
+  const lastEl = document.getElementById('alast-' + id);
+  const cfg = AUTOMACOES_CFG.find(a => a.id === id);
+  if (!btn || !cfg) return;
+  btn.textContent = '⏳ Rodando...';
+  btn.classList.add('running');
+  btn.disabled = true;
+  lastEl.className = 'auto-last';
+  lastEl.textContent = 'Executando...';
+  try {
+    const res = await _gs(cfg.gsAction, { projetos: state.projetos, lanes: state.lanes, evolucoes: state.evolucoes });
+    const ok = res && res.ok;
+    const ts = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    const st = getAutoState();
+    st[id + '_last'] = ts;
+    st[id + '_ok'] = ok;
+    saveAutoState(st);
+    lastEl.className = 'auto-last ' + (ok ? 'ok' : 'err');
+    lastEl.textContent = (ok ? '✓ ' : '✗ ') + ts + (res && res.msg ? ' · ' + res.msg : '');
+  } catch (e) {
+    lastEl.className = 'auto-last err';
+    lastEl.textContent = '✗ Erro: ' + e.message.substring(0, 40);
+  } finally {
+    btn.textContent = '▶ Testar';
+    btn.classList.remove('running');
+    btn.disabled = false;
+  }
+}
+
+function copyAutoCode(id) {
+  const cfg = AUTOMACOES_CFG.find(a => a.id === id);
+  if (!cfg) return;
+  navigator.clipboard.writeText(cfg.triggerCode).then(() => {
+    const btn = event.currentTarget;
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copiado!';
+    btn.style.color = 'var(--green-l)';
+    setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 2000);
+  }).catch(() => {
+    prompt('Copie o código abaixo:', cfg.triggerCode);
+  });
+}
+// ── FIM BLOCO ──
 // ═══ BLOCO: FILTER CHIPS (T2) ═══
 const STATUS_LIST=['Em andamento','Concluído','Em planejamento','Pausado'];
 function renderChips(){
@@ -2200,7 +2457,7 @@ function adjustColor(hex,amt){
   r=Math.max(0,Math.min(255,r+amt));g=Math.max(0,Math.min(255,g+amt));b=Math.max(0,Math.min(255,b+amt));
   return'#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
-function renderAll(){renderGantt();renderUpcoming();}
+function renderAll(){renderGantt();renderUpcoming();renderAutomacoes();}
 
 // ═══ BLOCO: GLOBAL EVENTS ═══
 document.addEventListener('click',e=>{
