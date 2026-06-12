@@ -197,6 +197,179 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
 .kpi-bar-fill{height:100%;border-radius:2px;width:0;transition:width 1.1s cubic-bezier(0.4,0,0.2,1);}
 
 
+
+/* ═══ ETAPAS ═══ */
+.pc-etapas-section{margin-top:14px;}
+.pc-etapas-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:8px;
+}
+.pc-etapas-title{font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);}
+.pc-etapas-add{
+  font-size:0.68rem;font-weight:700;color:var(--accent);
+  background:none;border:none;cursor:pointer;font-family:var(--font);
+  padding:2px 6px;border-radius:5px;transition:var(--tr);
+}
+.pc-etapas-add:hover{background:var(--accent-dim);}
+.pc-etapas-pesos{
+  font-size:0.62rem;font-family:var(--mono);color:var(--text4);
+  text-align:right;margin-bottom:6px;
+}
+.pc-etapas-pesos.warn{color:var(--amber);}
+.pc-etapas-pesos.ok{color:var(--green-l);}
+
+.etapa-item{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 10px;border-radius:9px;
+  border:1px solid var(--border);background:var(--bg3);
+  margin-bottom:5px;transition:var(--tr);
+  position:relative;overflow:hidden;
+}
+.etapa-item::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--etapa-color,var(--accent));border-radius:0 2px 2px 0;
+}
+.etapa-item:hover{border-color:var(--border3);}
+.etapa-item.concluido{opacity:0.75;}
+.etapa-item.concluido .etapa-nome{text-decoration:line-through;color:var(--text3);}
+.etapa-check{
+  width:18px;height:18px;border-radius:6px;
+  border:2px solid var(--border3);background:none;cursor:pointer;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  transition:var(--tr);font-size:0.65rem;
+}
+.etapa-item.concluido .etapa-check{
+  background:var(--green);border-color:var(--green);color:#fff;
+}
+.etapa-item.em_andamento .etapa-check{
+  border-color:var(--accent);background:var(--accent-dim);
+}
+.etapa-info{flex:1;min-width:0;}
+.etapa-nome{
+  font-size:0.78rem;font-weight:600;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.etapa-meta{display:flex;align-items:center;gap:6px;margin-top:2px;}
+.etapa-peso{
+  font-size:0.6rem;font-weight:800;font-family:var(--mono);
+  padding:1px 5px;border-radius:6px;
+  background:var(--bg5);color:var(--text3);
+}
+.etapa-prazo{font-size:0.6rem;font-family:var(--mono);color:var(--text4);}
+.etapa-prazo.vence-hoje{color:var(--red-l);font-weight:700;}
+.etapa-prazo.vence-em-breve{color:var(--amber);}
+.etapa-auto-badge{
+  font-size:0.58rem;font-weight:700;padding:1px 5px;border-radius:5px;
+  background:var(--purple-dim);color:var(--purple-l);cursor:default;
+}
+.etapa-actions{display:flex;gap:4px;opacity:0;transition:opacity 0.15s;}
+.etapa-item:hover .etapa-actions{opacity:1;}
+.etapa-act-btn{
+  width:18px;height:18px;border-radius:5px;border:none;
+  background:transparent;color:var(--text4);cursor:pointer;
+  font-size:0.65rem;display:flex;align-items:center;justify-content:center;
+  transition:var(--tr);
+}
+.etapa-act-btn:hover{background:var(--bg5);color:var(--text);}
+.etapa-act-btn.del:hover{background:var(--red-dim);color:var(--red-l);}
+
+/* Progress bar segmentada por etapa */
+.pc-etapa-progress{
+  width:100%;height:6px;border-radius:3px;
+  background:var(--bg5);overflow:hidden;
+  display:flex;gap:2px;margin:8px 0 4px;
+}
+.pc-etapa-seg{
+  height:100%;border-radius:2px;transition:width 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Marco ◆ na barra do gantt */
+.gbar-marco{
+  position:absolute;bottom:-3px;
+  width:8px;height:8px;border-radius:2px;
+  transform:rotate(45deg) translateX(-50%);
+  border:1.5px solid var(--bg2);
+  cursor:pointer;z-index:8;transition:transform 0.15s;
+}
+.gbar-marco:hover{transform:rotate(45deg) translateX(-50%) scale(1.4);}
+.gbar-marco.concluido{filter:brightness(1.2);}
+
+/* Modal etapas tab */
+.modal-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin:-18px -20px 16px;}
+.modal-tab{
+  padding:10px 18px;font-size:0.78rem;font-weight:600;
+  color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;
+  transition:var(--tr);background:none;border-top:none;border-left:none;border-right:none;
+  font-family:var(--font);
+}
+.modal-tab:hover{color:var(--text);}
+.modal-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.modal-tab-panel{display:none;}
+.modal-tab-panel.active{display:block;}
+
+/* Etapa editor no modal */
+.etapa-editor{
+  display:flex;gap:6px;align-items:center;
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:9px;padding:8px 10px;margin-bottom:6px;
+}
+.etapa-ed-nome{
+  flex:1;background:none;border:none;outline:none;
+  font-size:0.8rem;font-family:var(--font);color:var(--text);
+}
+.etapa-ed-peso{
+  width:48px;background:var(--bg4);border:1px solid var(--border2);
+  border-radius:5px;padding:3px 6px;font-size:0.75rem;font-family:var(--mono);
+  color:var(--text);outline:none;text-align:center;
+}
+.etapa-ed-auto{
+  background:var(--bg4);border:1px solid var(--border2);
+  border-radius:5px;padding:3px 6px;font-size:0.72rem;
+  color:var(--text2);font-family:var(--font);outline:none;cursor:pointer;
+}
+.etapa-ed-del{
+  width:20px;height:20px;border-radius:5px;border:none;
+  background:transparent;color:var(--text4);cursor:pointer;
+  font-size:0.7rem;transition:var(--tr);display:flex;align-items:center;justify-content:center;
+}
+.etapa-ed-del:hover{background:var(--red-dim);color:var(--red-l);}
+.etapa-add-row{
+  display:flex;gap:8px;align-items:center;
+  padding:8px 0 0;
+}
+.etapa-add-row .finput{font-size:0.78rem;padding:6px 9px;}
+.etapa-add-btn{
+  padding:7px 14px;border-radius:8px;background:var(--accent-dim);
+  color:var(--accent);border:1px solid var(--accent);
+  font-size:0.78rem;font-weight:700;font-family:var(--font);
+  cursor:pointer;transition:var(--tr);white-space:nowrap;
+}
+.etapa-add-btn:hover{background:var(--accent);color:#fff;}
+.etapa-peso-total{
+  font-size:0.7rem;font-family:var(--mono);
+  padding:6px 0 0;text-align:right;
+}
+.etapa-peso-total.warn{color:var(--amber);}
+.etapa-peso-total.ok{color:var(--green-l);}
+
+/* Toast notification */
+.toast-wrap{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;
+  pointer-events:none;
+}
+.toast{
+  background:var(--bg3);border:1px solid var(--border3);
+  border-radius:10px;padding:10px 18px;
+  font-size:0.8rem;font-weight:600;color:var(--text);
+  box-shadow:var(--shadow-lg);
+  animation:toastIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events:all;white-space:nowrap;
+}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(0.9);}to{opacity:1;transform:none;}}
+.toast.success{border-color:var(--green);background:rgba(16,185,129,0.12);}
+.toast.warning{border-color:var(--amber);background:rgba(245,158,11,0.12);}
+.toast.info{border-color:var(--accent);background:var(--accent-dim);}
 /* ═══ UPCOMING TIMELINE ═══ */
 .upcoming-section{padding:0 20px 16px;}
 .upcoming-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);}
@@ -1085,6 +1258,15 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
       <div class="pc-sparkline-wrap"><canvas id="pc-sparkline" width="328" height="48"></canvas></div>
     </div>
     <div class="pc-detail" id="pc-detail"></div>
+    <div class="pc-etapas-section" id="pc-etapas-section">
+      <div class="pc-etapas-header">
+        <span class="pc-etapas-title">◆ Etapas</span>
+        <button class="pc-etapas-add" onclick="addEtapaInline()">+ etapa</button>
+      </div>
+      <div class="pc-etapas-pesos" id="pc-etapas-pesos"></div>
+      <div class="pc-etapa-progress" id="pc-etapa-progress"></div>
+      <div id="pc-etapas-list"></div>
+    </div>
     <div class="pc-hist-title">Histórico de evolução</div>
     <div class="pc-hist-list" id="pc-hist-list"></div>
   </div>
@@ -1134,8 +1316,10 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
   </div>
 </div>
 
+<!-- TOAST -->
+<div class="toast-wrap" id="toast-wrap"></div>
 <!-- TOOLTIP -->
-<div class="tooltip hidden" id="tooltip"></div>
+<div class="tooltip" id="tooltip"></div>
 
 <!-- SETUP MODAL (primeiro acesso) -->
 <div class="modal-overlay" id="setup-overlay">
@@ -1150,6 +1334,11 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
       </div>
     </div>
     <div class="modal-body">
+      <div class="modal-tabs">
+        <button class="modal-tab active" id="tab-projeto" onclick="switchModalTab('projeto')">Projeto</button>
+        <button class="modal-tab" id="tab-etapas" onclick="switchModalTab('etapas')">◆ Etapas</button>
+      </div>
+      <div class="modal-tab-panel active" id="panel-projeto">
       <div class="form-grid">
         <div class="form-group full">
           <label class="flabel">Seu nome *</label>
@@ -1171,6 +1360,23 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
           </div>
         </div>
       </div>
+      </div><!-- /panel-projeto -->
+      <div class="modal-tab-panel" id="panel-etapas">
+        <div id="etapas-editor-list"></div>
+        <div class="etapa-add-row">
+          <input class="finput" id="nova-etapa-nome" placeholder="Nome da etapa..." style="flex:1">
+          <input class="finput etapa-ed-peso" id="nova-etapa-peso" type="number" min="1" max="100" placeholder="%" style="width:60px">
+          <select class="fselect etapa-ed-auto" id="nova-etapa-auto" style="width:130px">
+            <option value="">Sem automação</option>
+            <option value="digest">📧 Digest</option>
+            <option value="alerta">⚠️ Alerta</option>
+            <option value="marts">📊 MARTS</option>
+            <option value="snapshot">📸 Snapshot</option>
+          </select>
+          <button class="etapa-add-btn" onclick="addEtapaFromModal()">+ Adicionar</button>
+        </div>
+        <div class="etapa-peso-total" id="etapa-peso-total"></div>
+      </div><!-- /panel-etapas -->
     </div>
     <div class="modal-footer">
       <button class="btn-save" onclick="saveSetup()" style="width:100%">✓ Criar meu War Room</button>
@@ -1186,6 +1392,11 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
       <button class="modal-close" onclick="closeModal()">×</button>
     </div>
     <div class="modal-body">
+      <div class="modal-tabs">
+        <button class="modal-tab active" id="tab-projeto" onclick="switchModalTab('projeto')">Projeto</button>
+        <button class="modal-tab" id="tab-etapas" onclick="switchModalTab('etapas')">◆ Etapas</button>
+      </div>
+      <div class="modal-tab-panel active" id="panel-projeto">
       <div class="form-grid">
         <div class="form-group full">
           <label class="flabel">Nome *</label>
@@ -1219,6 +1430,23 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
           <textarea class="ftextarea" id="f-detalhe" placeholder="Descrição, objetivo, deliverable..."></textarea>
         </div>
       </div>
+      </div><!-- /panel-projeto -->
+      <div class="modal-tab-panel" id="panel-etapas">
+        <div id="etapas-editor-list"></div>
+        <div class="etapa-add-row">
+          <input class="finput" id="nova-etapa-nome" placeholder="Nome da etapa..." style="flex:1">
+          <input class="finput etapa-ed-peso" id="nova-etapa-peso" type="number" min="1" max="100" placeholder="%" style="width:60px">
+          <select class="fselect etapa-ed-auto" id="nova-etapa-auto" style="width:130px">
+            <option value="">Sem automação</option>
+            <option value="digest">📧 Digest</option>
+            <option value="alerta">⚠️ Alerta</option>
+            <option value="marts">📊 MARTS</option>
+            <option value="snapshot">📸 Snapshot</option>
+          </select>
+          <button class="etapa-add-btn" onclick="addEtapaFromModal()">+ Adicionar</button>
+        </div>
+        <div class="etapa-peso-total" id="etapa-peso-total"></div>
+      </div><!-- /panel-etapas -->
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
@@ -1254,6 +1482,7 @@ let state = {
   filtroStatus:null, filtroLane:null,
   busca:'', buscaIdx:0, buscaResults:[],
   collapsedLanes:[],
+  etapas:[], nextEtapaId:1000,
 };
 
 // ═══ BLOCO: SEED ═══
@@ -1277,6 +1506,8 @@ async function loadSheets(){
     if(d.evolucoes)state.evolucoes=d.evolucoes;
     if(d.nextProjId)state.nextProjId=d.nextProjId;
     if(d.nextLaneId)state.nextLaneId=d.nextLaneId;
+    if(d.etapas)state.etapas=d.etapas;
+    if(d.nextEtapaId)state.nextEtapaId=d.nextEtapaId;
     setSyncState('online','Online · '+_agora());
     return true;
   }catch(e){setSyncState('offline','Offline');return false;}
@@ -1295,7 +1526,10 @@ async function persist(type,data){
       case 'del_proj':action='delete_proj';payload={id:data.id};break;
       case 'evo':action='add_evolucao';payload={id:data.id,proj_id:data.projId,data:data.data,pct:data.pct,nota:data.nota||''};break;
       case 'meta':action='set_meta';payload={next_proj_id:state.nextProjId,next_lane_id:state.nextLaneId};break;
-      default:action='save_all';payload={lanes:state.lanes,projetos:state.projetos,evolucoes:state.evolucoes,nextProjId:state.nextProjId,nextLaneId:state.nextLaneId};
+      case 'etapa':action='upsert_etapa';payload={id:data.id,proj_id:data.projId,nome:data.nome,peso:data.peso,status:data.status,data_fim:data.dataFim||'',automacao_id:data.automacaoId||'',ordem:data.ordem||0};break;
+      case 'del_etapa':action='delete_etapa';payload={id:data.id};break;
+      case 'meta_etapa':action='set_meta';payload={next_etapa_id:state.nextEtapaId};break;
+      default:action='save_all';payload={lanes:state.lanes,projetos:state.projetos,evolucoes:state.evolucoes,etapas:state.etapas,nextProjId:state.nextProjId,nextLaneId:state.nextLaneId,nextEtapaId:state.nextEtapaId};
     }
     const res=await _gs(action,payload);
     if(res&&!res.ok)throw new Error(res.error||'Erro');
@@ -1343,8 +1577,8 @@ function saveSetup(){
   const saved=localStorage.getItem(dataKey);
   if(saved){
     const d=JSON.parse(saved);
-    Object.assign(state,{lanes:d.lanes,projetos:d.projetos,evolucoes:d.evolucoes,
-      nextProjId:d.nextProjId,nextLaneId:d.nextLaneId});
+    Object.assign(state,{lanes:d.lanes,projetos:d.projetos,evolucoes:d.evolucoes,etapas:d.etapas||[],
+      nextProjId:d.nextProjId,nextLaneId:d.nextLaneId,nextEtapaId:d.nextEtapaId||1000});
   } else {
     // Novo usuário — começa com War Room limpo
     state.lanes=[];state.projetos=[];state.evolucoes=[];
@@ -1380,8 +1614,8 @@ function checkSetup(){
     const saved=localStorage.getItem(dataKey);
     if(saved){
       const d=JSON.parse(saved);
-      Object.assign(state,{lanes:d.lanes,projetos:d.projetos,evolucoes:d.evolucoes,
-        nextProjId:d.nextProjId,nextLaneId:d.nextLaneId});
+      Object.assign(state,{lanes:d.lanes,projetos:d.projetos,evolucoes:d.evolucoes,etapas:d.etapas||[],
+        nextProjId:d.nextProjId,nextLaneId:d.nextLaneId,nextEtapaId:d.nextEtapaId||1000});
     }
     // Restaura Sheets URL do usuário
     const sheetsUrl=localStorage.getItem('sheetsUrl_'+dataKey)||cfg.sheets||'';
@@ -1391,8 +1625,8 @@ function checkSetup(){
 function persistLocal(){
   if(!state.dataKey)return;
   localStorage.setItem(state.dataKey,JSON.stringify({
-    lanes:state.lanes,projetos:state.projetos,evolucoes:state.evolucoes,
-    nextProjId:state.nextProjId,nextLaneId:state.nextLaneId
+    lanes:state.lanes,projetos:state.projetos,evolucoes:state.evolucoes,etapas:state.etapas,
+    nextProjId:state.nextProjId,nextLaneId:state.nextLaneId,nextEtapaId:state.nextEtapaId
   }));
 }
 // ── FIM BLOCO ──
@@ -1464,6 +1698,251 @@ function kpiClick(filterStatus){
   renderAll();
 }
 
+
+// ═══ BLOCO: ETAPAS ═══
+
+// ─ Cálculo de progresso por etapas ─
+function calcPctFromEtapas(projId){
+  const ets = state.etapas.filter(e=>e.projId===projId);
+  if(!ets.length) return null; // sem etapas → usa pct manual
+  const totalPeso = ets.reduce((s,e)=>s+e.peso,0);
+  if(!totalPeso) return 0;
+  const pctConcluido = ets.filter(e=>e.status==='concluido').reduce((s,e)=>s+e.peso,0);
+  return Math.round((pctConcluido/totalPeso)*100);
+}
+
+// ─ Render etapas no Preview Card ─
+function renderPcEtapas(projId, color){
+  const ets = state.etapas.filter(e=>e.projId===projId).sort((a,b)=>a.ordem-b.ordem);
+  const totalPeso = ets.reduce((s,e)=>s+e.peso,0);
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+
+  // Barra segmentada
+  const progEl = document.getElementById('pc-etapa-progress');
+  if(progEl){
+    if(ets.length){
+      progEl.style.display='flex';
+      let acc=0;
+      progEl.innerHTML = ets.map(e=>{
+        const w = totalPeso ? (e.peso/totalPeso)*100 : 0;
+        const bg = e.status==='concluido' ? color
+          : e.status==='em_andamento' ? color+'88'
+          : 'var(--bg5)';
+        acc+=w;
+        return `<div class="pc-etapa-seg" style="width:${w}%;background:${bg}" title="${escHtml(e.nome)} (${e.peso}%)"></div>`;
+      }).join('');
+    } else {
+      progEl.style.display='none';
+    }
+  }
+
+  // Peso total indicator
+  const pesosEl = document.getElementById('pc-etapas-pesos');
+  if(pesosEl){
+    if(ets.length){
+      const cls = totalPeso===100?'ok':totalPeso>100?'warn':'';
+      pesosEl.className='pc-etapas-pesos '+cls;
+      pesosEl.textContent = `Total de pesos: ${totalPeso}% ${totalPeso===100?'✓':totalPeso>100?'⚠ ultrapassa 100%':'(distribua os '+( 100-totalPeso)+'% restantes)'}`;
+    } else {
+      pesosEl.textContent='';
+    }
+  }
+
+  // Lista de etapas
+  const listEl = document.getElementById('pc-etapas-list');
+  if(!listEl) return;
+  if(!ets.length){
+    listEl.innerHTML=`<div style="font-size:0.74rem;color:var(--text4);font-style:italic;padding:6px 0">
+      Nenhuma etapa. Clique em "+ etapa" para adicionar.
+    </div>`;
+    return;
+  }
+  listEl.innerHTML = ets.map(e=>{
+    const statusIcon = e.status==='concluido'?'✓':e.status==='em_andamento'?'●':'○';
+    const prazoStr = e.dataFim ? (() => {
+      const df=new Date(e.dataFim); const diff=Math.round((df-hoje)/86400000);
+      const cls = diff<0?'vence-hoje':diff<=7?'vence-em-breve':'';
+      const label = diff<0?`${Math.abs(diff)}d atraso`:diff===0?'hoje':diff===1?'amanhã':`${diff}d`;
+      return `<span class="etapa-prazo ${cls}">📅 ${label}</span>`;
+    })() : '';
+    const autoBadge = e.automacaoId
+      ? `<span class="etapa-auto-badge" title="Automação: ${e.automacaoId}">⚡ ${e.automacaoId}</span>`
+      : '';
+    return `<div class="etapa-item ${e.status}" style="--etapa-color:${color}">
+      <button class="etapa-check" onclick="toggleEtapaStatus(${e.id})">${e.status==='concluido'?'✓':''}</button>
+      <div class="etapa-info">
+        <div class="etapa-nome">${escHtml(e.nome)}</div>
+        <div class="etapa-meta">
+          <span class="etapa-peso">${e.peso}%</span>
+          ${prazoStr}
+          ${autoBadge}
+        </div>
+      </div>
+      <div class="etapa-actions">
+        <button class="etapa-act-btn" onclick="cycleEtapaStatus(${e.id})" title="Mudar status">↻</button>
+        <button class="etapa-act-btn del" onclick="deleteEtapa(${e.id})" title="Deletar">×</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─ Toggle / cycle status ─
+function toggleEtapaStatus(etapaId){
+  const e = state.etapas.find(x=>x.id===etapaId);
+  if(!e) return;
+  e.status = e.status==='concluido' ? 'pendente' : 'concluido';
+  afterEtapaChange(e.projId, etapaId);
+}
+function cycleEtapaStatus(etapaId){
+  const e = state.etapas.find(x=>x.id===etapaId);
+  if(!e) return;
+  const order = ['pendente','em_andamento','concluido'];
+  e.status = order[(order.indexOf(e.status)+1)%3];
+  afterEtapaChange(e.projId, etapaId);
+}
+function afterEtapaChange(projId, etapaId){
+  const e = state.etapas.find(x=>x.id===etapaId);
+  // Recalcular pct do projeto
+  const newPct = calcPctFromEtapas(projId);
+  if(newPct !== null){
+    const proj = state.projetos.find(p=>p.id===projId);
+    if(proj){
+      const oldPct = proj.pct;
+      proj.pct = newPct;
+      // Registrar evolução automática se mudou
+      if(oldPct !== newPct){
+        const evo = {id:Date.now(), projId, data:new Date().toISOString().split('T')[0], pct:newPct, nota:`Etapa "${e.nome}" → ${e.status}`};
+        state.evolucoes.push(evo);
+        persist('evo', evo);
+      }
+      persist('proj', proj);
+    }
+  }
+  persist('etapa', e);
+  // Disparar automação se etapa concluída e tem automação vinculada
+  if(e.status==='concluido' && e.automacaoId){
+    const autoCfg = AUTOMACOES_CFG.find(a=>a.id===e.automacaoId);
+    showToast(`⚡ Disparando automação: ${autoCfg?autoCfg.nome:e.automacaoId}`, 'info');
+    testAuto(e.automacaoId).then(()=>showToast(`✓ ${autoCfg?autoCfg.nome:'Automação'} executada`, 'success'));
+  }
+  if(state.previewProjId===projId){
+    const lane = state.lanes.find(l=>state.projetos.find(p=>p.id===projId)?.laneId===l.id);
+    renderPcEtapas(projId, lane?lane.cor:'var(--accent)');
+    // Atualizar barra de progresso do preview
+    const proj=state.projetos.find(p=>p.id===projId);
+    if(proj){
+      const pf=document.getElementById('pc-prog-fill');
+      const pp=document.getElementById('pc-prog-pct');
+      if(pf)pf.style.width=proj.pct+'%';
+      if(pp)pp.textContent=proj.pct+'%';
+    }
+  }
+  renderGantt();
+  persistLocal();
+}
+
+// ─ Adicionar etapa inline (do Preview Card) ─
+function addEtapaInline(){
+  const projId = state.previewProjId;
+  if(!projId) return;
+  const nome = prompt('Nome da etapa:');
+  if(!nome || !nome.trim()) return;
+  const pesoStr = prompt('Peso (%) — quanto vale no progresso total:', '25');
+  const peso = Math.max(1, Math.min(100, parseInt(pesoStr)||25));
+  const autoId = prompt('Automação ao concluir? (digest/alerta/marts/snapshot — Enter para nenhuma):','') || '';
+  const ets = state.etapas.filter(e=>e.projId===projId);
+  const nova = {id:state.nextEtapaId++, projId, nome:nome.trim(), peso, status:'pendente', dataFim:'', automacaoId:autoId.trim(), ordem:ets.length};
+  state.etapas.push(nova);
+  persist('etapa', nova);
+  persist('meta_etapa');
+  const lane=state.lanes.find(l=>state.projetos.find(p=>p.id===projId)?.laneId===l.id);
+  renderPcEtapas(projId, lane?lane.cor:'var(--accent)');
+  persistLocal();
+  showToast('◆ Etapa adicionada', 'success');
+}
+
+// ─ Deletar etapa ─
+function deleteEtapa(etapaId){
+  const e = state.etapas.find(x=>x.id===etapaId);
+  if(!e) return;
+  const projId = e.projId;
+  state.etapas = state.etapas.filter(x=>x.id!==etapaId);
+  persist('del_etapa', {id:etapaId});
+  // Recalcular pct
+  const newPct = calcPctFromEtapas(projId);
+  if(newPct!==null){const proj=state.projetos.find(p=>p.id===projId);if(proj){proj.pct=newPct;persist('proj',proj);}}
+  const lane=state.lanes.find(l=>state.projetos.find(p=>p.id===projId)?.laneId===l.id);
+  renderPcEtapas(projId,lane?lane.cor:'var(--accent)');
+  renderGantt();persistLocal();
+}
+
+// ─ Modal tabs ─
+function switchModalTab(tab){
+  document.querySelectorAll('.modal-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.modal-tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+  if(tab==='etapas') renderEtapasEditor();
+}
+
+function renderEtapasEditor(){
+  const projId = state.editingProjId;
+  if(!projId) return;
+  const ets = state.etapas.filter(e=>e.projId===projId).sort((a,b)=>a.ordem-b.ordem);
+  const totalPeso = ets.reduce((s,e)=>s+e.peso,0);
+  const listEl = document.getElementById('etapas-editor-list');
+  listEl.innerHTML = ets.map(e=>`
+    <div class="etapa-editor" id="eted-${e.id}">
+      <input class="etapa-ed-nome" value="${escHtml(e.nome)}" onblur="updateEtapaNome(${e.id},this.value)" placeholder="Nome da etapa">
+      <input class="etapa-ed-peso" type="number" min="1" max="100" value="${e.peso}" onblur="updateEtapaPeso(${e.id},this.value)" title="Peso %">
+      <input class="etapa-ed-peso" type="date" value="${e.dataFim||''}" onblur="updateEtapaFim(${e.id},this.value)" title="Prazo" style="width:110px">
+      <select class="etapa-ed-auto" onchange="updateEtapaAuto(${e.id},this.value)">
+        <option value="">—</option>
+        <option value="digest" ${e.automacaoId==='digest'?'selected':''}>📧 Digest</option>
+        <option value="alerta" ${e.automacaoId==='alerta'?'selected':''}>⚠️ Alerta</option>
+        <option value="marts"  ${e.automacaoId==='marts'?'selected':''}>📊 MARTS</option>
+        <option value="snapshot" ${e.automacaoId==='snapshot'?'selected':''}>📸 Snapshot</option>
+      </select>
+      <button class="etapa-ed-del" onclick="deleteEtapa(${e.id});renderEtapasEditor()">×</button>
+    </div>`).join('');
+  const tot = document.getElementById('etapa-peso-total');
+  if(tot){
+    tot.className='etapa-peso-total '+(totalPeso===100?'ok':totalPeso>100?'warn':'');
+    tot.textContent=`Total: ${totalPeso}% ${totalPeso===100?'✓ perfeito':totalPeso>100?'⚠ ultrapassa 100%':''}`;
+  }
+}
+
+function addEtapaFromModal(){
+  const projId = state.editingProjId;
+  if(!projId) return;
+  const nome = document.getElementById('nova-etapa-nome').value.trim();
+  if(!nome) return;
+  const peso = Math.max(1,Math.min(100,parseInt(document.getElementById('nova-etapa-peso').value)||20));
+  const autoId = document.getElementById('nova-etapa-auto').value;
+  const ets = state.etapas.filter(e=>e.projId===projId);
+  const nova={id:state.nextEtapaId++, projId, nome, peso, status:'pendente', dataFim:'', automacaoId:autoId, ordem:ets.length};
+  state.etapas.push(nova);
+  persist('etapa',nova);persist('meta_etapa');
+  document.getElementById('nova-etapa-nome').value='';
+  document.getElementById('nova-etapa-peso').value='';
+  document.getElementById('nova-etapa-auto').value='';
+  renderEtapasEditor();persistLocal();
+}
+
+function updateEtapaNome(id,v){const e=state.etapas.find(x=>x.id===id);if(e&&v.trim()){e.nome=v.trim();persist('etapa',e);persistLocal();}}
+function updateEtapaPeso(id,v){const e=state.etapas.find(x=>x.id===id);if(e){e.peso=Math.max(1,Math.min(100,parseInt(v)||1));persist('etapa',e);renderEtapasEditor();persistLocal();}}
+function updateEtapaFim(id,v){const e=state.etapas.find(x=>x.id===id);if(e){e.dataFim=v||'';persist('etapa',e);persistLocal();}}
+function updateEtapaAuto(id,v){const e=state.etapas.find(x=>x.id===id);if(e){e.automacaoId=v;persist('etapa',e);persistLocal();}}
+
+// ─ Toast ─
+function showToast(msg, type='info'){
+  const wrap=document.getElementById('toast-wrap');
+  const div=document.createElement('div');
+  div.className=`toast ${type}`;div.textContent=msg;
+  wrap.appendChild(div);
+  setTimeout(()=>{div.style.opacity='0';div.style.transform='translateY(8px) scale(0.96)';div.style.transition='all 0.3s';setTimeout(()=>div.remove(),350);},3000);
+}
+// ── FIM BLOCO ──
 // ═══ BLOCO: UPCOMING TIMELINE ═══
 function renderUpcoming(){
   const hoje=new Date();hoje.setHours(0,0,0,0);
@@ -1807,6 +2286,7 @@ function openPreview(projId){
   const det=document.getElementById('pc-detail');
   det.innerHTML=proj.detalhe?escHtml(proj.detalhe):'<span class="pc-detail-empty">Sem descrição. Edite o projeto para adicionar.</span>';
   // Histórico
+  renderPcEtapas(projId,color);
   renderPcHistory(projId,color);
   // Abrir card + ajustar layout
   const card=document.getElementById('preview-card');
@@ -2150,6 +2630,18 @@ function renderGantt(){
           html+=`<span class="gbar-pct">${proj.pct}%</span>`;
         }
         html+=`<div class="gbar-resize" onmousedown="startResize(event,${proj.id})"></div>`;
+        // Marcos ◆ das etapas
+        const _ets=state.etapas.filter(e=>e.projId===proj.id).sort((a,b)=>a.ordem-b.ordem);
+        if(_ets.length){
+          const _totPeso=_ets.reduce((s,e)=>s+e.peso,0)||100;
+          let _acc=0;
+          _ets.forEach(et=>{
+            _acc+=et.peso;
+            const _marcoX=(_acc/_totPeso)*widthPx;
+            const _mColor=et.status==='concluido'?laneColor:et.status==='em_andamento'?laneColor+'aa':'var(--bg5)';
+            html+=`<div class="gbar-marco ${et.status}" style="left:${_marcoX-4}px;background:${_mColor}" title="${escHtml(et.nome)} (${et.peso}%) — ${et.status}" onclick="openPreview(${proj.id})" ></div>`;
+          });
+        }
         html+=`</div></div>`;
       } else {
         html+=`<div class="gbar-nodates"><div style="width:6px;height:6px;border-radius:50%;background:${lc}"></div><span>Datas a definir</span></div>`;
@@ -2360,6 +2852,7 @@ function openModal(laneId,projId){
     document.getElementById('f-status').value='Em andamento';
     document.getElementById('f-pct').value=0;
   }
+  switchModalTab('projeto');
   document.getElementById('modal-overlay').classList.add('open');
   setTimeout(()=>document.getElementById('f-nome').focus(),100);
 }
