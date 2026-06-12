@@ -37,7 +37,7 @@ const SCHEMA = {
   ],
   PROJETOS: [
     'id', 'lane_id', 'nome', 'status',
-    'inicio', 'fim', 'pct', 'detalhe'
+    'inicio', 'fim', 'pct', 'detalhe', 'owner'
   ],
   EVOLUCOES: [
     'id', 'proj_id', 'data', 'pct', 'nota'
@@ -45,6 +45,9 @@ const SCHEMA = {
   ETAPAS: [
     'id', 'proj_id', 'nome', 'peso', 'status',
     'data_fim', 'automacao_id', 'ordem'
+  ],
+  USUARIOS: [
+    'email', 'nome', 'role', 'ativo', 'criado_em'
   ],
 };
 // ── FIM BLOCO ──
@@ -76,6 +79,8 @@ function doPost(e) {
       case 'add_evolucao':  return jsonOk(handleAddEvolucao(payload));
       case 'set_meta':      return jsonOk(handleSetMeta(payload));
       case 'save_all':      return jsonOk(handleSaveAll(payload));
+      case 'upsert_usuario': return jsonOk(handleUpsertUsuario(payload));
+      case 'delete_usuario': return jsonOk(handleDeleteUsuario(payload));
       case 'upsert_etapa': return jsonOk(handleUpsertEtapa(payload));
       case 'delete_etapa': return jsonOk(handleDeleteEtapa(payload));
       case 'run_digest':    return jsonOk(handleDigest(payload));
@@ -113,9 +118,10 @@ function handleLoad() {
     peso:_toInt(r['peso']), status:String(r['status']||'pendente'),
     dataFim:_toDateStr(r['data_fim']), automacaoId:String(r['automacao_id']||''), ordem:_toInt(r['ordem'])
   }));
+  const usuarios = _readStaging(ss, 'USUARIOS').map(r=>({email:String(r['email']||''),nome:String(r['nome']||''),role:String(r['role']||'user'),ativo:r['ativo']!==false}));
   const nextEtapaId = parseInt(getConfig('next_etapa_id') || '1000');
   log_('INFO', 'Load: ' + lanes.length + 'L / ' + projetos.length + 'P / ' + evolucoes.length + 'E / ' + etapas.length + 'Et');
-  return { lanes, projetos, evolucoes, etapas, nextProjId, nextLaneId, nextEtapaId };
+  return { lanes, projetos, evolucoes, etapas, usuarios, nextProjId, nextLaneId, nextEtapaId };
 }
 // ── FIM BLOCO ──
 
@@ -543,6 +549,21 @@ function handleDeleteEtapa(payload) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   _deleteFromStaging(ss, 'ETAPAS', 'id', [payload.id]);
   log_('INFO', 'Delete etapa id=' + payload.id);
+  return { ok: true };
+}
+
+function handleUpsertUsuario(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const data = { email: payload.email, nome: payload.nome||'', role: payload.role||'user', ativo: true, criado_em: new Date().toISOString() };
+  appendRaw('USUARIOS', data, 'gantt');
+  upsertStaging(ss, 'USUARIOS', data, 'email');
+  log_('INFO', 'Upsert usuario: ' + payload.email + ' (' + payload.role + ')');
+  return { ok: true };
+}
+function handleDeleteUsuario(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  _deleteFromStaging(ss, 'USUARIOS', 'email', [payload.email]);
+  log_('INFO', 'Delete usuario: ' + payload.email);
   return { ok: true };
 }
 // ═══ BLOCO: AUTOMAÇÕES ═══
