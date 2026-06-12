@@ -72,6 +72,10 @@ function doPost(e) {
       case 'add_evolucao':  return jsonOk(handleAddEvolucao(payload));
       case 'set_meta':      return jsonOk(handleSetMeta(payload));
       case 'save_all':      return jsonOk(handleSaveAll(payload));
+      case 'run_digest':    return jsonOk(handleDigest(payload));
+      case 'run_alerta':    return jsonOk(handleAlerta(payload));
+      case 'run_marts':     return jsonOk(handleRunMarts(payload));
+      case 'run_snapshot':  return jsonOk(handleSnapshot(payload));
       default:              return jsonErr('Unknown POST action: ' + action);
     }
   } catch (err) {
@@ -496,6 +500,101 @@ function jsonErr(msg) {
 }
 // ── FIM BLOCO ──
 
+
+// ═══ BLOCO: AUTOMAÇÕES ═══
+
+function handleDigest(payload) {
+  const projetos = payload.projetos || [];
+  const lanes    = payload.lanes    || [];
+  const hoje     = new Date(); hoje.setHours(0,0,0,0);
+
+  const atrasados  = projetos.filter(p => !['Concluído','Pausado'].includes(p.status) && p.fim && new Date(p.fim) < hoje && p.pct < 100);
+  const emAndamento= projetos.filter(p => p.status === 'Em andamento');
+  const concluidos = projetos.filter(p => p.status === 'Concluído');
+  const pctMedio   = projetos.length ? Math.round(projetos.reduce((s,p)=>s+(p.pct||0),0)/projetos.length) : 0;
+
+  // Monta resumo por lane
+  const laneResumo = lanes.map(l => {
+    const ps = projetos.filter(p => p.laneId === l.id || p.lane_id === l.id);
+    const avg = ps.length ? Math.round(ps.reduce((s,p)=>s+(p.pct||0),0)/ps.length) : 0;
+    return `${l.nome}: ${ps.length}p · ${avg}% médio`;
+  }).join('\n');
+
+  const corpo = [
+    '=== WAR ROOM — DIGEST SEMANAL ===',
+    `Data: ${new Date().toLocaleDateString('pt-BR')}`,
+    '',
+    `Projetos totais: ${projetos.length}`,
+    `Progresso médio: ${pctMedio}%`,
+    `Em andamento: ${emAndamento.length}`,
+    `Concluídos: ${concluidos.length}`,
+    `Atrasados: ${atrasados.length}`,
+    '',
+    '--- Por Lane ---',
+    laneResumo,
+    '',
+    '--- Atrasados ---',
+    atrasados.length ? atrasados.map(p => `• ${p.nome} (${p.pct}%)`).join('\n') : 'Nenhum!',
+  ].join('\n');
+
+  // Tentar enviar email para o owner do script
+  try {
+    const email = Session.getActiveUser().getEmail();
+    if (email) {
+      GmailApp.sendEmail(email, '⚡ War Room · Digest Semanal', corpo);
+    }
+  } catch(e) {
+    // GmailApp pode não estar autorizado — só loga
+  }
+
+  log_('INFO', 'Digest gerado: ' + projetos.length + ' projetos, ' + atrasados.length + ' atrasados');
+  return { ok: true, msg: atrasados.length + ' atrasado(s)' };
+}
+
+function handleAlerta(payload) {
+  const projetos = payload.projetos || [];
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const atrasados = projetos.filter(p =>
+    !['Concluído','Pausado'].includes(p.status) &&
+    p.fim && new Date(p.fim) < hoje && (p.pct||0) < 100
+  );
+  atrasados.forEach(p => {
+    const dias = Math.round((hoje - new Date(p.fim)) / 86400000);
+    log_('ALERTA', `Projeto atrasado ${dias}d: ${p.nome} (${p.pct}%)`);
+  });
+  return { ok: true, msg: atrasados.length + ' alerta(s) registrado(s)' };
+}
+
+function handleRunMarts(payload) {
+  atualizarMarts();
+  return { ok: true, msg: 'MARTS atualizado' };
+}
+
+function handleSnapshot(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const now = new Date();
+  const nomAba = 'SNAPSHOT_' + now.getFullYear() + '_' + String(now.getMonth()+1).padStart(2,'0');
+
+  // Verifica se snapshot do mês já existe
+  if (ss.getSheetByName(nomAba)) {
+    return { ok: true, msg: 'Snapshot ' + nomAba + ' já existe' };
+  }
+
+  const origem = ss.getSheetByName('STAGING_PROJETOS');
+  if (!origem) return { ok: false, error: 'STAGING_PROJETOS não encontrada' };
+
+  const destino = ss.insertSheet(nomAba);
+  const data = origem.getDataRange().getValues();
+  destino.getRange(1, 1, data.length, data[0].length).setValues(data);
+  // Cor de fundo azul claro para distinguir de STAGING
+  destino.getRange(1,1,1,data[0].length).setBackground('#C8D8F0').setFontWeight('bold');
+  destino.setTabColor('#4F7CFF');
+  _formatarAba(destino, '#EEF4FF');
+
+  log_('INFO', 'Snapshot criado: ' + nomAba + ' com ' + (data.length-1) + ' projetos');
+  return { ok: true, msg: nomAba + ' criado' };
+}
+// ── FIM BLOCO ──
 // ═══ BLOCO: MARTS UPDATE (trigger manual ou cron) ═══
 /**
  * Recalcula os KPIs no MARTS.
