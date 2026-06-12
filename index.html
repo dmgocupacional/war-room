@@ -1143,6 +1143,84 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:4px;}
 ::-webkit-scrollbar-thumb:hover{background:var(--bg6);}
+
+/* ═══ USUÁRIOS ═══ */
+.users-modal-box{width:520px;max-width:95vw;}
+.user-row{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;border-radius:10px;
+  border:1px solid var(--border);background:var(--bg3);
+  margin-bottom:6px;transition:var(--tr);
+}
+.user-row:hover{border-color:var(--border3);}
+.user-avatar{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--purple));
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.78rem;font-weight:800;color:#fff;flex-shrink:0;
+  font-family:var(--font);
+}
+.user-info{flex:1;min-width:0;}
+.user-name{font-size:0.82rem;font-weight:700;color:var(--text);}
+.user-email{font-size:0.68rem;color:var(--text3);font-family:var(--mono);}
+.role-badge{
+  font-size:0.62rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:0.06em;padding:2px 8px;border-radius:8px;
+  flex-shrink:0;
+}
+.role-badge.admin{background:var(--accent-dim);color:var(--accent);}
+.role-badge.user{background:var(--bg5);color:var(--text3);}
+.role-badge.thiago{background:var(--purple-dim);color:var(--purple-l);}
+.user-actions{display:flex;gap:6px;opacity:0;transition:opacity 0.15s;}
+.user-row:hover .user-actions{opacity:1;}
+.user-act-btn{
+  padding:4px 10px;border-radius:6px;border:1px solid var(--border2);
+  background:transparent;color:var(--text3);cursor:pointer;
+  font-size:0.7rem;font-family:var(--font);transition:var(--tr);
+}
+.user-act-btn:hover{border-color:var(--border3);color:var(--text);}
+.user-act-btn.del:hover{background:var(--red-dim);color:var(--red-l);border-color:var(--red);}
+.user-add-row{
+  display:flex;gap:8px;align-items:center;
+  padding:12px 0 0;border-top:1px solid var(--border);margin-top:8px;
+  flex-wrap:wrap;
+}
+.user-self-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:0.63rem;font-weight:700;padding:1px 7px;border-radius:8px;
+  background:var(--green-dim);color:var(--green-l);margin-left:4px;
+}
+/* Owner badge na row do gantt */
+.owner-badge{
+  font-size:0.58rem;font-weight:700;padding:1px 5px;border-radius:5px;
+  background:var(--bg5);color:var(--text4);
+  white-space:nowrap;flex-shrink:0;
+}
+/* Projeto de outro user — leve dim para admin */
+.gantt-row.other-owner .gantt-row-label{opacity:0.85;}
+/* Seed restore card */
+.seed-restore-card{
+  background:var(--accent-dim);border:1px solid var(--accent);
+  border-radius:10px;padding:12px 14px;margin-top:12px;
+  display:flex;align-items:center;gap:12px;cursor:pointer;
+  transition:var(--tr);
+}
+.seed-restore-card:hover{background:rgba(79,124,255,0.22);}
+.seed-restore-icon{font-size:1.4rem;flex-shrink:0;}
+.seed-restore-info{}
+.seed-restore-title{font-size:0.82rem;font-weight:700;color:var(--accent);}
+.seed-restore-sub{font-size:0.68rem;color:var(--text3);margin-top:2px;}
+/* Navbar users btn */
+.nav-users-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 11px;border-radius:8px;
+  border:1px solid var(--border2);background:var(--bg3);
+  color:var(--text3);cursor:pointer;font-size:0.74rem;
+  font-family:var(--font);transition:var(--tr);
+}
+.nav-users-btn:hover{border-color:var(--border3);color:var(--text);}
+.nav-users-btn.admin-only{display:none;}
+body.is-admin .nav-users-btn.admin-only{display:flex;}
 .hidden{display:none!important;}
 </style>
 </head>
@@ -1163,6 +1241,7 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
     <div class="sync-dot" id="sync-dot"></div>
     <span id="sync-label">Offline</span>
   </div>
+  <button class="nav-users-btn admin-only" onclick="openUsersModal()" id="nav-users-btn">👥 Usuários</button>
   <button class="btn-icon" onclick="toggleTheme()" id="theme-btn" title="Alternar tema">☀</button>
   <button class="btn-icon" onclick="document.getElementById('setup-overlay').classList.add('open')" title="Configurar War Room">⚙</button>
   <button class="btn-add-proj" onclick="openModal()">+ Projeto</button>
@@ -1353,30 +1432,24 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
           <input class="finput" id="setup-titulo" type="text" placeholder="Ex: War Room · Projetos DIMEG">
         </div>
         <div class="form-group full">
+          <label class="flabel">Email *</label>
+          <input class="finput" id="setup-email" type="email" placeholder="seu@email.com">
+          <div style="font-size:0.68rem;color:var(--text3);margin-top:4px">Define seu nível de acesso automaticamente.</div>
+        </div>
+        <div class="form-group full">
           <label class="flabel">URL do Google Sheets (opcional)</label>
           <input class="finput" id="setup-sheets" type="text" placeholder="Cole a URL do Apps Script Web App">
-          <div style="font-size:0.68rem;color:var(--text3);margin-top:4px">
-            Deixe em branco para começar com dados locais. Pode conectar depois.
+        </div>
+        <div class="seed-restore-card" id="seed-restore-card" onclick="toggleSeedRestore()" style="display:none">
+          <div class="seed-restore-icon">📦</div>
+          <div class="seed-restore-info">
+            <div class="seed-restore-title">Carregar projetos DIMEG</div>
+            <div class="seed-restore-sub">23 projetos · 5 lanes · histórico completo</div>
           </div>
+          <input type="checkbox" id="seed-restore-check" onclick="event.stopPropagation()" style="width:18px;height:18px;cursor:pointer;margin-left:auto;flex-shrink:0">
         </div>
       </div>
-      </div><!-- /panel-projeto -->
-      <div class="modal-tab-panel" id="panel-etapas">
-        <div id="etapas-editor-list"></div>
-        <div class="etapa-add-row">
-          <input class="finput" id="nova-etapa-nome" placeholder="Nome da etapa..." style="flex:1">
-          <input class="finput etapa-ed-peso" id="nova-etapa-peso" type="number" min="1" max="100" placeholder="%" style="width:60px">
-          <select class="fselect etapa-ed-auto" id="nova-etapa-auto" style="width:130px">
-            <option value="">Sem automação</option>
-            <option value="digest">📧 Digest</option>
-            <option value="alerta">⚠️ Alerta</option>
-            <option value="marts">📊 MARTS</option>
-            <option value="snapshot">📸 Snapshot</option>
-          </select>
-          <button class="etapa-add-btn" onclick="addEtapaFromModal()">+ Adicionar</button>
-        </div>
-        <div class="etapa-peso-total" id="etapa-peso-total"></div>
-      </div><!-- /panel-etapas -->
+      </div><!-- /panel-setup -->
     </div>
     <div class="modal-footer">
       <button class="btn-save" onclick="saveSetup()" style="width:100%">✓ Criar meu War Room</button>
@@ -1384,6 +1457,34 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
   </div>
 </div>
 
+
+<!-- USERS MODAL -->
+<div class="modal-overlay" id="users-overlay" onclick="closeUsersBg(event)">
+  <div class="modal-box users-modal-box">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:10px;flex:1">
+        <span style="font-size:1.2rem">👥</span>
+        <div>
+          <div class="modal-title">Gestão de Usuários</div>
+          <div style="font-size:0.7rem;color:var(--text3);margin-top:1px">Admins veem todos os projetos · Users veem só os próprios</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeUsersModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="users-list"></div>
+      <div class="user-add-row">
+        <input class="finput" id="new-user-nome" placeholder="Nome" style="flex:1;min-width:100px">
+        <input class="finput" id="new-user-email" type="email" placeholder="email@empresa.com" style="flex:1.5;min-width:140px">
+        <select class="fselect" id="new-user-role" style="width:110px">
+          <option value="user">👤 User</option>
+          <option value="admin">👑 Admin</option>
+        </select>
+        <button class="btn-save" onclick="addUser()" style="padding:8px 14px;white-space:nowrap">+ Adicionar</button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalBg(event)">
   <div class="modal-box">
@@ -1472,6 +1573,124 @@ const KPI_CFG = [
   {key:'atrasado',  label:'Atrasados',   icon:'⚠',  color:'var(--red)',     filterStatus:'__atrasado__'},
 ];
 
+
+// ═══ BLOCO: RBAC ═══
+const ADMIN_EMAILS = ['henrique.paludo@dimeg.com.br','truck@dimeg.com.br'];
+
+function isAdmin(){
+  const u = state.currentUser;
+  if(!u) return false;
+  return u.role==='admin' || ADMIN_EMAILS.includes((u.email||'').toLowerCase());
+}
+function setRBACClass(){
+  document.body.classList.toggle('is-admin', isAdmin());
+}
+
+// Projetos visíveis para o usuário atual
+function projetosVisiveis(){
+  if(isAdmin()) return state.projetos;
+  const email = (state.currentUser?.email||'').toLowerCase();
+  return state.projetos.filter(p=>!p.owner || p.owner.toLowerCase()===email);
+}
+
+// ═══ BLOCO: USUÁRIOS ═══
+function getUsuarios(){
+  try{ return JSON.parse(localStorage.getItem('wr_usuarios')||'[]'); }
+  catch{ return []; }
+}
+function saveUsuarios(us){ localStorage.setItem('wr_usuarios',JSON.stringify(us)); }
+function initUsuarios(){
+  let us = getUsuarios();
+  // Seed admins se vazio
+  if(!us.length){
+    us = [
+      {nome:'Henrique Paludo', email:'henrique.paludo@dimeg.com.br', role:'admin'},
+      {nome:'Truck',           email:'truck@dimeg.com.br',           role:'admin'},
+    ];
+    saveUsuarios(us);
+  }
+  // Garante que admins fixos sempre são admin
+  ADMIN_EMAILS.forEach(ae=>{
+    const u = us.find(x=>x.email.toLowerCase()===ae.toLowerCase());
+    if(u) u.role='admin';
+  });
+  saveUsuarios(us);
+  state.usuarios = us;
+}
+
+function openUsersModal(){
+  if(!isAdmin()){ showToast('Acesso restrito a admins','warning'); return; }
+  renderUsersList();
+  document.getElementById('users-overlay').classList.add('open');
+}
+function closeUsersModal(){ document.getElementById('users-overlay').classList.remove('open'); }
+function closeUsersBg(e){ if(e.target===e.currentTarget) closeUsersModal(); }
+
+function renderUsersList(){
+  const us = getUsuarios();
+  const myEmail = (state.currentUser?.email||'').toLowerCase();
+  const el = document.getElementById('users-list');
+  if(!us.length){ el.innerHTML='<div style="color:var(--text4);font-size:0.8rem;padding:8px 0">Nenhum usuário cadastrado.</div>'; return; }
+  el.innerHTML = us.map(u=>{
+    const initials = u.nome.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const isMe = u.email.toLowerCase()===myEmail;
+    const isFixed = ADMIN_EMAILS.includes(u.email.toLowerCase());
+    const roleLabel = u.role==='admin' ? (ADMIN_EMAILS.slice(0,1)[0]===u.email.toLowerCase()?'👑 Dono':'👑 Admin') : '👤 User';
+    const roleClass = u.role==='admin' ? 'admin' : 'user';
+    return `<div class="user-row">
+      <div class="user-avatar">${initials}</div>
+      <div class="user-info">
+        <div class="user-name">${escHtml(u.nome)}${isMe?'<span class="user-self-badge">você</span>':''}</div>
+        <div class="user-email">${escHtml(u.email)}</div>
+      </div>
+      <span class="role-badge ${roleClass}">${roleLabel}</span>
+      ${!isMe && !isFixed ? `<div class="user-actions">
+        <button class="user-act-btn" onclick="toggleUserRole('${u.email}')">${u.role==='admin'?'→ User':'→ Admin'}</button>
+        <button class="user-act-btn del" onclick="removeUser('${u.email}')">Remover</button>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function addUser(){
+  const nome  = document.getElementById('new-user-nome').value.trim();
+  const email = document.getElementById('new-user-email').value.trim().toLowerCase();
+  const role  = document.getElementById('new-user-role').value;
+  if(!nome||!email){ showToast('Nome e email obrigatórios','warning'); return; }
+  const us = getUsuarios();
+  if(us.find(u=>u.email.toLowerCase()===email)){ showToast('Email já cadastrado','warning'); return; }
+  us.push({nome, email, role});
+  saveUsuarios(us);
+  state.usuarios = us;
+  document.getElementById('new-user-nome').value='';
+  document.getElementById('new-user-email').value='';
+  renderUsersList();
+  showToast(`✓ ${nome} adicionado(a)`, 'success');
+  if(state.sheetsUrl) _gs('upsert_usuario', {nome, email, role});
+}
+
+function removeUser(email){
+  if(ADMIN_EMAILS.includes(email.toLowerCase())){ showToast('Não é possível remover admins fixos','warning'); return; }
+  let us = getUsuarios();
+  us = us.filter(u=>u.email.toLowerCase()!==email.toLowerCase());
+  saveUsuarios(us);
+  state.usuarios = us;
+  renderUsersList();
+  showToast('Usuário removido', 'info');
+  if(state.sheetsUrl) _gs('delete_usuario', {email});
+}
+
+function toggleUserRole(email){
+  if(ADMIN_EMAILS.includes(email.toLowerCase())){ showToast('Role de admins fixos não pode ser alterado','warning'); return; }
+  const us = getUsuarios();
+  const u = us.find(x=>x.email.toLowerCase()===email.toLowerCase());
+  if(u){ u.role = u.role==='admin'?'user':'admin'; }
+  saveUsuarios(us);
+  state.usuarios = us;
+  renderUsersList();
+  if(state.sheetsUrl) _gs('upsert_usuario', u);
+}
+// ── FIM BLOCO ──
 // ═══ BLOCO: ESTADO GLOBAL ═══
 let state = {
   lanes:[], projetos:[], evolucoes:[],
@@ -1483,6 +1702,7 @@ let state = {
   busca:'', buscaIdx:0, buscaResults:[],
   collapsedLanes:[],
   etapas:[], nextEtapaId:1000,
+  usuarios:[], currentUser:null,
 };
 
 // ═══ BLOCO: SEED ═══
@@ -1567,21 +1787,40 @@ function saveSetup(){
   const cargo = document.getElementById('setup-cargo').value.trim();
   const titulo= document.getElementById('setup-titulo').value.trim();
   const sheets= document.getElementById('setup-sheets').value.trim();
+  const email = (document.getElementById('setup-email')?.value.trim()||'').toLowerCase();
   if(!nome){alert('Coloca seu nome 😊');return;}
-  const cfg={nome,cargo,titulo:titulo||`War Room · ${nome}`,sheets};
+  const role = ADMIN_EMAILS.includes(email)?'admin':'user';
+  const cfg={nome,cargo,titulo:titulo||`War Room · ${nome}`,sheets,email,role};
   localStorage.setItem('wr_config',JSON.stringify(cfg));
   document.getElementById('setup-overlay').classList.remove('open');
   applyConfig(cfg);
+  // Atualiza currentUser
+  state.currentUser={nome,email,role};
+  setRBACClass();
+  initUsuarios();
+  // Garante que este usuário está na lista
+  const us=getUsuarios();
+  if(email&&!us.find(u=>u.email.toLowerCase()===email)){
+    us.push({nome,email,role});saveUsuarios(us);state.usuarios=us;
+  }
   const dataKey=_dataKey(cfg);
   state.dataKey=dataKey;
   const saved=localStorage.getItem(dataKey);
-  if(saved){
+  const loadSeed=document.getElementById('seed-restore-check')?.checked;
+  if(saved&&!loadSeed){
     const d=JSON.parse(saved);
     Object.assign(state,{lanes:d.lanes,projetos:d.projetos,evolucoes:d.evolucoes,etapas:d.etapas||[],
       nextProjId:d.nextProjId,nextLaneId:d.nextLaneId,nextEtapaId:d.nextEtapaId||1000});
+  } else if(loadSeed){
+    // Carrega seed com owner = email do usuário
+    const seed=getSeed();
+    seed.projetos.forEach(p=>{p.owner=email||nome;});
+    Object.assign(state,{lanes:seed.lanes,projetos:seed.projetos,evolucoes:seed.evolucoes,etapas:[],
+      nextProjId:seed.nextProjId,nextLaneId:seed.nextLaneId,nextEtapaId:1000});
+    persistLocal();
+    showToast('📦 Projetos DIMEG carregados!','success');
   } else {
-    // Novo usuário — começa com War Room limpo
-    state.lanes=[];state.projetos=[];state.evolucoes=[];
+    state.lanes=[];state.projetos=[];state.evolucoes=[];state.etapas=[];
     state.nextProjId=100;state.nextLaneId=10;
   }
   if(sheets){
@@ -1599,15 +1838,31 @@ function applyConfig(cfg){
   document.querySelector('.nav-logo-mark').textContent=cfg.nome.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
   document.title=cfg.titulo||'War Room';
 }
+function toggleSeedRestore(){
+  const card=document.getElementById('seed-restore-card');
+  const cb=document.getElementById('seed-restore-check');
+  if(cb)cb.checked=!cb.checked;
+}
 function checkSetup(){
   const raw=localStorage.getItem('wr_config');
   if(!raw){
     ['setup-nome','setup-cargo','setup-titulo','setup-sheets'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('setup-overlay').classList.add('open');
-    setTimeout(()=>document.getElementById('setup-nome').focus(),150);
+    setTimeout(()=>{
+      document.getElementById('setup-nome').focus();
+      // Listener para mostrar seed-restore quando email for admin
+      const emailInp=document.getElementById('setup-email');
+      if(emailInp) emailInp.addEventListener('input',function(){
+        const card=document.getElementById('seed-restore-card');
+        if(card) card.style.display=ADMIN_EMAILS.includes(this.value.trim().toLowerCase())?'flex':'none';
+      });
+    },150);
   } else {
     const cfg=JSON.parse(raw);
     applyConfig(cfg);
+    state.currentUser={nome:cfg.nome,email:cfg.email||'',role:cfg.role||( ADMIN_EMAILS.includes((cfg.email||'').toLowerCase())?'admin':'user')};
+    setRBACClass();
+    initUsuarios();
     const dataKey=_dataKey(cfg);
     state.dataKey=dataKey;
     // Restaura dados locais do usuário
@@ -1642,11 +1897,12 @@ function toggleTheme(){
 // ═══ BLOCO: KPI STRIP (T1) ═══
 function calcKPIs(){
   const hoje=new Date();hoje.setHours(0,0,0,0);
-  const total=state.projetos.length;
-  const andamento=state.projetos.filter(p=>p.status==='Em andamento').length;
-  const concluido=state.projetos.filter(p=>p.status==='Concluído').length;
-  const planejado=state.projetos.filter(p=>p.status==='Em planejamento').length;
-  const atrasado=state.projetos.filter(p=>{
+  const _vp=projetosVisiveis();
+  const total=_vp.length;
+  const andamento=_vp.filter(p=>p.status==='Em andamento').length;
+  const concluido=_vp.filter(p=>p.status==='Concluído').length;
+  const planejado=_vp.filter(p=>p.status==='Em planejamento').length;
+  const atrasado=_vp.filter(p=>{
     if(p.status==='Concluído'||p.status==='Pausado')return false;
     if(!p.fim)return false;
     return new Date(p.fim)<hoje && p.pct<100;
@@ -1946,7 +2202,7 @@ function showToast(msg, type='info'){
 // ═══ BLOCO: UPCOMING TIMELINE ═══
 function renderUpcoming(){
   const hoje=new Date();hoje.setHours(0,0,0,0);
-  const items=state.projetos
+  const items=projetosVisiveis()
     .filter(p=>p.fim&&new Date(p.fim)>=hoje&&!['Concluído','Pausado'].includes(p.status))
     .sort((a,b)=>new Date(a.fim)-new Date(b.fim))
     .slice(0,8);
@@ -2197,7 +2453,7 @@ function onSearchInput(val){
 function renderSearchResults(q){
   const el=document.getElementById('search-results');
   if(!q){el.innerHTML='<div class="search-empty">Digite para buscar um projeto...</div>';state.buscaResults=[];return;}
-  const results=state.projetos.filter(p=>p.nome.toLowerCase().includes(q)||(p.detalhe||'').toLowerCase().includes(q));
+  const results=projetosVisiveis().filter(p=>p.nome.toLowerCase().includes(q)||(p.detalhe||'').toLowerCase().includes(q));
   state.buscaResults=results;
   if(!results.length){el.innerHTML='<div class="search-empty">Nenhum projeto encontrado.</div>';return;}
   el.innerHTML=results.map((p,i)=>{
@@ -2548,7 +2804,8 @@ function renderGantt(){
 
   state.lanes.forEach((lane,li)=>{
     if(fLane&&lane.id!==fLane)return;
-    const projetos=state.projetos.filter(p=>{
+    const _visibles=projetosVisiveis();
+    const projetos=_visibles.filter(p=>{
       if(p.laneId!==lane.id)return false;
       if(fStatus==='__atrasado__')return isAtrasado(p);
       if(fStatus&&p.status!==fStatus)return false;
@@ -2601,9 +2858,12 @@ function renderGantt(){
       html+=`<div class="gantt-row-label" ondblclick="rowLabelDblClick(event,${proj.id})">`;
       html+=`<div class="row-accent" style="background:${lc}"></div>`;
       html+=`<div class="row-name" onclick="openPreview(${proj.id})" data-proj-id="${proj.id}">${escHtml(proj.nome)}</div>`;
+      // Owner badge — admin vê de quem é o projeto
+      const _ownerBadge = isAdmin()&&proj.owner&&proj.owner!==(state.currentUser?.email||state.currentUser?.nome||'')
+        ? `<span class="owner-badge">${proj.owner.split('@')[0]}</span>` : '';
       html+=`<div class="row-chips"><span class="rchip" style="background:${sc.bg};color:${sc.text};border-color:${sc.border}">${sc.icon} ${proj.status}</span>`;
       if(isAtrasado(proj))html+=`<span class="rchip" style="background:var(--red-dim);color:var(--red-l);border-color:var(--red)">⚠ atrasado</span>`;
-      html+=`</div>`;
+      html+=_ownerBadge+`</div>`;
       html+=`<button class="row-edit-btn" onclick="openModal(${lane.id},${proj.id})">✎</button>`;
       html+=`</div>`;
       // Timeline
@@ -2871,7 +3131,7 @@ function saveModal(){
     const p=state.projetos.find(x=>x.id===state.editingProjId);
     if(p){Object.assign(p,{nome,laneId,status,inicio,fim,pct,detalhe});persist('proj',p);}
   } else {
-    const novo={id:state.nextProjId++,laneId,nome,status,inicio,fim,pct,detalhe};
+    const novo={id:state.nextProjId++,laneId,nome,status,inicio,fim,pct,detalhe,owner:state.currentUser?.email||state.currentUser?.nome||''};
     state.projetos.push(novo);persist('proj',novo);persist('meta');
   }
   closeModal();
@@ -3036,7 +3296,7 @@ document.addEventListener('mousemove',e=>{
 document.addEventListener('keydown',e=>{
   if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch();}
   if(e.key==='Escape'){
-    closeSearch();closePreview();closePopover();closeModal();
+    closeSearch();closePreview();closePopover();closeModal();closeUsersModal();
     document.getElementById('status-dropdown').classList.add('hidden');
   }
 });
