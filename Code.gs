@@ -42,6 +42,10 @@ const SCHEMA = {
   EVOLUCOES: [
     'id', 'proj_id', 'data', 'pct', 'nota'
   ],
+  ETAPAS: [
+    'id', 'proj_id', 'nome', 'peso', 'status',
+    'data_fim', 'automacao_id', 'ordem'
+  ],
 };
 // ── FIM BLOCO ──
 
@@ -72,6 +76,8 @@ function doPost(e) {
       case 'add_evolucao':  return jsonOk(handleAddEvolucao(payload));
       case 'set_meta':      return jsonOk(handleSetMeta(payload));
       case 'save_all':      return jsonOk(handleSaveAll(payload));
+      case 'upsert_etapa': return jsonOk(handleUpsertEtapa(payload));
+      case 'delete_etapa': return jsonOk(handleDeleteEtapa(payload));
       case 'run_digest':    return jsonOk(handleDigest(payload));
       case 'run_alerta':    return jsonOk(handleAlerta(payload));
       case 'run_marts':     return jsonOk(handleRunMarts(payload));
@@ -102,8 +108,14 @@ function handleLoad() {
   const nextProjId = parseInt(getConfig('next_proj_id') || '100');
   const nextLaneId = parseInt(getConfig('next_lane_id') || '10');
 
-  log_('INFO', 'Load: ' + lanes.length + 'L / ' + projetos.length + 'P / ' + evolucoes.length + 'E');
-  return { lanes, projetos, evolucoes, nextProjId, nextLaneId };
+  const etapas = _readStaging(ss, 'ETAPAS').map(r => ({
+    id:_toInt(r['id']), projId:_toInt(r['proj_id']), nome:String(r['nome']||''),
+    peso:_toInt(r['peso']), status:String(r['status']||'pendente'),
+    dataFim:_toDateStr(r['data_fim']), automacaoId:String(r['automacao_id']||''), ordem:_toInt(r['ordem'])
+  }));
+  const nextEtapaId = parseInt(getConfig('next_etapa_id') || '1000');
+  log_('INFO', 'Load: ' + lanes.length + 'L / ' + projetos.length + 'P / ' + evolucoes.length + 'E / ' + etapas.length + 'Et');
+  return { lanes, projetos, evolucoes, etapas, nextProjId, nextLaneId, nextEtapaId };
 }
 // ── FIM BLOCO ──
 
@@ -212,6 +224,15 @@ function handleSaveAll(payload) {
       }
     });
   }
+  if (payload.etapas) {
+    _clearStaging(ss, 'ETAPAS');
+    payload.etapas.forEach(e => {
+      const data = {id:e.id, proj_id:e.projId||e.proj_id, nome:e.nome, peso:e.peso, status:e.status||'pendente', data_fim:e.dataFim||e.data_fim||'', automacao_id:e.automacaoId||e.automacao_id||'', ordem:e.ordem||0};
+      appendRaw('ETAPAS', data, 'bulk');
+      upsertStaging(ss, 'ETAPAS', data, 'id');
+    });
+  }
+  if (payload.nextEtapaId) setConfig('next_etapa_id', payload.nextEtapaId, 'Próximo ID de etapa');
   if (payload.nextProjId) setConfig('next_proj_id', payload.nextProjId, 'Próximo ID de projeto');
   if (payload.nextLaneId) setConfig('next_lane_id', payload.nextLaneId, 'Próximo ID de lane');
 
@@ -501,6 +522,29 @@ function jsonErr(msg) {
 // ── FIM BLOCO ──
 
 
+
+function handleUpsertEtapa(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const data = {
+    id: payload.id, proj_id: payload.proj_id,
+    nome: payload.nome, peso: payload.peso || 0,
+    status: payload.status || 'pendente',
+    data_fim: payload.data_fim || '',
+    automacao_id: payload.automacao_id || '',
+    ordem: payload.ordem || 0
+  };
+  appendRaw('ETAPAS', data, 'gantt');
+  upsertStaging(ss, 'ETAPAS', data, 'id');
+  log_('INFO', 'Upsert etapa id=' + data.id + ' proj=' + data.proj_id + ' status=' + data.status);
+  return { ok: true };
+}
+
+function handleDeleteEtapa(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  _deleteFromStaging(ss, 'ETAPAS', 'id', [payload.id]);
+  log_('INFO', 'Delete etapa id=' + payload.id);
+  return { ok: true };
+}
 // ═══ BLOCO: AUTOMAÇÕES ═══
 
 function handleDigest(payload) {
