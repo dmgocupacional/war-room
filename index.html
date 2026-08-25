@@ -1440,6 +1440,73 @@ input.bu-row-dot{padding:0;border:none;background:none;}
   padding:1px 5px;border-radius:4px;
 }
 
+
+/* ═══ LOGIN ═══ */
+.login-overlay{
+  position:fixed;inset:0;z-index:400;display:none;
+  align-items:center;justify-content:center;padding:20px;
+  background:var(--bg);
+}
+.login-overlay.open{display:flex;}
+.login-overlay::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(900px 420px at 50% 8%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 70%);
+}
+.login-box{
+  width:100%;max-width:370px;position:relative;z-index:1;
+  background:var(--bg2);border:1px solid var(--border2);border-radius:18px;
+  padding:30px 26px 24px;
+  box-shadow:0 24px 70px rgba(0,0,0,0.42);
+  animation:loginIn .5s cubic-bezier(.16,1,.3,1);
+}
+@keyframes loginIn{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+.login-mark{
+  width:46px;height:46px;border-radius:13px;margin:0 auto 15px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:1.05rem;color:#0b0f17;
+  background:linear-gradient(140deg,var(--accent),color-mix(in srgb,var(--accent) 55%,#fff));
+  box-shadow:0 6px 22px color-mix(in srgb,var(--accent) 40%,transparent);
+}
+.login-title{font-family:var(--font);font-size:1.15rem;font-weight:800;text-align:center;letter-spacing:-0.02em;}
+.login-sub{font-size:0.73rem;color:var(--text3);text-align:center;margin:5px 0 20px;}
+.login-field{margin-bottom:11px;}
+.login-field .flabel{display:block;margin-bottom:5px;}
+.login-btn{
+  width:100%;margin-top:7px;padding:11px;border:none;border-radius:10px;cursor:pointer;
+  font-family:inherit;font-size:0.82rem;font-weight:700;color:#0b0f17;
+  background:linear-gradient(140deg,var(--accent),color-mix(in srgb,var(--accent) 62%,#fff));
+  transition:transform .16s ease,box-shadow .16s ease,opacity .16s ease;
+}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 35%,transparent);}
+.login-btn:disabled{opacity:0.55;cursor:wait;transform:none;box-shadow:none;}
+.login-msg{
+  margin-top:11px;padding:8px 11px;border-radius:8px;font-size:0.72rem;
+  display:none;line-height:1.45;
+}
+.login-msg.show{display:block;}
+.login-msg.erro{color:var(--red-l);background:color-mix(in srgb,var(--red-l) 12%,transparent);}
+.login-msg.info{color:var(--text2);background:var(--bg3);}
+.login-foot{
+  margin-top:16px;padding-top:13px;border-top:1px solid var(--border2);
+  font-size:0.67rem;color:var(--text4);text-align:center;line-height:1.5;
+}
+.login-link{color:var(--text3);cursor:pointer;text-decoration:underline;}
+.login-link:hover{color:var(--accent);}
+.setup-sub{font-size:0.72rem;color:var(--text3);margin-top:2px;}
+.nav-user{
+  display:flex;align-items:center;gap:7px;padding:4px 9px;
+  background:var(--bg3);border:1px solid var(--border2);border-radius:9px;
+  margin-right:8px;cursor:pointer;
+}
+.nav-user:hover{border-color:var(--border3);}
+.nav-user-av{
+  width:22px;height:22px;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.6rem;font-weight:800;color:#0b0f17;
+  background:linear-gradient(140deg,var(--accent),color-mix(in srgb,var(--accent) 58%,#fff));
+}
+.nav-user-nome{font-size:0.72rem;font-weight:600;color:var(--text2);}
+.nav-user-role{font-family:var(--mono);font-size:0.58rem;color:var(--text4);}
 </style>
 </head>
 <body>
@@ -1452,6 +1519,7 @@ input.bu-row-dot{padding:0;border:none;background:none;}
   </div>
   <div class="nav-spacer"></div>
   <div class="bu-switch" id="bu-switch"></div>
+  <div class="nav-user" id="nav-user" onclick="abrirMinhaConta()"></div>
   <button class="btn-search-nav" onclick="openSearch()" id="btn-search">
     <span>🔍</span><span>Buscar projeto...</span>
     <span class="btn-search-kbd">⌘K</span>
@@ -1462,7 +1530,7 @@ input.bu-row-dot{padding:0;border:none;background:none;}
   </div>
   <button class="nav-users-btn admin-only" onclick="openUsersModal()" id="nav-users-btn">👥 Usuários</button>
   <button class="btn-icon" onclick="toggleTheme()" id="theme-btn" title="Alternar tema">☀</button>
-  <button class="btn-icon" onclick="document.getElementById('setup-overlay').classList.add('open')" title="Configurar War Room">⚙</button>
+  <button class="btn-icon" onclick="abrirSetup()" title="Configuração da instância">⚙</button>
   <button class="btn-add-proj" onclick="openModal()">+ Projeto</button>
 </nav>
 
@@ -1475,6 +1543,34 @@ input.bu-row-dot{padding:0;border:none;background:none;}
       <span class="search-esc" onclick="closeSearch()">ESC</span>
     </div>
     <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+<!-- ═══ LOGIN ═══ -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-mark">WR</div>
+    <div class="login-title">War Room</div>
+    <div class="login-sub">Portfólio de projetos · DIMEG</div>
+
+    <div class="login-field">
+      <label class="flabel">E-mail</label>
+      <input class="finput" id="login-email" type="email" autocomplete="username"
+             placeholder="seu@dimeg.com.br" onkeydown="if(event.key==='Enter')document.getElementById('login-senha').focus()">
+    </div>
+    <div class="login-field">
+      <label class="flabel">Senha</label>
+      <input class="finput" id="login-senha" type="password" autocomplete="current-password"
+             placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()">
+    </div>
+
+    <button class="login-btn" id="login-btn" onclick="fazerLogin()">Entrar</button>
+    <div class="login-msg" id="login-msg"></div>
+
+    <div class="login-foot">
+      Primeiro acesso? A senha que você digitar agora vira a sua.<br>
+      <span class="login-link" onclick="abrirConfigInstancia()">Configurar backend</span>
+    </div>
   </div>
 </div>
 
@@ -1665,52 +1761,26 @@ input.bu-row-dot{padding:0;border:none;background:none;}
       <div style="display:flex;align-items:center;gap:10px;flex:1">
         <div class="nav-logo-mark" style="flex-shrink:0">⚡</div>
         <div>
-          <div class="modal-title">Configurar War Room</div>
-          <div style="font-size:0.72rem;color:var(--text3);margin-top:2px">Personalize sua instância</div>
+          <div class="modal-title">Configuração da instância</div>
+          <div class="setup-sub">Backend compartilhado · só admin</div>
         </div>
       </div>
     </div>
     <div class="modal-body">
-      <div class="modal-tabs">
-        <button class="modal-tab active" id="tab-projeto" onclick="switchModalTab('projeto')">Projeto</button>
-        <button class="modal-tab" id="tab-etapas" onclick="switchModalTab('etapas')">◆ Etapas</button>
-      </div>
-      <div class="modal-tab-panel active" id="panel-projeto">
       <div class="form-grid">
-        <div class="form-group full">
-          <label class="flabel">Seu nome *</label>
-          <input class="finput" id="setup-nome" type="text" placeholder="Ex: Thiago Ferreira">
-        </div>
-        <div class="form-group full">
-          <label class="flabel">Cargo / Empresa</label>
-          <input class="finput" id="setup-cargo" type="text" placeholder="Ex: CEO · DIMEG">
-        </div>
         <div class="form-group full">
           <label class="flabel">Título do War Room</label>
           <input class="finput" id="setup-titulo" type="text" placeholder="Ex: War Room · Projetos DIMEG">
         </div>
         <div class="form-group full">
-          <label class="flabel">Email *</label>
-          <input class="finput" id="setup-email" type="email" placeholder="seu@email.com">
-          <div style="font-size:0.68rem;color:var(--text3);margin-top:4px">Define seu nível de acesso automaticamente.</div>
-        </div>
-        <div class="form-group full">
-          <label class="flabel">URL do Google Sheets (opcional)</label>
+          <label class="flabel">URL do backend (Apps Script) *</label>
           <input class="finput" id="setup-sheets" type="text" placeholder="Cole a URL do Apps Script Web App">
         </div>
-        <div class="seed-restore-card" id="seed-restore-card" onclick="toggleSeedRestore()" style="display:none">
-          <div class="seed-restore-icon">📦</div>
-          <div class="seed-restore-info">
-            <div class="seed-restore-title">Carregar projetos DIMEG</div>
-            <div class="seed-restore-sub">23 projetos · 5 lanes · histórico completo</div>
-          </div>
-          <input type="checkbox" id="seed-restore-check" onclick="event.stopPropagation()" style="width:18px;height:18px;cursor:pointer;margin-left:auto;flex-shrink:0">
         </div>
       </div>
-      </div><!-- /panel-setup -->
     </div>
     <div class="modal-footer">
-      <button class="btn-save" onclick="saveSetup()" style="width:100%">✓ Criar meu War Room</button>
+      <button class="btn-save" onclick="saveSetup()" style="width:100%">✓ Salvar configuração</button>
     </div>
   </div>
 </div>
@@ -1907,12 +1977,12 @@ function closeUsersModal(){ document.getElementById('users-overlay').classList.r
 function closeUsersBg(e){ if(e.target===e.currentTarget) closeUsersModal(); }
 
 function renderUsersList(){
-  const us = getUsuarios();
+  const us = (state.usuarios&&state.usuarios.length)?state.usuarios:getUsuarios();
   const myEmail = (state.currentUser?.email||'').toLowerCase();
   const el = document.getElementById('users-list');
   if(!us.length){ el.innerHTML='<div style="color:var(--text4);font-size:0.8rem;padding:8px 0">Nenhum usuário cadastrado.</div>'; return; }
   el.innerHTML = us.map(u=>{
-    const initials = u.nome.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const initials = (u.nome||u.email||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
     const isMe = u.email.toLowerCase()===myEmail;
     const isFixed = ADMIN_EMAILS.includes(u.email.toLowerCase());
     const roleLabel = u.role==='admin' ? (ADMIN_EMAILS.slice(0,1)[0]===u.email.toLowerCase()?'👑 Dono':'👑 Admin') : '👤 User';
@@ -1920,7 +1990,7 @@ function renderUsersList(){
     return `<div class="user-row">
       <div class="user-avatar">${initials}</div>
       <div class="user-info">
-        <div class="user-name">${escHtml(u.nome)}${isMe?'<span class="user-self-badge">você</span>':''}</div>
+        <div class="user-name">${escHtml(u.nome||u.email)}${isMe?'<span class="user-self-badge">você</span>':''}</div>
         <div class="user-email">${escHtml(u.email)}</div>
       </div>
       <span class="role-badge ${roleClass}">${roleLabel}</span>
@@ -1946,7 +2016,12 @@ function addUser(){
   document.getElementById('new-user-email').value='';
   renderUsersList();
   showToast(`✓ ${nome} adicionado(a)`, 'success');
-  if(state.sheetsUrl) _gs('upsert_usuario', {nome, email, role});
+  if(state.sheetsUrl){
+    _gs('criar_usuario', {nome, email, role, busPermitidas:[]}).then(r=>{
+      if(r&&r.ok) showToast('Usuário criado — a senha é definida no 1º login dele','success');
+      else if(r&&r.error) showToast(r.error,'error');
+    });
+  }
 }
 
 function removeUser(email){
@@ -1983,7 +2058,7 @@ let state = {
   collapsedLanes:[],
   etapas:[], nextEtapaId:1000,
   usuarios:[], currentUser:null,
-  bus:[], filtroBU:null,
+  bus:[], filtroBU:null, token:null,
   intelCollapsed:true,
 };
 
@@ -2086,8 +2161,16 @@ function getSeed(){return{bus:SEED_BUS.map(b=>({...b})),lanes:[{id:1,nome:'Tecno
 // ═══ BLOCO: GOOGLE SHEETS BRIDGE ═══
 async function _gs(action,payload){
   if(!state.sheetsUrl)return null;
-  const r=await fetch(state.sheetsUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,payload:payload||{}})});
-  return r.json();
+  const p=Object.assign({},payload||{});
+  if(state.token) p.token=state.token;
+  const r=await fetch(state.sheetsUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,payload:p})});
+  const j=await r.json();
+  // Sessão expirada no servidor → volta para o login em vez de falhar mudo
+  if(j&&j.ok===false&&/Sessão expirada/i.test(j.error||'')){
+    setSessao(null);state.token=null;abrirLogin();
+    _loginMsg('Sua sessão expirou. Entre novamente.','info');
+  }
+  return j;
 }
 async function loadSheets(){
   if(!state.sheetsUrl)return false;
@@ -2163,6 +2246,157 @@ async function syncSheets(){
 }
 function _agora(){return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
 
+// ═══ BLOCO: AUTH (login por e-mail + senha) ═══
+// O backend é ÚNICO e compartilhado. A URL não é mais digitada por
+// usuário — era isso que fazia cada pessoa ter um War Room separado.
+// Fica em localStorage global; admin configura uma vez.
+
+function getSheetsUrl(){
+  return localStorage.getItem('wr_sheets_url')||'';
+}
+function setSheetsUrl(u){
+  localStorage.setItem('wr_sheets_url',(u||'').trim());
+  state.sheetsUrl=(u||'').trim();
+}
+
+function getSessao(){
+  try{ return JSON.parse(localStorage.getItem('wr_sessao')||'null'); }
+  catch{ return null; }
+}
+function setSessao(s){
+  if(s) localStorage.setItem('wr_sessao',JSON.stringify(s));
+  else localStorage.removeItem('wr_sessao');
+}
+
+function _loginMsg(txt,tipo){
+  const el=document.getElementById('login-msg');
+  if(!el)return;
+  el.textContent=txt||'';
+  el.className='login-msg '+(txt?('show '+(tipo||'erro')):'');
+}
+
+function abrirLogin(){
+  // Guardas: abrirLogin é chamado de dentro do _gs; se lançar aqui,
+  // derruba a cadeia de promise de qualquer chamada ao backend.
+  document.getElementById('login-overlay')?.classList.add('open');
+  setTimeout(()=>document.getElementById('login-email')?.focus(),120);
+}
+function fecharLogin(){
+  document.getElementById('login-overlay')?.classList.remove('open');
+}
+
+function abrirConfigInstancia(){
+  const atual=getSheetsUrl();
+  const u=prompt('URL do Apps Script Web App (backend compartilhado):',atual);
+  if(u===null)return;
+  setSheetsUrl(u);
+  _loginMsg(u?'Backend configurado. Faça login.':'Backend removido.','info');
+}
+
+async function fazerLogin(){
+  const email=(document.getElementById('login-email').value||'').trim().toLowerCase();
+  const senha=document.getElementById('login-senha').value||'';
+  const btn=document.getElementById('login-btn');
+  if(!email||!senha){ _loginMsg('Informe e-mail e senha'); return; }
+  if(!getSheetsUrl()){ _loginMsg('Backend não configurado — clique em "Configurar backend".'); return; }
+
+  btn.disabled=true; btn.textContent='Entrando...'; _loginMsg('');
+  try{
+    state.sheetsUrl=getSheetsUrl();
+    const r=await _gs('login',{email,senha});
+    if(!r||!r.ok){ _loginMsg((r&&r.error)||'Não foi possível entrar'); return; }
+
+    setSessao({token:r.token,usuario:r.usuario,em:Date.now()});
+    state.token=r.token;
+    state.currentUser=Object.assign({},r.usuario);
+    state.dataKey='wr_data_'+_slugUser(r.usuario.nome||email);
+    setRBACClass();
+    aplicarIdentidade();
+
+    if(r.primeiroAcesso) showToast('Senha definida com sucesso','success');
+
+    document.getElementById('login-senha').value='';
+    fecharLogin();
+    await carregarTudo();
+  }catch(e){
+    _loginMsg('Erro de conexão: '+String(e.message||e).substring(0,60));
+  }finally{
+    btn.disabled=false; btn.textContent='Entrar';
+  }
+}
+
+function logout(){
+  setSessao(null);
+  state.token=null; state.currentUser=null;
+  state.lanes=[];state.projetos=[];state.evolucoes=[];state.etapas=[];
+  document.body.classList.remove('is-admin');
+  abrirLogin();
+}
+
+// Nome, cargo e role vêm do cadastro — não são mais digitados pelo usuário
+function aplicarIdentidade(){
+  const u=state.currentUser;
+  if(!u)return;
+  const iniciais=(u.nome||u.email||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const el=document.getElementById('nav-user');
+  if(el){
+    el.innerHTML=`<div class="nav-user-av">${escHtml(iniciais)}</div>
+      <div>
+        <div class="nav-user-nome">${escHtml(u.nome||u.email)}</div>
+        <div class="nav-user-role">${escHtml(u.role==='admin'?'admin':(u.cargo||'user'))}</div>
+      </div>`;
+  }
+  const sub=document.querySelector('.nav-sub');
+  if(sub) sub.textContent=(u.nome||u.email)+(u.cargo?' · '+u.cargo:'');
+}
+
+function abrirMinhaConta(){
+  const u=state.currentUser;
+  if(!u)return;
+  const acao=prompt(`${u.nome||u.email} (${u.role})\n\nDigite:\n  senha  → trocar senha\n  sair   → encerrar sessão`,'');
+  if(!acao)return;
+  const a=acao.trim().toLowerCase();
+  if(a==='sair') return logout();
+  if(a==='senha') return trocarSenha();
+}
+
+async function trocarSenha(){
+  const atual=prompt('Senha atual:');
+  if(atual===null)return;
+  const nova=prompt('Nova senha (mínimo 6 caracteres):');
+  if(nova===null)return;
+  if((nova||'').length<6){ showToast('Senha precisa de 6+ caracteres','error'); return; }
+  const r=await _gs('set_senha',{email:state.currentUser.email,senhaAtual:atual,senhaNova:nova});
+  showToast(r&&r.ok?'Senha alterada':(r&&r.error)||'Erro ao alterar','success');
+}
+
+// Carrega os dados após autenticar — ponto único de entrada
+async function carregarTudo(){
+  const ok=await loadSheets();
+  if(!ok) showToast('Não conectou ao backend — usando cache local','warning');
+  if(!state.bus.length) state.bus=SEED_BUS.map(b=>({...b}));
+  migrarBusLegado();
+  restaurarPrefBU();
+  renderAll();
+}
+
+// Restaura sessão salva; sem ela, mostra login
+function checkAuth(){
+  state.sheetsUrl=getSheetsUrl();
+  const s=getSessao();
+  if(s&&s.usuario&&s.token){
+    state.token=s.token;
+    state.currentUser=Object.assign({},s.usuario);
+    state.dataKey='wr_data_'+_slugUser(s.usuario.nome||s.usuario.email);
+    setRBACClass();
+    aplicarIdentidade();
+    carregarTudo();
+  } else {
+    abrirLogin();
+  }
+}
+// ── FIM BLOCO ──
+
 // ═══ BLOCO: SETUP (onboarding multi-usuário) ═══
 function _slugUser(nome){
   return nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
@@ -2171,105 +2405,29 @@ function _slugUser(nome){
 function _dataKey(cfg){ return 'wr_data_'+_slugUser(cfg.nome); }
 
 function saveSetup(){
-  const nome  = document.getElementById('setup-nome').value.trim();
-  const cargo = document.getElementById('setup-cargo').value.trim();
-  const titulo= document.getElementById('setup-titulo').value.trim();
-  const sheets= document.getElementById('setup-sheets').value.trim();
-  const email = (document.getElementById('setup-email')?.value.trim()||'').toLowerCase();
-  if(!nome){alert('Coloca seu nome 😊');return;}
-  const role = ADMIN_EMAILS.includes(email)?'admin':'user';
-  const cfg={nome,cargo,titulo:titulo||`War Room · ${nome}`,sheets,email,role};
-  localStorage.setItem('wr_config',JSON.stringify(cfg));
+  const titulo = document.getElementById('setup-titulo').value.trim();
+  const sheets = document.getElementById('setup-sheets').value.trim();
+  if(sheets) setSheetsUrl(sheets);
+  if(titulo){
+    localStorage.setItem('wr_titulo',titulo);
+    const t=document.querySelector('.nav-title'); if(t)t.textContent=titulo;
+  }
   document.getElementById('setup-overlay').classList.remove('open');
-  applyConfig(cfg);
-  // Atualiza currentUser
-  state.currentUser={nome,email,role};
-  setRBACClass();
-  initUsuarios();
-  // Garante que este usuário está na lista
-  const us=getUsuarios();
-  if(email&&!us.find(u=>u.email.toLowerCase()===email)){
-    us.push({nome,email,role});saveUsuarios(us);state.usuarios=us;
-  }
-  const dataKey=_dataKey(cfg);
-  state.dataKey=dataKey;
-  const saved=localStorage.getItem(dataKey);
-  const loadSeed=document.getElementById('seed-restore-check')?.checked;
-  if(saved&&!loadSeed){
-    const d=JSON.parse(saved);
-    Object.assign(state,{lanes:d.lanes,projetos:d.projetos,evolucoes:d.evolucoes,etapas:d.etapas||[],
-      nextProjId:d.nextProjId,nextLaneId:d.nextLaneId,nextEtapaId:d.nextEtapaId||1000});
-  } else if(loadSeed){
-    // Carrega seed com owner = email do usuário
-    const seed=getSeed();
-    seed.projetos.forEach(p=>{p.owner=email||nome;});
-    Object.assign(state,{lanes:seed.lanes,projetos:seed.projetos,evolucoes:seed.evolucoes,etapas:[],
-      nextProjId:seed.nextProjId,nextLaneId:seed.nextLaneId,nextEtapaId:1000});
-    persistLocal();
-    showToast('📦 Projetos DIMEG carregados!','success');
-  } else {
-    state.lanes=[];state.projetos=[];state.evolucoes=[];state.etapas=[];
-    state.nextProjId=100;state.nextLaneId=10;
-  }
-  if(sheets){
-    state.sheetsUrl=sheets;
-    localStorage.setItem('sheetsUrl_'+dataKey,sheets);
-    loadSheets().then(ok=>{renderAll();});
-  } else {
-    renderAll();
-  }
+  showToast('Configuração salva','success');
+  if(state.currentUser) carregarTudo(); else abrirLogin();
 }
-function applyConfig(cfg){
-  if(!cfg)return;
-  document.querySelector('.nav-title').textContent=cfg.titulo||'War Room';
-  document.querySelector('.nav-sub').textContent=cfg.nome+(cfg.cargo?' · '+cfg.cargo:'');
-  document.querySelector('.nav-logo-mark').textContent=cfg.nome.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-  document.title=cfg.titulo||'War Room';
+
+// Abre a config da instância já preenchida com o que está valendo
+function abrirSetup(){
+  const t=document.getElementById('setup-titulo');
+  const s=document.getElementById('setup-sheets');
+  if(t)t.value=localStorage.getItem('wr_titulo')||'';
+  if(s)s.value=getSheetsUrl();
+  document.getElementById('setup-overlay').classList.add('open');
 }
-function toggleSeedRestore(){
-  const card=document.getElementById('seed-restore-card');
-  const cb=document.getElementById('seed-restore-check');
-  if(cb)cb.checked=!cb.checked;
-}
-function checkSetup(){
-  const raw=localStorage.getItem('wr_config');
-  if(!raw){
-    ['setup-nome','setup-cargo','setup-titulo','setup-sheets'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('setup-overlay').classList.add('open');
-    setTimeout(()=>{
-      document.getElementById('setup-nome').focus();
-      // Listener para mostrar seed-restore quando email for admin
-      const emailInp=document.getElementById('setup-email');
-      if(emailInp) emailInp.addEventListener('input',function(){
-        const card=document.getElementById('seed-restore-card');
-        if(card) card.style.display=ADMIN_EMAILS.includes(this.value.trim().toLowerCase())?'flex':'none';
-      });
-    },150);
-  } else {
-    const cfg=JSON.parse(raw);
-    applyConfig(cfg);
-    state.currentUser={nome:cfg.nome,email:cfg.email||'',role:cfg.role||( ADMIN_EMAILS.includes((cfg.email||'').toLowerCase())?'admin':'user'),buPadrao:'',busPermitidas:[]};
-    setRBACClass();
-    initUsuarios();
-    const dataKey=_dataKey(cfg);
-    state.dataKey=dataKey;
-    // Restaura dados locais do usuário
-    const saved=localStorage.getItem(dataKey);
-    if(saved){
-      const d=JSON.parse(saved);
-      Object.assign(state,{lanes:d.lanes,projetos:d.projetos,evolucoes:d.evolucoes,etapas:d.etapas||[],
-        bus:(d.bus&&d.bus.length)?d.bus:[],
-        nextProjId:d.nextProjId,nextLaneId:d.nextLaneId,nextEtapaId:d.nextEtapaId||1000});
-    }
-    // BUs sempre existem — sem elas o switch não renderiza e o filtro fica órfão
-    if(!state.bus.length) state.bus=SEED_BUS.map(b=>({...b}));
-    migrarBusLegado();
-    restaurarPrefBU();
-    // Restaura Sheets URL do usuário
-    const sheetsUrl=localStorage.getItem('sheetsUrl_'+dataKey)||cfg.sheets||'';
-    if(sheetsUrl){state.sheetsUrl=sheetsUrl;loadSheets().then(ok=>{if(ok)renderAll();});}
-  }
-}
+
+// checkSetup foi substituído por checkAuth() — a identidade agora vem
+// do login contra o Sheets, não de um formulário local.
 function persistLocal(){
   if(!state.dataKey)return;
   localStorage.setItem(state.dataKey,JSON.stringify({
@@ -4078,6 +4236,8 @@ document.addEventListener('keydown',e=>{
 // ═══ BLOCO: INIT ═══
 function init(){
   // T0 - theme persistence
+  const _t=localStorage.getItem('wr_titulo');
+  if(_t){const _te=document.querySelector('.nav-title');if(_te)_te.textContent=_t;}
   state.intelCollapsed=localStorage.getItem('wr_intel_collapsed')!=='0';
   const _is=document.getElementById('intel-section');
   if(_is)_is.classList.toggle('collapsed',state.intelCollapsed);
@@ -4086,8 +4246,8 @@ function init(){
   document.getElementById('theme-btn').textContent=savedTheme==='dark'?'☀':'🌙';
   // Estado vazio por padrão — checkSetup carrega dados do usuário correto
   state.lanes=[];state.projetos=[];state.evolucoes=[];
-  setSyncState('','Configurando...');
-  checkSetup();
+  setSyncState('','Autenticando...');
+  checkAuth();
   // Scroll to today após render
   setTimeout(()=>{
     const tl=buildTimeline();

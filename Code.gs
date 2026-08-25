@@ -51,7 +51,8 @@ const SCHEMA = {
   ],
   USUARIOS: [
     'email', 'nome', 'role', 'ativo', 'criado_em',
-    'bu_padrao', 'bus_permitidas'
+    'bu_padrao', 'bus_permitidas',
+    'senha_hash', 'salt', 'ultimo_login', 'cargo'
   ],
   SESSOES_TRABALHO: [
     'id', 'etapa_id', 'proj_id', 'user_email',
@@ -79,6 +80,15 @@ function doPost(e) {
     const action = body.action || '';
     const payload = body.payload || {};
 
+    // Gate de sessão: só liga quando CONFIG.auth_required = 1.
+    // Desligado por padrão para não derrubar o app mobile, que ainda
+    // não envia token. Ligue depois de atualizar o mobile.
+    if (getConfig('auth_required') === '1' &&
+        ['login', 'setup'].indexOf(action) < 0 &&
+        !validarToken(payload.token)) {
+      return jsonOk({ ok: false, error: 'Sessão expirada — faça login novamente' });
+    }
+
     switch (action) {
       case 'setup':         return jsonOk(handleSetup());
       case 'upsert_lane':   return jsonOk(handleUpsertLane(payload));
@@ -90,6 +100,9 @@ function doPost(e) {
       case 'save_all':      return jsonOk(handleSaveAll(payload));
       case 'upsert_usuario': return jsonOk(handleUpsertUsuario(payload));
       case 'delete_usuario': return jsonOk(handleDeleteUsuario(payload));
+      case 'login':         return jsonOk(handleLogin(payload));
+      case 'set_senha':     return jsonOk(handleSetSenha(payload));
+      case 'criar_usuario': return jsonOk(handleCriarUsuario(payload));
       case 'metricas_repo': return jsonOk(handleMetricasRepo(payload));
       case 'upsert_bu':     return jsonOk(handleUpsertBu(payload));
       case 'delete_bu':     return jsonOk(handleDeleteBu(payload));
@@ -606,6 +619,131 @@ function handleDeleteEtapa(payload) {
   log_('INFO', 'Delete etapa id=' + payload.id);
   return { ok: true };
 }
+
+// ═══ BLOCO: AUTH ═══
+// Senha: SHA-256(salt + senha), salt aleatório por usuário.
+// Apps Script não tem bcrypt — isto protege contra leitura casual da
+// planilha, NÃO contra ataque offline dedicado. Não reutilizar senhas.
+
+function _salt() {
+  return Utilities.getUuid().replace(/-/g, '').substring(0, 16);
+}
+
+function _hash(salt, senha) {
+  const bytes = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_256, String(salt) + String(senha), Utilities.Charset.UTF_8);
+  return bytes.map(function(b) {
+    return ('0' + (b & 0xFF).toString(16)).slice(-2);
+  }).join('');
+}
+
+// Comparação de tempo constante — evita vazar o hash por timing
+function _igual(a, b) {
+  a = String(a); b = String(b);
+  if (a.length !== b.length) return false;
+  let dif = 0;
+  for (let i = 0; i < a.length; i++) dif |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return dif === 0;
+}
+
+function _novoToken(email) {
+  const tk = Utilities.getUuid();
+  CacheService.getScriptCache().put('sess_' + tk, email, 21600); // 6h
+  return tk;
+}
+
+function validarToken(tk) {
+  if (!tk) return null;
+  return CacheService.getScriptCache().get('sess_' + tk);
+}
+
+function handleLogin(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const email = String(payload.email || '').trim().toLowerCase();
+  const senha = String(payload.senha || '');
+  if (!email || !senha) return { ok: false, error: 'Informe e-mail e senha' };
+
+  const u = _findInStaging(ss, 'USUARIOS', 'email', email);
+  if (!u) { log_('WARN', 'Login falhou (inexistente): ' + email); return { ok: false, error: 'E-mail ou senha inválidos' }; }
+  if (u['ativo'] === false) return { ok: false, error: 'Usuário inativo' };
+
+  // Primeiro acesso: usuário existe mas ainda não tem senha → define agora
+  if (!u['senha_hash']) {
+    const salt = _salt();
+    u['salt'] = salt;
+    u['senha_hash'] = _hash(salt, senha);
+    u['ultimo_login'] = new Date().toISOString();
+    upsertStaging(ss, 'USUARIOS', u, 'email');
+    log_('INFO', 'Senha definida no primeiro acesso: ' + email);
+    return { ok: true, primeiroAcesso: true, token: _novoToken(email), usuario: _perfil(u) };
+  }
+
+  if (!_igual(u['senha_hash'], _hash(u['salt'], senha))) {
+    log_('WARN', 'Login falhou (senha): ' + email);
+    return { ok: false, error: 'E-mail ou senha inválidos' };
+  }
+
+  u['ultimo_login'] = new Date().toISOString();
+  upsertStaging(ss, 'USUARIOS', u, 'email');
+  log_('INFO', 'Login OK: ' + email);
+  return { ok: true, token: _novoToken(email), usuario: _perfil(u) };
+}
+
+// Nunca devolve hash nem salt para o cliente
+function _perfil(u) {
+  return {
+    email: String(u['email'] || ''),
+    nome: String(u['nome'] || ''),
+    cargo: String(u['cargo'] || ''),
+    role: String(u['role'] || 'user'),
+    buPadrao: String(u['bu_padrao'] || ''),
+    busPermitidas: String(u['bus_permitidas'] || '').split(',').map(function(s){return s.trim();}).filter(Boolean),
+  };
+}
+
+function handleSetSenha(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const email = String(payload.email || '').trim().toLowerCase();
+  const u = _findInStaging(ss, 'USUARIOS', 'email', email);
+  if (!u) return { ok: false, error: 'Usuário não encontrado' };
+
+  // Troca própria exige a senha atual; admin reseta sem ela
+  const ehReset = payload.adminToken && validarToken(payload.adminToken);
+  if (!ehReset) {
+    if (!u['senha_hash'] || !_igual(u['senha_hash'], _hash(u['salt'], String(payload.senhaAtual || '')))) {
+      return { ok: false, error: 'Senha atual incorreta' };
+    }
+  }
+  const nova = String(payload.senhaNova || '');
+  if (nova.length < 6) return { ok: false, error: 'Senha precisa de 6+ caracteres' };
+
+  const salt = _salt();
+  u['salt'] = salt;
+  u['senha_hash'] = _hash(salt, nova);
+  upsertStaging(ss, 'USUARIOS', u, 'email');
+  log_('INFO', 'Senha alterada: ' + email + (ehReset ? ' (reset admin)' : ''));
+  return { ok: true };
+}
+
+// Admin cria usuário sem senha — ela é definida no primeiro login dele
+function handleCriarUsuario(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const email = String(payload.email || '').trim().toLowerCase();
+  if (!email) return { ok: false, error: 'E-mail obrigatório' };
+  if (_findInStaging(ss, 'USUARIOS', 'email', email)) return { ok: false, error: 'E-mail já cadastrado' };
+
+  const data = {
+    email: email, nome: payload.nome || '', cargo: payload.cargo || '',
+    role: payload.role || 'user', ativo: true, criado_em: new Date().toISOString(),
+    bu_padrao: '', bus_permitidas: (payload.busPermitidas || []).join(','),
+    senha_hash: '', salt: '', ultimo_login: ''
+  };
+  appendRaw('USUARIOS', data, 'gantt');
+  upsertStaging(ss, 'USUARIOS', data, 'email');
+  log_('INFO', 'Usuário criado: ' + email);
+  return { ok: true };
+}
+// ── FIM BLOCO ──
 
 // ═══ BLOCO: INTEGRACOES (proxy — segredos ficam aqui, nunca no HTML) ═══
 // O token é lido de Script Properties. O front pede a métrica e recebe
