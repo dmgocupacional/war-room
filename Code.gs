@@ -90,6 +90,7 @@ function doPost(e) {
       case 'save_all':      return jsonOk(handleSaveAll(payload));
       case 'upsert_usuario': return jsonOk(handleUpsertUsuario(payload));
       case 'delete_usuario': return jsonOk(handleDeleteUsuario(payload));
+      case 'metricas_repo': return jsonOk(handleMetricasRepo(payload));
       case 'upsert_bu':     return jsonOk(handleUpsertBu(payload));
       case 'delete_bu':     return jsonOk(handleDeleteBu(payload));
       case 'set_pref':      return jsonOk(handleSetPref(payload));
@@ -605,6 +606,84 @@ function handleDeleteEtapa(payload) {
   log_('INFO', 'Delete etapa id=' + payload.id);
   return { ok: true };
 }
+
+// ═══ BLOCO: INTEGRACOES (proxy — segredos ficam aqui, nunca no HTML) ═══
+// O token é lido de Script Properties. O front pede a métrica e recebe
+// número pronto; nunca vê credencial. Mesmo padrão do Worker do Asaas.
+
+const REPOS_DMG = {
+  'erp-dimplus': 'dmgocupacional/erp-dimplus',
+  'dmg-erp':     'dmgocupacional/dmg-erp',
+  'crm-dmg':     'dmgocupacional/crm-dmg',
+};
+
+function _ghToken() {
+  return PropertiesService.getScriptProperties().getProperty('GH_TOKEN') || '';
+}
+
+// Commits por semana nas últimas N semanas + versão do package.json.
+// Cache de 30min — o Apps Script tem quota curta de UrlFetchApp.
+function handleMetricasRepo(payload) {
+  const token = _ghToken();
+  if (!token) return { ok: false, error: 'GH_TOKEN não configurado nas Script Properties' };
+
+  const chave = payload && payload.repo ? payload.repo : 'all';
+  const cache = CacheService.getScriptCache();
+  const hit = cache.get('metricas_' + chave);
+  if (hit && !(payload && payload.force)) return { ok: true, cached: true, repos: JSON.parse(hit) };
+
+  const alvos = (payload && payload.repo && REPOS_DMG[payload.repo])
+    ? [[payload.repo, REPOS_DMG[payload.repo]]]
+    : Object.keys(REPOS_DMG).map(function(k){ return [k, REPOS_DMG[k]]; });
+
+  const semanas = (payload && payload.semanas) ? payload.semanas : 12;
+  const desde = new Date(Date.now() - semanas * 7 * 86400000).toISOString();
+  const headers = { Authorization: 'token ' + token, Accept: 'application/vnd.github+json' };
+  const out = {};
+
+  alvos.forEach(function(par) {
+    const chaveRepo = par[0], full = par[1];
+    try {
+      const rc = UrlFetchApp.fetch(
+        'https://api.github.com/repos/' + full + '/commits?since=' + desde + '&per_page=100',
+        { headers: headers, muteHttpExceptions: true });
+      const commits = rc.getResponseCode() === 200 ? JSON.parse(rc.getContentText()) : [];
+
+      // Agrupa por semana ISO para desenhar a curva de atividade
+      const porSemana = {};
+      commits.forEach(function(c) {
+        const d = new Date(c.commit.author.date);
+        const k = d.getFullYear() + '-W' + Math.ceil(((d - new Date(d.getFullYear(),0,1)) / 86400000 + 1) / 7);
+        porSemana[k] = (porSemana[k] || 0) + 1;
+      });
+
+      // Versão atual do package.json
+      let versao = '';
+      const rp = UrlFetchApp.fetch(
+        'https://api.github.com/repos/' + full + '/contents/package.json',
+        { headers: headers, muteHttpExceptions: true });
+      if (rp.getResponseCode() === 200) {
+        const j = JSON.parse(rp.getContentText());
+        const pkg = JSON.parse(Utilities.newBlob(Utilities.base64Decode(j.content)).getDataAsString());
+        versao = pkg.version || '';
+      }
+
+      out[chaveRepo] = {
+        commits: commits.length,
+        porSemana: porSemana,
+        versao: versao,
+        ultimoCommit: commits.length ? commits[0].commit.author.date : '',
+      };
+    } catch (e) {
+      out[chaveRepo] = { erro: String(e).substring(0, 80) };
+    }
+  });
+
+  cache.put('metricas_' + chave, JSON.stringify(out), 1800);
+  log_('INFO', 'Métricas repo: ' + Object.keys(out).join(', '));
+  return { ok: true, cached: false, repos: out };
+}
+// ── FIM BLOCO ──
 
 // ═══ BLOCO: BUS (Business Units) ═══
 function handleUpsertBu(payload) {
