@@ -2270,8 +2270,11 @@ function _agora(){return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',m
 // usuário — era isso que fazia cada pessoa ter um War Room separado.
 // Fica em localStorage global; admin configura uma vez.
 
+// Backend padrão da instância DIMEG — assim ninguém precisa configurar
+// nada no primeiro acesso. Pode ser sobrescrito em "Configurar backend".
+const SHEETS_URL_PADRAO='https://script.google.com/macros/s/AKfycbwcgi3X6Eyu2HcIRGNved57oEoKU3vIY_iBFDZ8oTjlKtaOiKh8XyTWObvpbEm5udNX/exec';
 function getSheetsUrl(){
-  return localStorage.getItem('wr_sheets_url')||'';
+  return localStorage.getItem('wr_sheets_url')||SHEETS_URL_PADRAO;
 }
 function setSheetsUrl(u){
   localStorage.setItem('wr_sheets_url',(u||'').trim());
