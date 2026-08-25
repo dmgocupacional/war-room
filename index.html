@@ -1543,6 +1543,99 @@ input.bu-row-dot{padding:0;border:none;background:none;}
 }
 .setup-priv.on .setup-priv-sw{background:color-mix(in srgb,var(--green-l) 45%,transparent);}
 .setup-priv.on .setup-priv-sw::after{transform:translateX(16px);background:var(--green-l);}
+
+/* ═══ HANDLES DA BARRA ═══ */
+.gbar-wrap{touch-action:none;}
+body.dragging-bar{cursor:grabbing;user-select:none;}
+body.dragging-bar *{cursor:grabbing !important;}
+
+.gbar-grip{
+  position:absolute;left:10px;right:10px;top:0;bottom:0;
+  cursor:grab;z-index:3;
+}
+.gbar-wrap:hover .gbar-grip{cursor:grab;}
+
+.gbar-handle{
+  position:absolute;top:0;bottom:0;width:11px;z-index:5;
+  cursor:ew-resize;opacity:0;transition:opacity .16s ease;
+  display:flex;align-items:center;justify-content:center;
+}
+.gbar-handle::after{
+  content:'';width:3px;height:52%;border-radius:2px;
+  background:rgba(255,255,255,0.9);
+  box-shadow:0 0 6px rgba(0,0,0,0.5);
+}
+.gbar-handle.esq{left:-2px;}
+.gbar-handle.dir{right:-2px;}
+.gbar-wrap:hover .gbar-handle{opacity:0.95;}
+
+.gbar-pct-handle{
+  position:absolute;top:50%;width:13px;height:13px;z-index:6;
+  margin-left:-6px;margin-top:-6px;border-radius:50%;
+  background:#fff;border:2px solid rgba(0,0,0,0.35);
+  cursor:ew-resize;opacity:0;transition:opacity .16s ease,transform .16s ease;
+  box-shadow:0 2px 7px rgba(0,0,0,0.4);
+}
+.gbar-wrap:hover .gbar-pct-handle{opacity:1;}
+.gbar-pct-handle:hover{transform:scale(1.22);}
+
+.drag-ghost{
+  position:fixed;z-index:900;transform:translateX(-50%);
+  padding:5px 10px;border-radius:8px;pointer-events:none;
+  font-family:var(--mono);font-size:0.68rem;font-weight:700;
+  color:var(--text);background:var(--bg2);
+  border:1px solid var(--border3);
+  box-shadow:0 6px 22px rgba(0,0,0,0.45);
+  opacity:0;transition:opacity .12s ease;white-space:nowrap;
+}
+.drag-ghost.show{opacity:1;}
+
+/* ═══ ESTADO VAZIO ═══ */
+.gantt-vazio{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:56px 24px;text-align:center;gap:7px;
+}
+.gantt-vazio-icon{font-size:2.1rem;opacity:0.4;margin-bottom:3px;}
+.gantt-vazio-titulo{font-size:0.95rem;font-weight:800;color:var(--text2);letter-spacing:-0.01em;}
+.gantt-vazio-sub{font-size:0.76rem;color:var(--text3);max-width:340px;line-height:1.5;}
+.gantt-vazio-acoes{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap;justify-content:center;}
+.gv-btn{
+  padding:7px 14px;border-radius:8px;cursor:pointer;font-family:inherit;
+  font-size:0.74rem;font-weight:700;color:var(--text2);
+  background:var(--bg3);border:1px solid var(--border2);
+  transition:border-color .16s ease,color .16s ease;
+}
+.gv-btn:hover{border-color:var(--border3);color:var(--text);}
+.gv-btn.primary{
+  color:#0b0f17;border-color:transparent;
+  background:linear-gradient(140deg,var(--accent),color-mix(in srgb,var(--accent) 62%,#fff));
+}
+
+/* ═══ ATALHOS ═══ */
+.atalho-row{
+  display:flex;align-items:center;gap:6px;padding:6px 0;
+  border-bottom:1px solid var(--border);font-size:0.74rem;color:var(--text3);
+}
+.atalho-row:last-child{border-bottom:none;}
+.atalho-row span{margin-left:auto;color:var(--text2);}
+.atalho-row kbd{
+  font-family:var(--mono);font-size:0.65rem;padding:2px 6px;border-radius:5px;
+  background:var(--bg4);border:1px solid var(--border2);
+  border-bottom-width:2px;color:var(--text2);
+}
+
+/* ═══ BACKEND INLINE NO LOGIN ═══ */
+.login-backend{
+  display:none;gap:6px;margin-top:10px;
+}
+.login-backend.open{display:flex;}
+.login-backend .finput{flex:1;font-size:0.68rem;}
+
+.pc-etapa-add-row{display:flex;gap:5px;margin-top:8px;}
+.pc-etapa-add-row #pc-etapa-nome{flex:1;}
+.pc-etapa-add-row #pc-etapa-peso{width:52px;}
+.pc-etapa-add-row #pc-etapa-resp{width:76px;}
+.pc-etapa-add-row .finput{font-size:0.7rem;padding:5px 7px;}
 </style>
 </head>
 <body>
@@ -1606,6 +1699,59 @@ input.bu-row-dot{padding:0;border:none;background:none;}
     <div class="login-foot">
       Primeiro acesso? A senha que você digitar agora vira a sua.<br>
       <span class="login-link" onclick="abrirConfigInstancia()">Configurar backend</span>
+      <div class="login-backend" id="login-backend">
+        <input class="finput" id="login-backend-url" placeholder="https://script.google.com/macros/s/.../exec"
+               onkeydown="if(event.key==='Enter')salvarBackendLogin()">
+        <button class="gv-btn" onclick="salvarBackendLogin()">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MINHA CONTA ═══ -->
+<div class="modal-overlay" id="conta-overlay" onclick="fecharContaBg(event)">
+  <div class="modal-box" style="max-width:390px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="conta-nome"></div>
+        <div class="setup-sub"><span id="conta-email"></span> · <span id="conta-role"></span></div>
+      </div>
+      <button class="modal-close" onclick="fecharConta()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="intel-card-title">Trocar senha</div>
+      <div class="login-field"><label class="flabel">Senha atual</label>
+        <input class="finput" id="conta-atual" type="password" autocomplete="current-password"></div>
+      <div class="login-field"><label class="flabel">Nova senha</label>
+        <input class="finput" id="conta-nova" type="password" autocomplete="new-password"></div>
+      <div class="login-field"><label class="flabel">Confirmar nova senha</label>
+        <input class="finput" id="conta-nova2" type="password" autocomplete="new-password"
+               onkeydown="if(event.key==='Enter')trocarSenha()"></div>
+      <button class="login-btn" onclick="trocarSenha()">Alterar senha</button>
+      <div class="login-msg" id="conta-msg"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="logout()">Sair da conta</button>
+      <button class="btn-save" onclick="fecharConta()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ATALHOS ═══ -->
+<div class="modal-overlay" id="atalhos-overlay" onclick="mostrarAtalhos()">
+  <div class="modal-box" style="max-width:330px">
+    <div class="modal-header">
+      <div class="modal-title">Atalhos</div>
+      <button class="modal-close" onclick="mostrarAtalhos()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="atalho-row"><kbd>N</kbd><span>Novo projeto</span></div>
+      <div class="atalho-row"><kbd>/</kbd><span>Buscar</span></div>
+      <div class="atalho-row"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><span>Zoom semana · mês · trimestre</span></div>
+      <div class="atalho-row"><kbd>I</kbd><span>Painel de inteligência</span></div>
+      <div class="atalho-row"><kbd>Ctrl</kbd><kbd>Z</kbd><span>Desfazer arrasto</span></div>
+      <div class="atalho-row"><kbd>Esc</kbd><span>Fechar</span></div>
+      <div class="atalho-row"><kbd>?</kbd><span>Esta lista</span></div>
     </div>
   </div>
 </div>
@@ -1735,6 +1881,12 @@ input.bu-row-dot{padding:0;border:none;background:none;}
       <div class="pc-etapas-pesos" id="pc-etapas-pesos"></div>
       <div class="pc-etapa-progress" id="pc-etapa-progress"></div>
       <div id="pc-etapas-list"></div>
+      <div class="pc-etapa-add-row">
+        <input class="finput" id="pc-etapa-nome" placeholder="Nova etapa..."
+               onkeydown="if(event.key==='Enter')addEtapaInline()">
+        <input class="finput" id="pc-etapa-peso" type="number" min="1" max="100" placeholder="%" value="25">
+        <input class="finput" id="pc-etapa-resp" placeholder="Resp.">
+      </div>
     </div>
     <div class="pc-hist-title">Histórico de evolução</div>
     <div class="pc-hist-list" id="pc-hist-list"></div>
@@ -2300,7 +2452,7 @@ function setSyncState(st,label){
   document.getElementById('sync-label').textContent=label;
 }
 async function syncSheets(){
-  const url=prompt('URL do Apps Script Web App (vazio = offline):',state.sheetsUrl||'');
+  const url=(document.getElementById('setup-sheets')?.value||'').trim();
   if(url===null)return;
   state.sheetsUrl=url.trim();
   localStorage.setItem('sheetsUrl',state.sheetsUrl);
@@ -2355,11 +2507,19 @@ function fecharLogin(){
 }
 
 function abrirConfigInstancia(){
-  const atual=getSheetsUrl();
-  const u=prompt('URL do Apps Script Web App (backend compartilhado):',atual);
-  if(u===null)return;
+  const box=document.getElementById('login-backend');
+  if(!box)return;
+  const aberto=box.classList.toggle('open');
+  if(aberto){
+    document.getElementById('login-backend-url').value=getSheetsUrl();
+    document.getElementById('login-backend-url').focus();
+  }
+}
+function salvarBackendLogin(){
+  const u=document.getElementById('login-backend-url').value.trim();
   setSheetsUrl(u);
-  _loginMsg(u?'Backend configurado. Faça login.':'Backend removido.','info');
+  document.getElementById('login-backend').classList.remove('open');
+  _loginMsg(u?'Backend salvo. Pode entrar.':'Backend limpo — voltou ao padrão.','info');
 }
 
 async function fazerLogin(){
@@ -2422,21 +2582,33 @@ function aplicarIdentidade(){
 function abrirMinhaConta(){
   const u=state.currentUser;
   if(!u)return;
-  const acao=prompt(`${u.nome||u.email} (${u.role})\n\nDigite:\n  senha  → trocar senha\n  sair   → encerrar sessão`,'');
-  if(!acao)return;
-  const a=acao.trim().toLowerCase();
-  if(a==='sair') return logout();
-  if(a==='senha') return trocarSenha();
+  document.getElementById('conta-nome').textContent=u.nome||u.email;
+  document.getElementById('conta-email').textContent=u.email;
+  document.getElementById('conta-role').textContent=u.role==='admin'?'admin':(u.cargo||'usuário');
+  document.getElementById('conta-msg').className='login-msg';
+  ['conta-atual','conta-nova','conta-nova2'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('conta-overlay').classList.add('open');
+}
+function fecharConta(){document.getElementById('conta-overlay').classList.remove('open');}
+function fecharContaBg(e){if(e.target===e.currentTarget)fecharConta();}
+
+function _contaMsg(t,tipo){
+  const el=document.getElementById('conta-msg');
+  el.textContent=t||'';
+  el.className='login-msg '+(t?('show '+(tipo||'erro')):'');
 }
 
 async function trocarSenha(){
-  const atual=prompt('Senha atual:');
-  if(atual===null)return;
-  const nova=prompt('Nova senha (mínimo 6 caracteres):');
-  if(nova===null)return;
-  if((nova||'').length<6){ showToast('Senha precisa de 6+ caracteres','error'); return; }
+  const atual=document.getElementById('conta-atual').value;
+  const nova=document.getElementById('conta-nova').value;
+  const nova2=document.getElementById('conta-nova2').value;
+  if(!atual||!nova){ _contaMsg('Preencha a senha atual e a nova'); return; }
+  if(nova.length<6){ _contaMsg('A nova senha precisa de 6+ caracteres'); return; }
+  if(nova!==nova2){ _contaMsg('A confirmação não bate com a nova senha'); return; }
   const r=await _gs('set_senha',{email:state.currentUser.email,senhaAtual:atual,senhaNova:nova});
-  showToast(r&&r.ok?'Senha alterada':(r&&r.error)||'Erro ao alterar','success');
+  if(r&&r.ok){ _contaMsg('Senha alterada com sucesso','info'); showToast('Senha alterada','success');
+    setTimeout(fecharConta,900);
+  } else { _contaMsg((r&&r.error)||'Não foi possível alterar'); }
 }
 
 // Carrega os dados após autenticar — ponto único de entrada
@@ -2783,13 +2955,17 @@ function afterEtapaChange(projId, etapaId){
 function addEtapaInline(){
   const projId = state.previewProjId;
   if(!projId) return;
-  const nome = prompt('Nome da etapa:');
-  if(!nome || !nome.trim()) return;
-  const pesoStr = prompt('Peso (%) — quanto vale no progresso total:', '25');
-  const peso = Math.max(1, Math.min(100, parseInt(pesoStr)||25));
-  const autoId = prompt('Automação ao concluir? (digest/alerta/marts/snapshot — Enter para nenhuma):','') || '';
+  const iN=document.getElementById('pc-etapa-nome');
+  const iP=document.getElementById('pc-etapa-peso');
+  const iR=document.getElementById('pc-etapa-resp');
+  const nome=(iN?.value||'').trim();
+  if(!nome){ iN?.focus(); showToast('Dê um nome à etapa','error'); return; }
+  const peso = Math.max(1, Math.min(100, parseInt(iP?.value)||25));
+  const autoId = '';
+  const resp = (iR?.value||'').trim();
+  if(iN)iN.value='';if(iP)iP.value='';if(iR)iR.value='';
   const ets = state.etapas.filter(e=>e.projId===projId);
-  const nova = {id:state.nextEtapaId++, projId, nome:nome.trim(), peso, status:'pendente', dataFim:'', automacaoId:autoId.trim(), ordem:ets.length};
+  const nova = {id:state.nextEtapaId++, projId, nome, peso, status:'pendente', dataFim:'', automacaoId:autoId, ordem:ets.length, responsavel:resp};
   state.etapas.push(nova);
   persist('etapa', nova);
   persist('meta_etapa');
@@ -3085,6 +3261,12 @@ function copyAutoCode(id) {
   });
 }
 // ── FIM BLOCO ──
+function limparFiltros(){
+  state.filtroStatus=null;state.filtroLane=null;state.busca='';
+  const b=document.getElementById('search-input');if(b)b.value='';
+  renderAll();
+}
+
 // ═══ BLOCO: FILTER CHIPS (T2) ═══
 const STATUS_LIST=['Em andamento','Concluído','Em planejamento','Pausado'];
 function renderChips(){
@@ -3419,6 +3601,36 @@ function dateToPx(date,tl){
   return((d-cells[0].date)/(last-cells[0].date))*totalPx;
 }
 
+// Inversa de dateToPx. Cobre os três zooms — o zoom trimestre caía
+// no ramo semanal e produzia datas erradas silenciosamente.
+function pxToDate(px,tl){
+  const{minD,totalPx,cells,COL,type}=tl;
+  if(type==='mes'){
+    const lastC=cells[cells.length-1].date;
+    const end=new Date(lastC.getFullYear(),lastC.getMonth()+1,1);
+    return new Date(minD.getTime()+(px/totalPx)*(end-minD));
+  }
+  if(type==='semana'){
+    return new Date(cells[0].date.getTime()+(px/COL)*7*86400000);
+  }
+  const last=cells[cells.length-1].endDate;
+  return new Date(cells[0].date.getTime()+(px/totalPx)*(last-cells[0].date));
+}
+
+// Arredonda para a menor unidade legível do zoom atual. Sem snap o
+// arrasto vira loteria de pixel e a data nunca cai redonda.
+function snapDate(d,tl){
+  const x=new Date(d); x.setHours(0,0,0,0);
+  if(tl.type==='mes') return x;
+  if(tl.type==='semana'){ x.setDate(x.getDate()-((x.getDay()+6)%7)); return x; }
+  return new Date(x.getFullYear(),x.getMonth(),1);
+}
+
+function isoDia(d){
+  const x=new Date(d);
+  return new Date(x.getTime()-x.getTimezoneOffset()*60000).toISOString().split('T')[0];
+}
+
 // ═══ BLOCO: RENDER HEADER ═══
 function renderHeader(tl){
   const{cells,COL,type}=tl,today=new Date();
@@ -3578,7 +3790,10 @@ function renderGantt(){
         } else if(wx>60){
           html+=`<span class="gbar-pct">${proj.pct}%</span>`;
         }
-        html+=`<div class="gbar-resize" onmousedown="startResize(event,${proj.id})"></div>`;
+        html+=`<div class="gbar-grip" onpointerdown="startDrag(event,${proj.id},'move')" title="Arrastar para mover"></div>`;
+        html+=`<div class="gbar-handle esq" onpointerdown="startDrag(event,${proj.id},'inicio')" title="Ajustar início"></div>`;
+        html+=`<div class="gbar-handle dir" onpointerdown="startDrag(event,${proj.id},'fim')" title="Ajustar fim"></div>`;
+        html+=`<div class="gbar-pct-handle" style="left:${proj.pct}%" onpointerdown="startDrag(event,${proj.id},'pct')" title="Arrastar para ajustar o progresso"></div>`;
         // Marcos ◆ das etapas
         const _ets=state.etapas.filter(e=>e.projId===proj.id).sort((a,b)=>a.ordem-b.ordem);
         if(_ets.length){
@@ -3586,8 +3801,8 @@ function renderGantt(){
           let _acc=0;
           _ets.forEach(et=>{
             _acc+=et.peso;
-            const _marcoX=(_acc/_totPeso)*widthPx;
-            const _mColor=et.status==='concluido'?laneColor:et.status==='em_andamento'?laneColor+'aa':'var(--bg5)';
+            const _marcoX=(_acc/_totPeso)*wx;
+            const _mColor=et.status==='concluido'?lc:et.status==='em_andamento'?adjustColor(lc,30):'var(--bg5)';
             html+=`<div class="gbar-marco ${et.status}" style="left:${_marcoX-4}px;background:${_mColor}" title="${escHtml(et.nome)} (${et.peso}%) — ${et.status}" onclick="openPreview(${proj.id})" ></div>`;
           });
         }
@@ -3599,6 +3814,23 @@ function renderGantt(){
     });
     html+=`</div></div>`; // rows-wrap + lane
   });
+
+  // Estado vazio: antes o gantt ficava em branco sem explicar nada
+  if(total===0){
+    const escopo=state.filtroBU?nomeBu(state.filtroBU):null;
+    const temFiltro=state.filtroBU||state.filtroStatus||state.filtroLane||state.busca;
+    html=`<div class="gantt-vazio">
+      <div class="gantt-vazio-icon">${temFiltro?'🔍':'◔'}</div>
+      <div class="gantt-vazio-titulo">${temFiltro?'Nenhum projeto neste recorte':'Nenhum projeto ainda'}</div>
+      <div class="gantt-vazio-sub">${temFiltro
+        ? (escopo?`Não há projetos em <b>${escHtml(escopo)}</b> com os filtros ativos.`:'Os filtros ativos não deixaram nada visível.')
+        : 'Crie o primeiro projeto ou carregue o portfólio DIMEG.'}</div>
+      <div class="gantt-vazio-acoes">
+        ${temFiltro?`<button class="gv-btn" onclick="limparFiltros()">Limpar filtros</button>`:''}
+        <button class="gv-btn primary" onclick="openModal(state.lanes[0]?.id)">+ Novo projeto</button>
+      </div>
+    </div>`;
+  }
 
   inner.innerHTML=html;
   document.getElementById('proj-count')&&(document.getElementById('proj-count').textContent=total+' projetos');
@@ -4275,40 +4507,138 @@ function laneDragEnd(){
   dragSourceLaneId=null;
 }
 
-// ═══ BLOCO: RESIZE BAR ═══
-let resizeState=null;
-function startResize(e,projId){
+// ═══ BLOCO: DRAG BAR (mover, redimensionar, progresso) ═══
+// Pointer Events em vez de mouse: o mesmo código serve mouse, toque e
+// caneta, e o setPointerCapture garante que o arrasto não se perca se
+// o cursor sair da barra.
+
+let dragState=null;
+const UNDO_MAX=20;
+state.undo=[];
+
+// Empilha o estado anterior do projeto para o Ctrl+Z
+function pushUndo(proj){
+  state.undo.push({projId:proj.id,inicio:proj.inicio,fim:proj.fim,pct:proj.pct});
+  if(state.undo.length>UNDO_MAX)state.undo.shift();
+}
+
+function desfazer(){
+  const u=state.undo.pop();
+  if(!u){ showToast('Nada para desfazer','info'); return; }
+  const p=state.projetos.find(x=>x.id===u.projId);
+  if(!p)return;
+  p.inicio=u.inicio;p.fim=u.fim;p.pct=u.pct;
+  persist('proj',p);persistLocal();
+  renderAll();
+  showToast('Desfeito: '+p.nome,'success');
+}
+
+// modo: 'move' | 'inicio' | 'fim' | 'pct'
+function startDrag(e,projId,modo){
+  if(!isAdmin() && !podeEditar(projId)) return;
   e.stopPropagation();e.preventDefault();
   const proj=state.projetos.find(p=>p.id===projId);
-  if(!proj||!proj.fim)return;
-  resizeState={projId,startX:e.clientX,origFim:proj.fim,tl:buildTimeline()};
-  document.addEventListener('mousemove',onResize);
-  document.addEventListener('mouseup',endResize);
+  if(!proj||!proj.inicio)return;
+
+  const tl=buildTimeline();
+  const wrap=e.currentTarget.closest('.gbar-wrap');
+  dragState={
+    projId,modo,tl,wrap,
+    startX:e.clientX,
+    origInicio:proj.inicio,
+    origFim:proj.fim||proj.inicio,
+    origPct:proj.pct,
+    larguraPx:wrap?wrap.offsetWidth:0,
+    moveu:false,
+  };
+  try{ e.currentTarget.setPointerCapture(e.pointerId); }catch{}
+  document.addEventListener('pointermove',onDrag);
+  document.addEventListener('pointerup',endDrag);
+  document.addEventListener('pointercancel',endDrag);
+  document.body.classList.add('dragging-bar');
 }
-function onResize(e){
-  if(!resizeState)return;
-  const{projId,startX,origFim,tl}=resizeState;
-  const proj=state.projetos.find(p=>p.id===projId);if(!proj)return;
+
+function onDrag(e){
+  if(!dragState)return;
+  const{projId,modo,tl,startX,origInicio,origFim,origPct,larguraPx}=dragState;
+  const proj=state.projetos.find(p=>p.id===projId);
+  if(!proj)return;
   const dx=e.clientX-startX;
-  const newPx=dateToPx(origFim,tl)+dx;
-  let newDate;
-  if(tl.type==='mes'){
-    const end=new Date(tl.cells[tl.cells.length-1].date.getFullYear(),tl.cells[tl.cells.length-1].date.getMonth()+1,1);
-    const totalDays=(end-tl.minD)/86400000;
-    newDate=new Date(tl.minD.getTime()+(newPx/tl.totalPx)*totalDays*86400000);
+  if(Math.abs(dx)<3&&!dragState.moveu)return;   // tolerância: clique não vira arrasto
+  if(!dragState.moveu){ dragState.moveu=true; pushUndo(proj); }
+
+  if(modo==='pct'){
+    const novo=Math.max(0,Math.min(100,Math.round(((dateToPx(origInicio,tl)+larguraPx*origPct/100+dx)-dateToPx(origInicio,tl))/larguraPx*100)));
+    proj.pct=novo;
+    dragState.label=novo+'%';
   } else {
-    newDate=new Date(tl.cells[0].date.getTime()+(newPx/tl.COL)*7*86400000);
+    const pxIni=dateToPx(origInicio,tl)+dx;
+    const pxFim=dateToPx(origFim,tl)+dx;
+    if(modo==='move'){
+      proj.inicio=isoDia(snapDate(pxToDate(pxIni,tl),tl));
+      proj.fim   =isoDia(snapDate(pxToDate(pxFim,tl),tl));
+    } else if(modo==='inicio'){
+      let d=snapDate(pxToDate(pxIni,tl),tl);
+      const limite=new Date(origFim);
+      if(d>=limite)d=snapDate(new Date(limite.getTime()-86400000),tl);
+      proj.inicio=isoDia(d);
+    } else if(modo==='fim'){
+      let d=snapDate(pxToDate(pxFim,tl),tl);
+      const limite=new Date(proj.inicio||origInicio);
+      if(d<=limite)d=snapDate(new Date(limite.getTime()+86400000),tl);
+      proj.fim=isoDia(d);
+    }
+    const dias=Math.max(1,Math.round((new Date(proj.fim)-new Date(proj.inicio))/86400000));
+    dragState.label=fmtData(proj.inicio)+' → '+fmtData(proj.fim)+'  ·  '+dias+'d';
   }
-  const startDate=new Date(proj.inicio||tl.minD);
-  if(newDate<startDate)newDate=startDate;
-  proj.fim=newDate.toISOString().split('T')[0];
+  pintarDragGhost();
   renderGantt();
 }
-function endResize(){
-  if(resizeState){const proj=state.projetos.find(p=>p.id===resizeState.projId);if(proj)persist('proj',proj);}
-  resizeState=null;
-  document.removeEventListener('mousemove',onResize);
-  document.removeEventListener('mouseup',endResize);
+
+// Etiqueta viva durante o arrasto — sem ela o usuário arrasta às cegas
+function pintarDragGhost(){
+  let g=document.getElementById('drag-ghost');
+  if(!g){
+    g=document.createElement('div');
+    g.id='drag-ghost';g.className='drag-ghost';
+    document.body.appendChild(g);
+  }
+  g.textContent=dragState.label||'';
+  g.classList.add('show');
+  const r=dragState.wrap?dragState.wrap.getBoundingClientRect():null;
+  if(r){ g.style.left=(r.left+r.width/2)+'px'; g.style.top=(r.top-34)+'px'; }
+}
+
+function endDrag(){
+  if(dragState){
+    const proj=state.projetos.find(p=>p.id===dragState.projId);
+    if(proj&&dragState.moveu){
+      persist('proj',proj);persistLocal();
+      renderAll();
+      showToast('Atualizado — Ctrl+Z desfaz','success');
+    }
+  }
+  dragState=null;
+  document.getElementById('drag-ghost')?.classList.remove('show');
+  document.body.classList.remove('dragging-bar');
+  document.removeEventListener('pointermove',onDrag);
+  document.removeEventListener('pointerup',endDrag);
+  document.removeEventListener('pointercancel',endDrag);
+}
+
+// Não-admin só arrasta o que é dele
+function podeEditar(projId){
+  const p=state.projetos.find(x=>x.id===projId);
+  if(!p)return false;
+  if(isAdmin())return true;
+  const me=(state.currentUser?.email||'').toLowerCase();
+  return !p.owner||p.owner.toLowerCase()===me;
+}
+
+function fmtData(iso){
+  if(!iso)return '—';
+  const [y,m,d]=iso.split('-');
+  return d+'/'+m;
 }
 
 // ═══ BLOCO: SCROLL SYNC ═══
@@ -4330,6 +4660,40 @@ function adjustColor(hex,amt){
   return'#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
 function renderAll(){renderBuSwitch();renderGantt();renderUpcoming();renderIntel();renderAutomacoes();}
+
+// ═══ BLOCO: ATALHOS ═══
+// Ignora quando o foco está num campo — senão digitar "n" num input
+// abriria o modal de projeto.
+function _digitando(el){
+  if(!el)return false;
+  const t=(el.tagName||'').toLowerCase();
+  return t==='input'||t==='textarea'||t==='select'||el.isContentEditable;
+}
+
+function onAtalho(e){
+  if(_digitando(document.activeElement))return;
+
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){
+    e.preventDefault();desfazer();return;
+  }
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+
+  switch(e.key.toLowerCase()){
+    case 'n': e.preventDefault();openModal(state.lanes[0]?.id);break;
+    case '/': e.preventDefault();openSearch();break;
+    case '1': setZoom('semana');break;
+    case '2': setZoom('mes');break;
+    case '3': setZoom('trimestre');break;
+    case 'i': toggleIntel();break;
+    case '?': e.preventDefault();mostrarAtalhos();break;
+  }
+}
+
+function mostrarAtalhos(){
+  const el=document.getElementById('atalhos-overlay');
+  if(el)el.classList.toggle('open');
+}
+// ── FIM BLOCO ──
 
 // ═══ BLOCO: GLOBAL EVENTS ═══
 document.addEventListener('click',e=>{
@@ -4364,6 +4728,7 @@ function init(){
   // T0 - theme persistence
   const _t=localStorage.getItem('wr_titulo');
   if(_t){const _te=document.querySelector('.nav-title');if(_te)_te.textContent=_t;}
+  document.addEventListener('keydown',onAtalho);
   state.intelCollapsed=localStorage.getItem('wr_intel_collapsed')!=='0';
   const _is=document.getElementById('intel-section');
   if(_is)_is.classList.toggle('collapsed',state.intelCollapsed);
