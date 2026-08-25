@@ -1507,6 +1507,17 @@ input.bu-row-dot{padding:0;border:none;background:none;}
 }
 .nav-user-nome{font-size:0.72rem;font-weight:600;color:var(--text2);}
 .nav-user-role{font-family:var(--mono);font-size:0.58rem;color:var(--text4);}
+
+.setup-seed{
+  display:flex;align-items:center;gap:11px;margin-top:14px;padding:11px;
+  background:color-mix(in srgb,var(--accent) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--accent) 34%,transparent);
+  border-radius:11px;cursor:pointer;transition:background .16s ease;
+}
+.setup-seed:hover{background:color-mix(in srgb,var(--accent) 20%,transparent);}
+.setup-seed-icon{font-size:1.35rem;flex-shrink:0;}
+.setup-seed-title{font-size:0.8rem;font-weight:700;color:var(--accent);}
+.setup-seed-sub{font-size:0.67rem;color:var(--text3);margin-top:2px;}
 </style>
 </head>
 <body>
@@ -1776,6 +1787,14 @@ input.bu-row-dot{padding:0;border:none;background:none;}
           <label class="flabel">URL do backend (Apps Script) *</label>
           <input class="finput" id="setup-sheets" type="text" placeholder="Cole a URL do Apps Script Web App">
         </div>
+        </div>
+      </div>
+    </div>
+      <div class="setup-seed" onclick="carregarSeedDIMEG()">
+        <div class="setup-seed-icon">📦</div>
+        <div>
+          <div class="setup-seed-title">Popular com os projetos DIMEG</div>
+          <div class="setup-seed-sub">23 projetos · 5 lanes · 3 BUs · histórico de evoluções</div>
         </div>
       </div>
     </div>
@@ -2220,7 +2239,7 @@ async function persist(type,data){
       case 'del_bu':action='delete_bu';payload={id:data.id};break;
       case 'pref':action='set_pref';payload={email:data.email,nome:data.nome||'',role:data.role||'user',buPadrao:data.buPadrao||'',busPermitidas:data.busPermitidas||[]};break;
       case 'meta_etapa':action='set_meta';payload={next_etapa_id:state.nextEtapaId};break;
-      default:action='save_all';payload={lanes:state.lanes,projetos:state.projetos,evolucoes:state.evolucoes,etapas:state.etapas,nextProjId:state.nextProjId,nextLaneId:state.nextLaneId,nextEtapaId:state.nextEtapaId};
+      default:action='save_all';payload={bus:state.bus,lanes:state.lanes,projetos:state.projetos,evolucoes:state.evolucoes,etapas:state.etapas,nextProjId:state.nextProjId,nextLaneId:state.nextLaneId,nextEtapaId:state.nextEtapaId};
     }
     const res=await _gs(action,payload);
     if(res&&!res.ok)throw new Error(res.error||'Erro');
@@ -2415,6 +2434,28 @@ function saveSetup(){
   document.getElementById('setup-overlay').classList.remove('open');
   showToast('Configuração salva','success');
   if(state.currentUser) carregarTudo(); else abrirLogin();
+}
+
+// Popula um backend vazio com o portfólio DIMEG. Só admin, e só se
+// estiver realmente vazio — nunca sobrescreve dado existente.
+async function carregarSeedDIMEG(){
+  if(!isAdmin()){ showToast('Só admin pode popular o backend','error'); return; }
+  if(!getSheetsUrl()){ showToast('Configure a URL do backend antes','error'); return; }
+  if(state.projetos.length){
+    if(!confirm(`Já existem ${state.projetos.length} projetos no backend.\n\nCarregar o seed vai DUPLICAR tudo. Continuar mesmo assim?`)) return;
+  }
+  const s=getSeed();
+  // Classifica por BU antes de subir — o seed é anterior ao eixo de BU
+  s.projetos.forEach(p=>{ if(!p.buId) p.buId=inferirBu(p.nome); });
+  state.bus=s.bus; state.lanes=s.lanes; state.projetos=s.projetos;
+  state.evolucoes=s.evolucoes; state.etapas=[];
+  state.nextProjId=s.nextProjId; state.nextLaneId=s.nextLaneId;
+  showToast('Enviando portfólio para o backend...','info');
+  await persist('all');
+  await persist('meta');
+  document.getElementById('setup-overlay').classList.remove('open');
+  renderAll();
+  showToast('23 projetos carregados','success');
 }
 
 // Abre a config da instância já preenchida com o que está valendo

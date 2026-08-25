@@ -244,6 +244,14 @@ function handleSaveAll(payload) {
   // Bulk save — usado para sincronização inicial / force sync
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
+  if (payload.bus) {
+    _clearStaging(ss, 'BUS');
+    payload.bus.forEach((b, i) => {
+      const data = { id: b.id, nome: b.nome, cor: b.cor, ordem: i };
+      appendRaw('BUS', data, 'bulk');
+      upsertStaging(ss, 'BUS', data, 'id');
+    });
+  }
   if (payload.lanes) {
     _clearStaging(ss, 'LANES');
     payload.lanes.forEach((l, i) => {
@@ -255,8 +263,9 @@ function handleSaveAll(payload) {
   if (payload.projetos) {
     _clearStaging(ss, 'PROJETOS');
     payload.projetos.forEach(p => {
-      const data = { id: p.id, lane_id: p.laneId, nome: p.nome, status: p.status,
-                     inicio: p.inicio || '', fim: p.fim || '', pct: p.pct, detalhe: p.detalhe || '' };
+      const data = { id: p.id, lane_id: p.laneId, bu_id: p.buId || '', nome: p.nome, status: p.status,
+                     inicio: p.inicio || '', fim: p.fim || '', pct: p.pct, detalhe: p.detalhe || '',
+                     owner: p.owner || '' };
       appendRaw('PROJETOS', data, 'bulk');
       upsertStaging(ss, 'PROJETOS', data, 'id');
     });
