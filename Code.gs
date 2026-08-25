@@ -63,6 +63,10 @@ const SCHEMA = {
 
 // ═══ BLOCO: HTTP HANDLERS ═══
 function doGet(e) {
+  // O botão "Executar" do editor chama sem argumento — sem esta guarda
+  // o erro parece bug de produção, mas não é: em requisição real o
+  // Google sempre preenche `e`.
+  e = e || {};
   const action = (e.parameter && e.parameter.action) || 'load';
   try {
     // O gate vale no GET também: sem ele, ?action=load devolveria o
@@ -83,6 +87,9 @@ function doGet(e) {
 
 function doPost(e) {
   try {
+    if (!e || !e.postData) {
+      return jsonErr('doPost precisa ser chamado por HTTP, não pelo botão Executar do editor.');
+    }
     const body = JSON.parse(e.postData.contents);
     const action = body.action || '';
     const payload = body.payload || {};
