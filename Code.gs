@@ -45,6 +45,10 @@ const SCHEMA = {
   EVOLUCOES: [
     'id', 'proj_id', 'data', 'pct', 'nota'
   ],
+  TAREFAS: [
+    'id', 'proj_id', 'titulo', 'feito', 'horizonte',
+    'data', 'responsavel', 'ordem', 'criado_em', 'feito_em'
+  ],
   ETAPAS: [
     'id', 'proj_id', 'nome', 'peso', 'status',
     'data_fim', 'automacao_id', 'ordem', 'responsavel'
@@ -129,6 +133,8 @@ function doPost(e) {
       case 'set_pref':      return jsonOk(handleSetPref(payload));
       case 'get_config':    return jsonOk({ ok: true, authRequired: getConfig('auth_required') === '1' });
       case 'set_config':    return jsonOk(handleSetConfig(payload));
+      case 'upsert_tarefa': return jsonOk(handleUpsertTarefa(payload));
+      case 'delete_tarefa': return jsonOk(handleDeleteTarefa(payload));
       case 'upsert_etapa': return jsonOk(handleUpsertEtapa(payload));
       case 'delete_etapa': return jsonOk(handleDeleteEtapa(payload));
       case 'run_digest':    return jsonOk(handleDigest(payload));
@@ -181,9 +187,12 @@ function handleLoad() {
     busPermitidas:String(r['bus_permitidas']||'').split(',').map(s=>s.trim()).filter(Boolean)
   }));
   const bus = _readStaging(ss, 'BUS').map(_parseBu).sort((a,b)=>(a.ordem||0)-(b.ordem||0));
+  const tarefas = _readStaging(ss, 'TAREFAS').map(_parseTarefa).sort((a,b)=>(a.ordem||0)-(b.ordem||0));
+  const nextTarefaId = tarefas.length ? Math.max.apply(null, tarefas.map(t=>t.id)) + 1 : 5000;
   const nextEtapaId = parseInt(getConfig('next_etapa_id') || '1000');
   log_('INFO', 'Load: ' + lanes.length + 'L / ' + projetos.length + 'P / ' + evolucoes.length + 'E / ' + etapas.length + 'Et');
-  return { bus, lanes, projetos, evolucoes, etapas, usuarios, nextProjId, nextLaneId, nextEtapaId };
+  return { bus, lanes, projetos, evolucoes, etapas, tarefas, usuarios,
+           nextProjId, nextLaneId, nextEtapaId, nextTarefaId };
 }
 // ── FIM BLOCO ──
 
@@ -266,6 +275,17 @@ function handleSaveAll(payload) {
   // Bulk save — usado para sincronização inicial / force sync
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
+  if (payload.tarefas) {
+    _clearStaging(ss, 'TAREFAS');
+    payload.tarefas.forEach((t, i) => {
+      const data = { id: t.id, proj_id: t.projId || '', titulo: t.titulo, feito: t.feito === true,
+                     horizonte: t.horizonte || 'semana', data: t.data || '',
+                     responsavel: t.responsavel || '', ordem: i,
+                     criado_em: t.criadoEm || new Date().toISOString(), feito_em: t.feitoEm || '' };
+      appendRaw('TAREFAS', data, 'bulk');
+      upsertStaging(ss, 'TAREFAS', data, 'id');
+    });
+  }
   if (payload.bus) {
     _clearStaging(ss, 'BUS');
     payload.bus.forEach((b, i) => {
@@ -493,6 +513,20 @@ function _parseLane(row) {
   };
 }
 
+function _parseTarefa(row) {
+  return {
+    id:          _toInt(row['id']),
+    projId:      _toInt(row['proj_id']),
+    titulo:      String(row['titulo'] || ''),
+    feito:       row['feito'] === true || String(row['feito']).toLowerCase() === 'true',
+    horizonte:   String(row['horizonte'] || 'semana'),
+    data:        _toDateStr(row['data']),
+    responsavel: String(row['responsavel'] || ''),
+    ordem:       _toInt(row['ordem']),
+    feitoEm:     String(row['feito_em'] || ''),
+  };
+}
+
 function _parseBu(row) {
   return {
     id:    String(row['id'] || ''),
@@ -650,6 +684,33 @@ function handleDeleteEtapa(payload) {
   log_('INFO', 'Delete etapa id=' + payload.id);
   return { ok: true };
 }
+
+// ═══ BLOCO: TAREFAS ═══
+function handleUpsertTarefa(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const data = {
+    id: payload.id,
+    proj_id: payload.proj_id || '',
+    titulo: payload.titulo || '',
+    feito: payload.feito === true,
+    horizonte: payload.horizonte || 'semana',
+    data: payload.data || '',
+    responsavel: payload.responsavel || '',
+    ordem: payload.ordem || 0,
+    criado_em: payload.criado_em || new Date().toISOString(),
+    feito_em: payload.feito === true ? (payload.feito_em || new Date().toISOString()) : '',
+  };
+  appendRaw('TAREFAS', data, 'gantt');
+  upsertStaging(ss, 'TAREFAS', data, 'id');
+  return { ok: true };
+}
+
+function handleDeleteTarefa(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  _deleteFromStaging(ss, 'TAREFAS', 'id', [payload.id]);
+  return { ok: true };
+}
+// ── FIM BLOCO ──
 
 // ═══ BLOCO: AUTH ═══
 // Senha: SHA-256(salt + senha), salt aleatório por usuário.

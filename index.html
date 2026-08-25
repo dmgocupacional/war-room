@@ -1636,6 +1636,108 @@ body.dragging-bar *{cursor:grabbing !important;}
 .pc-etapa-add-row #pc-etapa-peso{width:52px;}
 .pc-etapa-add-row #pc-etapa-resp{width:76px;}
 .pc-etapa-add-row .finput{font-size:0.7rem;padding:5px 7px;}
+
+/* ═══ MEU FOCO ═══ */
+.foco-section::before{
+  background:radial-gradient(700px 180px at 12% 0%,color-mix(in srgb,var(--green-l) 10%,transparent),transparent 70%);
+}
+.foco-dot{background:var(--green-l);box-shadow:0 0 10px var(--green-l);}
+.foco-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:11px;padding:0 16px 16px;
+}
+.foco-col{
+  background:var(--bg3);border:1px solid var(--border2);border-radius:11px;
+  padding:10px;display:flex;flex-direction:column;min-height:130px;
+  transition:border-color .16s ease,background .16s ease;
+}
+.foco-col.over{
+  border-color:var(--accent);
+  background:color-mix(in srgb,var(--accent) 9%,var(--bg3));
+}
+.foco-col-head{
+  display:flex;align-items:center;gap:6px;margin-bottom:8px;
+  padding-bottom:7px;border-bottom:1px solid var(--border);
+}
+.foco-col-icon{color:var(--fh);font-size:0.72rem;}
+.foco-col-nome{font-size:0.71rem;font-weight:800;color:var(--text2);letter-spacing:-0.01em;}
+.foco-col-count{
+  margin-left:auto;font-family:var(--mono);font-size:0.62rem;font-weight:700;
+  color:var(--fh);background:color-mix(in srgb,var(--fh) 15%,transparent);
+  padding:1px 6px;border-radius:9px;
+}
+.foco-col-body{flex:1;display:flex;flex-direction:column;gap:2px;}
+.foco-vazio{font-size:0.68rem;color:var(--text4);font-style:italic;padding:8px 2px;}
+.foco-add{margin-top:7px;}
+.foco-add .finput{font-size:0.69rem;padding:5px 8px;width:100%;}
+
+/* ═══ LINHA DE TAREFA ═══ */
+.tarefa-row{
+  display:flex;align-items:center;gap:6px;padding:3px 2px;border-radius:6px;
+  cursor:grab;transition:background .14s ease;
+}
+.tarefa-row:hover{background:var(--bg4);}
+.tarefa-row.feito .tarefa-titulo{text-decoration:line-through;color:var(--text4);}
+.tarefa-row.vencida:not(.feito) .tarefa-titulo{color:var(--red-l);}
+.tarefa-check{
+  width:15px;height:15px;flex-shrink:0;border-radius:5px;cursor:pointer;
+  border:1.5px solid var(--border3);background:transparent;
+  color:#0b0f17;font-size:0.6rem;font-weight:800;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .14s ease,border-color .14s ease;
+}
+.tarefa-check:hover{border-color:var(--green-l);}
+.tarefa-check.on{background:var(--green-l);border-color:var(--green-l);}
+.tarefa-titulo{
+  flex:1;min-width:0;border:none;background:transparent;
+  font-family:inherit;font-size:0.71rem;color:var(--text2);
+  padding:2px 3px;border-radius:4px;
+}
+.tarefa-titulo:focus{background:var(--bg5);outline:none;}
+.tarefa-data{
+  font-family:var(--mono);font-size:0.6rem;color:var(--text4);flex-shrink:0;
+}
+.tarefa-data.venc{color:var(--red-l);font-weight:700;}
+.tarefa-proj{
+  font-size:0.58rem;font-weight:700;flex-shrink:0;max-width:82px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;
+  padding:1px 5px;border-radius:4px;
+  color:var(--tpc);background:color-mix(in srgb,var(--tpc) 14%,transparent);
+}
+.tarefa-proj:hover{background:color-mix(in srgb,var(--tpc) 26%,transparent);}
+.tarefa-del{
+  border:none;background:transparent;color:var(--text4);cursor:pointer;
+  font-size:0.85rem;padding:0 3px;flex-shrink:0;opacity:0;transition:opacity .14s ease;
+}
+.tarefa-row:hover .tarefa-del{opacity:1;}
+.tarefa-del:hover{color:var(--red-l);}
+
+.pc-tarefa-grupo{margin-bottom:7px;}
+.pc-tarefa-grupo-head{
+  font-size:0.6rem;font-weight:800;color:var(--fh);
+  text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;
+}
+.pc-tarefas-count{
+  font-family:var(--mono);font-size:0.63rem;color:var(--text4);margin-left:auto;
+}
+
+/* ═══ TOAST DESFAZER ═══ */
+.toast-undo{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(14px);
+  z-index:850;display:flex;align-items:center;gap:12px;
+  padding:9px 11px 9px 15px;border-radius:11px;
+  background:var(--bg2);border:1px solid var(--border3);
+  box-shadow:0 10px 34px rgba(0,0,0,0.46);
+  font-size:0.75rem;color:var(--text2);
+  opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease;
+}
+.toast-undo.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+.tu-btn{
+  border:none;background:transparent;cursor:pointer;font-family:inherit;
+  font-size:0.73rem;font-weight:800;color:var(--accent);
+  padding:3px 8px;border-radius:7px;
+}
+.tu-btn:hover{background:color-mix(in srgb,var(--accent) 15%,transparent);}
 </style>
 </head>
 <body>
@@ -1706,6 +1808,12 @@ body.dragging-bar *{cursor:grabbing !important;}
       </div>
     </div>
   </div>
+</div>
+
+<!-- ═══ TOAST DESFAZER ═══ -->
+<div class="toast-undo" id="toast-undo">
+  <span class="tu-msg"></span>
+  <button class="tu-btn">Desfazer</button>
 </div>
 
 <!-- ═══ MINHA CONTA ═══ -->
@@ -1793,6 +1901,20 @@ body.dragging-bar *{cursor:grabbing !important;}
       Próximas entregas
     </div>
     <div class="upcoming-list" id="upcoming-list"></div>
+  </div>
+
+  <!-- MEU FOCO -->
+  <div class="intel-section foco-section" id="foco-section">
+    <div class="intel-header" onclick="toggleFoco()">
+      <div class="intel-header-dot foco-dot"></div>
+      <span class="intel-header-label">✓ Meu foco</span>
+      <span class="intel-header-sub" id="foco-sub"></span>
+      <div class="intel-header-spacer"></div>
+      <span class="intel-header-toggle">▾</span>
+    </div>
+    <div class="intel-body">
+      <div class="foco-grid" id="foco-grid"></div>
+    </div>
   </div>
 
   <!-- INTELIGÊNCIA -->
@@ -1886,6 +2008,22 @@ body.dragging-bar *{cursor:grabbing !important;}
                onkeydown="if(event.key==='Enter')addEtapaInline()">
         <input class="finput" id="pc-etapa-peso" type="number" min="1" max="100" placeholder="%" value="25">
         <input class="finput" id="pc-etapa-resp" placeholder="Resp.">
+      </div>
+    </div>
+    <div class="pc-etapas-section">
+      <div class="pc-etapas-header">
+        <span class="pc-etapas-title">✓ Minhas tarefas</span>
+        <span class="pc-tarefas-count" id="pc-tarefas-count"></span>
+      </div>
+      <div id="pc-tarefas-list"></div>
+      <div class="pc-etapa-add-row">
+        <input class="finput" id="pc-tarefa-nome" placeholder="Nova tarefa..."
+               onkeydown="if(event.key==='Enter')addTarefaProjeto()">
+        <select class="fselect" id="pc-tarefa-hz">
+          <option value="hoje">Hoje</option>
+          <option value="semana" selected>Semana</option>
+          <option value="mes">Mês</option>
+        </select>
       </div>
     </div>
     <div class="pc-hist-title">Histórico de evolução</div>
@@ -2264,6 +2402,7 @@ let state = {
   etapas:[], nextEtapaId:1000,
   usuarios:[], currentUser:null,
   bus:[], filtroBU:null, token:null,
+  tarefas:[], nextTarefaId:5000, focoCollapsed:false,
   intelCollapsed:true,
 };
 
@@ -2404,6 +2543,8 @@ async function loadSheets(){
     if(d.nextLaneId)state.nextLaneId=d.nextLaneId;
     if(d.etapas)state.etapas=d.etapas;
     if(d.nextEtapaId)state.nextEtapaId=d.nextEtapaId;
+    if(d.tarefas)state.tarefas=d.tarefas;
+    if(d.nextTarefaId)state.nextTarefaId=d.nextTarefaId;
     if(d.bus&&d.bus.length)state.bus=d.bus;
     if(d.usuarios)state.usuarios=d.usuarios;
     // Sheets é fonte de verdade das preferências do perfil
@@ -2434,11 +2575,13 @@ async function persist(type,data){
       case 'meta':action='set_meta';payload={next_proj_id:state.nextProjId,next_lane_id:state.nextLaneId};break;
       case 'etapa':action='upsert_etapa';payload={id:data.id,proj_id:data.projId,nome:data.nome,peso:data.peso,status:data.status,data_fim:data.dataFim||'',automacao_id:data.automacaoId||'',ordem:data.ordem||0,responsavel:data.responsavel||''};break;
       case 'del_etapa':action='delete_etapa';payload={id:data.id};break;
+      case 'tarefa':action='upsert_tarefa';payload={id:data.id,proj_id:data.projId||'',titulo:data.titulo,feito:data.feito===true,horizonte:data.horizonte||'semana',data:data.data||'',responsavel:data.responsavel||'',ordem:data.ordem||0,criado_em:data.criadoEm||'',feito_em:data.feitoEm||''};break;
+      case 'del_tarefa':action='delete_tarefa';payload={id:data.id};break;
       case 'bu':action='upsert_bu';payload={id:data.id,nome:data.nome,cor:data.cor,ordem:state.bus.findIndex(b=>b.id===data.id)};break;
       case 'del_bu':action='delete_bu';payload={id:data.id};break;
       case 'pref':action='set_pref';payload={email:data.email,nome:data.nome||'',role:data.role||'user',buPadrao:data.buPadrao||'',busPermitidas:data.busPermitidas||[]};break;
       case 'meta_etapa':action='set_meta';payload={next_etapa_id:state.nextEtapaId};break;
-      default:action='save_all';payload={bus:state.bus,lanes:state.lanes,projetos:state.projetos,evolucoes:state.evolucoes,etapas:state.etapas,nextProjId:state.nextProjId,nextLaneId:state.nextLaneId,nextEtapaId:state.nextEtapaId};
+      default:action='save_all';payload={bus:state.bus,tarefas:state.tarefas,lanes:state.lanes,projetos:state.projetos,evolucoes:state.evolucoes,etapas:state.etapas,nextProjId:state.nextProjId,nextLaneId:state.nextLaneId,nextEtapaId:state.nextEtapaId};
     }
     const res=await _gs(action,payload);
     if(res&&!res.ok)throw new Error(res.error||'Erro');
@@ -2730,7 +2873,7 @@ function persistLocal(){
   if(!state.dataKey)return;
   localStorage.setItem(state.dataKey,JSON.stringify({
     lanes:state.lanes,projetos:state.projetos,evolucoes:state.evolucoes,etapas:state.etapas,
-    bus:state.bus,
+    bus:state.bus,tarefas:state.tarefas,nextTarefaId:state.nextTarefaId,
     nextProjId:state.nextProjId,nextLaneId:state.nextLaneId,nextEtapaId:state.nextEtapaId
   }));
 }
@@ -2938,6 +3081,7 @@ function afterEtapaChange(projId, etapaId){
   if(state.previewProjId===projId){
     const lane = state.lanes.find(l=>state.projetos.find(p=>p.id===projId)?.laneId===l.id);
     renderPcEtapas(projId, lane?lane.cor:'var(--accent)');
+  renderPcTarefas(projId);
     // Atualizar barra de progresso do preview
     const proj=state.projetos.find(p=>p.id===projId);
     if(proj){
@@ -3060,6 +3204,252 @@ function showToast(msg, type='info'){
   setTimeout(()=>{div.style.opacity='0';div.style.transform='translateY(8px) scale(0.96)';div.style.transition='all 0.3s';setTimeout(()=>div.remove(),350);},3000);
 }
 // ── FIM BLOCO ──
+// ═══ BLOCO: TAREFAS (checklist operacional) ═══
+// Diferente de ETAPAS: etapa é marco do projeto e alimenta o pct.
+// Tarefa é o que EU faço, e nunca mexe no progresso do projeto —
+// misturar as duas coisas estragaria as duas.
+
+const HORIZONTES = [
+  {id:'hoje',   nome:'Hoje',        icon:'◉', cor:'var(--red-l)'},
+  {id:'semana', nome:'Esta semana', icon:'◐', cor:'var(--amber)'},
+  {id:'mes',    nome:'Este mês',    icon:'○', cor:'var(--text3)'},
+];
+
+function _hojeISO(){
+  const d=new Date();
+  return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().split('T')[0];
+}
+
+// Tarefa vencida sobe para Hoje sozinha — o horizonte guardado não muda,
+// mas a leitura respeita a data, que é o que importa na hora de agir.
+function horizonteEfetivo(t){
+  if(t.feito) return t.horizonte;
+  if(t.data && t.data < _hojeISO()) return 'hoje';
+  return t.horizonte||'semana';
+}
+function estaVencida(t){
+  return !t.feito && t.data && t.data < _hojeISO();
+}
+
+// Só as tarefas dos projetos que o usuário enxerga no recorte atual
+function tarefasVisiveis(){
+  const ids=new Set(projetosVisiveis().map(p=>p.id));
+  return state.tarefas.filter(t=>!t.projId||ids.has(t.projId));
+}
+
+function addTarefa(projId,titulo,horizonte,data,resp){
+  const t={
+    id:state.nextTarefaId++,
+    projId:projId||0,
+    titulo:(titulo||'').trim(),
+    feito:false,
+    horizonte:horizonte||'semana',
+    data:data||'',
+    responsavel:resp||'',
+    ordem:state.tarefas.length,
+    criadoEm:new Date().toISOString(),
+    feitoEm:'',
+  };
+  if(!t.titulo)return null;
+  state.tarefas.push(t);
+  persist('tarefa',t);persistLocal();
+  return t;
+}
+
+function toggleTarefa(id){
+  const t=state.tarefas.find(x=>x.id===id);
+  if(!t)return;
+  t.feito=!t.feito;
+  t.feitoEm=t.feito?new Date().toISOString():'';
+  persist('tarefa',t);persistLocal();
+  renderFoco();renderPcTarefas(state.previewProjId);renderIntel();
+}
+
+function moverTarefa(id,horizonte){
+  const t=state.tarefas.find(x=>x.id===id);
+  if(!t)return;
+  t.horizonte=horizonte;
+  // Mover para outro horizonte com data vencida seria contraditório:
+  // a data mandaria ela de volta para Hoje na hora.
+  if(t.data&&t.data<_hojeISO())t.data='';
+  persist('tarefa',t);persistLocal();
+  renderFoco();renderPcTarefas(state.previewProjId);
+}
+
+function delTarefa(id){
+  const t=state.tarefas.find(x=>x.id===id);
+  if(!t)return;
+  state.tarefas=state.tarefas.filter(x=>x.id!==id);
+  persist('del_tarefa',{id});persistLocal();
+  renderFoco();renderPcTarefas(state.previewProjId);renderIntel();
+  showToastUndo('Tarefa removida',()=>{
+    state.tarefas.push(t);
+    persist('tarefa',t);persistLocal();
+    renderFoco();renderPcTarefas(state.previewProjId);
+  });
+}
+
+function editarTituloTarefa(id,v){
+  const t=state.tarefas.find(x=>x.id===id);
+  if(!t||!v.trim()||t.titulo===v.trim())return;
+  t.titulo=v.trim();
+  persist('tarefa',t);persistLocal();
+}
+
+function setDataTarefa(id,v){
+  const t=state.tarefas.find(x=>x.id===id);
+  if(!t)return;
+  t.data=v||'';
+  persist('tarefa',t);persistLocal();
+  renderFoco();
+}
+
+// ─ Painel Meu Foco: três colunas atravessando todos os projetos ─
+function toggleFoco(){
+  const el=document.getElementById('foco-section');
+  el.classList.toggle('collapsed');
+  state.focoCollapsed=el.classList.contains('collapsed');
+  localStorage.setItem('wr_foco_collapsed',state.focoCollapsed?'1':'0');
+  if(!state.focoCollapsed)renderFoco();
+}
+
+function renderFoco(){
+  const grid=document.getElementById('foco-grid');
+  const sub=document.getElementById('foco-sub');
+  if(!grid)return;
+
+  const todas=tarefasVisiveis();
+  const abertas=todas.filter(t=>!t.feito);
+  const vencidas=abertas.filter(estaVencida).length;
+  if(sub){
+    sub.textContent = abertas.length
+      ? `${abertas.length} aberta${abertas.length!==1?'s':''}${vencidas?` · ${vencidas} vencida${vencidas!==1?'s':''}`:''}`
+      : 'nada pendente';
+  }
+  if(state.focoCollapsed){grid.innerHTML='';return;}
+
+  grid.innerHTML=HORIZONTES.map(h=>{
+    const lista=todas.filter(t=>horizonteEfetivo(t)===h.id)
+      .sort((a,b)=>(a.feito-b.feito)||(a.data||'9').localeCompare(b.data||'9'));
+    const abertasH=lista.filter(t=>!t.feito).length;
+    const itens=lista.length
+      ? lista.map(t=>linhaTarefa(t,true)).join('')
+      : `<div class="foco-vazio">Nada aqui</div>`;
+    return `<div class="foco-col" data-horizonte="${h.id}"
+        ondragover="focoDragOver(event)" ondrop="focoDrop(event,'${h.id}')" ondragleave="focoDragLeave(event)">
+      <div class="foco-col-head" style="--fh:${h.cor}">
+        <span class="foco-col-icon">${h.icon}</span>
+        <span class="foco-col-nome">${h.nome}</span>
+        <span class="foco-col-count">${abertasH}</span>
+      </div>
+      <div class="foco-col-body">${itens}</div>
+      <div class="foco-add">
+        <input class="finput" id="foco-add-${h.id}" placeholder="+ tarefa..."
+               onkeydown="if(event.key==='Enter')addTarefaFoco('${h.id}')">
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Linha de tarefa — usada no painel de foco e dentro do projeto
+function linhaTarefa(t,mostrarProjeto){
+  const proj=state.projetos.find(p=>p.id===t.projId);
+  const cor=proj?(state.lanes.find(l=>l.id===proj.laneId)?.cor||'var(--accent)'):'var(--text4)';
+  const venc=estaVencida(t);
+  const tagProj = mostrarProjeto&&proj
+    ? `<span class="tarefa-proj" style="--tpc:${cor}" onclick="event.stopPropagation();openPreview(${proj.id})">${escHtml(proj.nome)}</span>`
+    : '';
+  const dataTag = t.data
+    ? `<span class="tarefa-data ${venc?'venc':''}">${fmtData(t.data)}</span>` : '';
+  return `<div class="tarefa-row ${t.feito?'feito':''} ${venc?'vencida':''}"
+      draggable="true" ondragstart="tarefaDragStart(event,${t.id})" ondragend="tarefaDragEnd()">
+    <button class="tarefa-check ${t.feito?'on':''}" onclick="toggleTarefa(${t.id})">${t.feito?'✓':''}</button>
+    <input class="tarefa-titulo" value="${escHtml(t.titulo)}"
+           onblur="editarTituloTarefa(${t.id},this.value)"
+           onkeydown="if(event.key==='Enter')this.blur()">
+    ${dataTag}${tagProj}
+    <button class="tarefa-del" onclick="delTarefa(${t.id})" title="Remover">×</button>
+  </div>`;
+}
+
+function addTarefaFoco(horizonte){
+  const el=document.getElementById('foco-add-'+horizonte);
+  const v=(el?.value||'').trim();
+  if(!v)return;
+  // Tarefa criada no painel geral não pertence a projeto nenhum até
+  // você arrastar ou criar dentro de um projeto.
+  const t=addTarefa(0,v,horizonte,horizonte==='hoje'?_hojeISO():'','');
+  if(t){el.value='';renderFoco();}
+}
+
+// ─ Arrastar tarefa entre horizontes ─
+let tarefaDrag=null;
+function tarefaDragStart(e,id){
+  tarefaDrag=id;
+  e.dataTransfer.effectAllowed='move';
+  try{e.dataTransfer.setData('text/plain',String(id));}catch{}
+}
+function tarefaDragEnd(){
+  tarefaDrag=null;
+  document.querySelectorAll('.foco-col.over').forEach(c=>c.classList.remove('over'));
+}
+function focoDragOver(e){e.preventDefault();e.currentTarget.classList.add('over');}
+function focoDragLeave(e){e.currentTarget.classList.remove('over');}
+function focoDrop(e,horizonte){
+  e.preventDefault();
+  e.currentTarget.classList.remove('over');
+  const id=tarefaDrag||parseInt(e.dataTransfer.getData('text/plain'));
+  if(id)moverTarefa(id,horizonte);
+}
+
+// ─ Checklist dentro do projeto ─
+function renderPcTarefas(projId){
+  const el=document.getElementById('pc-tarefas-list');
+  if(!el||!projId)return;
+  const lista=state.tarefas.filter(t=>t.projId===projId);
+  const abertas=lista.filter(t=>!t.feito).length;
+  const cnt=document.getElementById('pc-tarefas-count');
+  if(cnt)cnt.textContent=lista.length?`${lista.length-abertas}/${lista.length}`:'';
+  if(!lista.length){
+    el.innerHTML='<div class="foco-vazio">Nenhuma tarefa — some uma abaixo.</div>';
+    return;
+  }
+  el.innerHTML=HORIZONTES.map(h=>{
+    const doH=lista.filter(t=>horizonteEfetivo(t)===h.id)
+      .sort((a,b)=>(a.feito-b.feito));
+    if(!doH.length)return '';
+    return `<div class="pc-tarefa-grupo">
+      <div class="pc-tarefa-grupo-head" style="--fh:${h.cor}">${h.icon} ${h.nome}</div>
+      ${doH.map(t=>linhaTarefa(t,false)).join('')}
+    </div>`;
+  }).join('')||'<div class="foco-vazio">Nenhuma tarefa neste horizonte.</div>';
+}
+
+function addTarefaProjeto(){
+  const projId=state.previewProjId;
+  if(!projId)return;
+  const el=document.getElementById('pc-tarefa-nome');
+  const hz=document.getElementById('pc-tarefa-hz');
+  const v=(el?.value||'').trim();
+  if(!v){el?.focus();return;}
+  const h=hz?.value||'semana';
+  const t=addTarefa(projId,v,h,h==='hoje'?_hojeISO():'','');
+  if(t){el.value='';renderPcTarefas(projId);renderFoco();}
+}
+
+// Toast com ação de desfazer — melhor que confirm() para remoção
+function showToastUndo(msg,acao){
+  const t=document.getElementById('toast-undo');
+  if(!t){showToast(msg,'success');return;}
+  t.querySelector('.tu-msg').textContent=msg;
+  const btn=t.querySelector('.tu-btn');
+  btn.onclick=()=>{acao();t.classList.remove('show');};
+  t.classList.add('show');
+  clearTimeout(state._tuTimer);
+  state._tuTimer=setTimeout(()=>t.classList.remove('show'),5000);
+}
+// ── FIM BLOCO ──
+
 // ═══ BLOCO: UPCOMING TIMELINE ═══
 function renderUpcoming(){
   const hoje=new Date();hoje.setHours(0,0,0,0);
@@ -3926,6 +4316,10 @@ function calcHealth(proj){
   else if(sem>10) score-=10;
   // Pausado é decisão, não doença — penalidade leve
   if(proj.status==='Pausado') score-=8;
+  // Tarefas vencidas acumuladas: sinal operacional que prazo e ritmo
+  // não capturam — o projeto anda, mas deixando dívida pelo caminho.
+  const _venc=state.tarefas.filter(t=>t.projId===proj.id&&estaVencida(t)).length;
+  if(_venc>=5) score-=15; else if(_venc>=2) score-=8; else if(_venc===1) score-=3;
 
   return Math.max(0, Math.min(100, Math.round(score)));
 }
@@ -3964,6 +4358,7 @@ function renderIntel(){
     + cardProjecao(projs)
     + cardZumbis(projs)
     + cardHealth(projs)
+    + cardTarefas(projs)
     + cardHeatmap();
 
   // Animação das barras de health — duplo rAF força a transição
@@ -4066,6 +4461,30 @@ function cardHealth(projs){
     </div>`).join('');
   return `<div class="intel-card">
     <div class="intel-card-title">Health score · média ${media}</div>${linhas}
+  </div>`;
+}
+
+// Onde a dívida operacional está concentrada
+function cardTarefas(projs){
+  const arr=projs.map(p=>({
+    p,
+    venc:state.tarefas.filter(t=>t.projId===p.id&&estaVencida(t)).length,
+    abertas:state.tarefas.filter(t=>t.projId===p.id&&!t.feito).length,
+  })).filter(x=>x.abertas>0).sort((a,b)=>(b.venc-a.venc)||(b.abertas-a.abertas));
+  if(!arr.length){
+    return `<div class="intel-card"><div class="intel-card-title">Tarefas em aberto</div>
+      <div class="intel-empty">Nenhuma tarefa pendente nos projetos deste recorte.</div></div>`;
+  }
+  const linhas=arr.slice(0,7).map(({p,venc,abertas})=>`
+    <div class="intel-item" onclick="openPreview(${p.id})">
+      <span class="intel-item-nome">${escHtml(p.nome)}</span>
+      ${venc?`<span class="intel-item-val neg">${venc} venc</span>`:''}
+      <span class="intel-item-val neutro">${abertas}</span>
+    </div>`).join('');
+  const totVenc=arr.reduce((s,x)=>s+x.venc,0);
+  return `<div class="intel-card">
+    <div class="intel-card-title">Tarefas em aberto${totVenc?` · ${totVenc} vencida${totVenc!==1?'s':''}`:''}</div>
+    ${linhas}
   </div>`;
 }
 
@@ -4659,7 +5078,7 @@ function adjustColor(hex,amt){
   r=Math.max(0,Math.min(255,r+amt));g=Math.max(0,Math.min(255,g+amt));b=Math.max(0,Math.min(255,b+amt));
   return'#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
-function renderAll(){renderBuSwitch();renderGantt();renderUpcoming();renderIntel();renderAutomacoes();}
+function renderAll(){renderBuSwitch();renderGantt();renderFoco();renderUpcoming();renderIntel();renderAutomacoes();}
 
 // ═══ BLOCO: ATALHOS ═══
 // Ignora quando o foco está num campo — senão digitar "n" num input
@@ -4729,6 +5148,9 @@ function init(){
   const _t=localStorage.getItem('wr_titulo');
   if(_t){const _te=document.querySelector('.nav-title');if(_te)_te.textContent=_t;}
   document.addEventListener('keydown',onAtalho);
+  state.focoCollapsed=localStorage.getItem('wr_foco_collapsed')==='1';
+  const _fs=document.getElementById('foco-section');
+  if(_fs)_fs.classList.toggle('collapsed',state.focoCollapsed);
   state.intelCollapsed=localStorage.getItem('wr_intel_collapsed')!=='0';
   const _is=document.getElementById('intel-section');
   if(_is)_is.classList.toggle('collapsed',state.intelCollapsed);
