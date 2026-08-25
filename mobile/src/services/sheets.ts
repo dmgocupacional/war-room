@@ -27,7 +27,9 @@ async function _post(url: string, action: string, payload: Record<string, unknow
   try {
     const r = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      // text/plain evita o preflight OPTIONS, que o Apps Script não
+      // responde com cabeçalhos CORS. O corpo segue sendo JSON.
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ action, payload }),
       signal: controller.signal,
     });

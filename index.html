@@ -2216,7 +2216,12 @@ async function _gs(action,payload){
   if(!state.sheetsUrl)return null;
   const p=Object.assign({},payload||{});
   if(state.token) p.token=state.token;
-  const r=await fetch(state.sheetsUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,payload:p})});
+  const r=await fetch(state.sheetsUrl,{
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    redirect:'follow',
+    body:JSON.stringify({action,payload:p})
+  });
   const j=await r.json();
   // Sessão expirada no servidor → volta para o login em vez de falhar mudo
   if(j&&j.ok===false&&/Sessão expirada/i.test(j.error||'')){
