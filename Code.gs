@@ -32,11 +32,14 @@ const DL_CONFIG = {
 
 // ═══ BLOCO: SCHEMA ═══
 const SCHEMA = {
+  BUS: [
+    'id', 'nome', 'cor', 'ordem'
+  ],
   LANES: [
     'id', 'nome', 'cor', 'ordem'
   ],
   PROJETOS: [
-    'id', 'lane_id', 'nome', 'status',
+    'id', 'lane_id', 'bu_id', 'nome', 'status',
     'inicio', 'fim', 'pct', 'detalhe', 'owner'
   ],
   EVOLUCOES: [
@@ -44,10 +47,11 @@ const SCHEMA = {
   ],
   ETAPAS: [
     'id', 'proj_id', 'nome', 'peso', 'status',
-    'data_fim', 'automacao_id', 'ordem'
+    'data_fim', 'automacao_id', 'ordem', 'responsavel'
   ],
   USUARIOS: [
-    'email', 'nome', 'role', 'ativo', 'criado_em'
+    'email', 'nome', 'role', 'ativo', 'criado_em',
+    'bu_padrao', 'bus_permitidas'
   ],
   SESSOES_TRABALHO: [
     'id', 'etapa_id', 'proj_id', 'user_email',
@@ -86,6 +90,9 @@ function doPost(e) {
       case 'save_all':      return jsonOk(handleSaveAll(payload));
       case 'upsert_usuario': return jsonOk(handleUpsertUsuario(payload));
       case 'delete_usuario': return jsonOk(handleDeleteUsuario(payload));
+      case 'upsert_bu':     return jsonOk(handleUpsertBu(payload));
+      case 'delete_bu':     return jsonOk(handleDeleteBu(payload));
+      case 'set_pref':      return jsonOk(handleSetPref(payload));
       case 'upsert_etapa': return jsonOk(handleUpsertEtapa(payload));
       case 'delete_etapa': return jsonOk(handleDeleteEtapa(payload));
       case 'run_digest':    return jsonOk(handleDigest(payload));
@@ -111,6 +118,10 @@ function handleLoad() {
   // Setup automático na primeira chamada
   if (!ss.getSheetByName('CONFIG')) handleSetup();
 
+  // Migração idempotente: garante que colunas novas do SCHEMA existam
+  // nas abas já criadas (sem perder dado nem reordenar linhas).
+  _migrarColunas(ss);
+
   const lanes     = _readStaging(ss, 'LANES')    .map(_parseLane);
   const projetos  = _readStaging(ss, 'PROJETOS') .map(_parseProj);
   const evolucoes = _readRaw(ss, 'EVOLUCOES')    .map(_parseEvo);
@@ -124,12 +135,19 @@ function handleLoad() {
   const etapas = _readStaging(ss, 'ETAPAS').map(r => ({
     id:_toInt(r['id']), projId:_toInt(r['proj_id']), nome:String(r['nome']||''),
     peso:_toInt(r['peso']), status:String(r['status']||'pendente'),
-    dataFim:_toDateStr(r['data_fim']), automacaoId:String(r['automacao_id']||''), ordem:_toInt(r['ordem'])
+    dataFim:_toDateStr(r['data_fim']), automacaoId:String(r['automacao_id']||''), ordem:_toInt(r['ordem']),
+    responsavel:String(r['responsavel']||'')
   }));
-  const usuarios = _readStaging(ss, 'USUARIOS').map(r=>({email:String(r['email']||''),nome:String(r['nome']||''),role:String(r['role']||'user'),ativo:r['ativo']!==false}));
+  const usuarios = _readStaging(ss, 'USUARIOS').map(r=>({
+    email:String(r['email']||''), nome:String(r['nome']||''),
+    role:String(r['role']||'user'), ativo:r['ativo']!==false,
+    buPadrao:String(r['bu_padrao']||''),
+    busPermitidas:String(r['bus_permitidas']||'').split(',').map(s=>s.trim()).filter(Boolean)
+  }));
+  const bus = _readStaging(ss, 'BUS').map(_parseBu).sort((a,b)=>(a.ordem||0)-(b.ordem||0));
   const nextEtapaId = parseInt(getConfig('next_etapa_id') || '1000');
   log_('INFO', 'Load: ' + lanes.length + 'L / ' + projetos.length + 'P / ' + evolucoes.length + 'E / ' + etapas.length + 'Et');
-  return { lanes, projetos, evolucoes, etapas, usuarios, nextProjId, nextLaneId, nextEtapaId };
+  return { bus, lanes, projetos, evolucoes, etapas, usuarios, nextProjId, nextLaneId, nextEtapaId };
 }
 // ── FIM BLOCO ──
 
@@ -326,6 +344,24 @@ function _protegerAba(ss, nomeAba) {
 // ── FIM BLOCO ──
 
 // ═══ BLOCO: HELPERS VISUAIS ═══
+// Adiciona ao final da aba qualquer coluna do SCHEMA que ainda não exista.
+// Idempotente: roda a cada load sem duplicar nem mexer nos dados.
+function _migrarColunas(ss) {
+  Object.keys(SCHEMA).forEach(function(entidade) {
+    ['RAW_', 'STAGING_'].forEach(function(prefixo) {
+      const aba = ss.getSheetByName(prefixo + entidade);
+      if (!aba) return;
+      const lastCol = aba.getLastColumn();
+      if (!lastCol) return;
+      const headers = aba.getRange(1, 1, 1, lastCol).getValues()[0].map(String);
+      const faltando = SCHEMA[entidade].filter(function(c) { return headers.indexOf(c) < 0; });
+      if (!faltando.length) return;
+      aba.getRange(1, lastCol + 1, 1, faltando.length).setValues([faltando]);
+      log_('INFO', 'Migração: ' + prefixo + entidade + ' +[' + faltando.join(', ') + ']');
+    });
+  });
+}
+
 function _aplicarHeader(aba, colunas) {
   const r = aba.getRange(1, 1, 1, colunas.length);
   r.setValues([colunas]);
@@ -412,10 +448,20 @@ function _parseLane(row) {
   };
 }
 
+function _parseBu(row) {
+  return {
+    id:    String(row['id'] || ''),
+    nome:  String(row['nome'] || ''),
+    cor:   String(row['cor'] || '#4F7CFF'),
+    ordem: _toInt(row['ordem']),
+  };
+}
+
 function _parseProj(row) {
   return {
     id:      _toInt(row['id']),
     laneId:  _toInt(row['lane_id']),
+    buId:    String(row['bu_id'] || ''),
     nome:    String(row['nome'] || ''),
     status:  String(row['status'] || 'Em planejamento'),
     inicio:  _toDateStr(row['inicio']),
@@ -560,9 +606,64 @@ function handleDeleteEtapa(payload) {
   return { ok: true };
 }
 
+// ═══ BLOCO: BUS (Business Units) ═══
+function handleUpsertBu(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const data = { id: payload.id, nome: payload.nome||'', cor: payload.cor||'#4F7CFF', ordem: payload.ordem||0 };
+  appendRaw('BUS', data, 'gantt');
+  upsertStaging(ss, 'BUS', data, 'id');
+  log_('INFO', 'Upsert BU: ' + data.id + ' (' + data.nome + ')');
+  return { ok: true };
+}
+
+function handleDeleteBu(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  _deleteFromStaging(ss, 'BUS', 'id', [payload.id]);
+  // Projetos da BU removida voltam para "sem BU" — nunca são apagados.
+  const projs = _readStaging(ss, 'PROJETOS');
+  projs.forEach(function(r) {
+    if (String(r['bu_id']) === String(payload.id)) {
+      r['bu_id'] = '';
+      upsertStaging(ss, 'PROJETOS', r, 'id');
+    }
+  });
+  log_('WARN', 'Delete BU: ' + payload.id + ' — projetos desvinculados');
+  return { ok: true };
+}
+
+// Preferência do usuário (BU padrão + BUs permitidas) — persiste por perfil
+function handleSetPref(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const email = String(payload.email || '').toLowerCase();
+  if (!email) return { ok: false, error: 'email obrigatório' };
+  const atual = _findInStaging(ss, 'USUARIOS', 'email', email);
+  const data = {
+    email: email,
+    nome: payload.nome !== undefined ? payload.nome : (atual ? atual['nome'] : ''),
+    role: payload.role !== undefined ? payload.role : (atual ? atual['role'] : 'user'),
+    ativo: atual ? atual['ativo'] !== false : true,
+    criado_em: atual && atual['criado_em'] ? atual['criado_em'] : new Date().toISOString(),
+    bu_padrao: payload.buPadrao !== undefined ? payload.buPadrao : (atual ? atual['bu_padrao'] : ''),
+    bus_permitidas: payload.busPermitidas !== undefined
+      ? (Array.isArray(payload.busPermitidas) ? payload.busPermitidas.join(',') : payload.busPermitidas)
+      : (atual ? atual['bus_permitidas'] : '')
+  };
+  upsertStaging(ss, 'USUARIOS', data, 'email');
+  log_('INFO', 'Pref usuario ' + email + ' → bu_padrao=' + data.bu_padrao);
+  return { ok: true };
+}
+// ── FIM BLOCO ──
+
 function handleUpsertUsuario(payload) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const data = { email: payload.email, nome: payload.nome||'', role: payload.role||'user', ativo: true, criado_em: new Date().toISOString() };
+  const _ant = _findInStaging(ss, 'USUARIOS', 'email', payload.email);
+  const data = {
+    email: payload.email, nome: payload.nome||'', role: payload.role||'user',
+    ativo: true, criado_em: new Date().toISOString(),
+    // Preserva preferências já existentes — upsert de usuário não pode zerar BU
+    bu_padrao: _ant ? (_ant['bu_padrao']||'') : '',
+    bus_permitidas: _ant ? (_ant['bus_permitidas']||'') : ''
+  };
   appendRaw('USUARIOS', data, 'gantt');
   upsertStaging(ss, 'USUARIOS', data, 'email');
   log_('INFO', 'Upsert usuario: ' + payload.email + ' (' + payload.role + ')');

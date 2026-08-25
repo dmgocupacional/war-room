@@ -1222,6 +1222,224 @@ h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-fam
 .nav-users-btn.admin-only{display:none;}
 body.is-admin .nav-users-btn.admin-only{display:flex;}
 .hidden{display:none!important;}
+
+/* ═══ BU SWITCH ═══ */
+.bu-switch{
+  display:flex;align-items:center;gap:2px;padding:3px;
+  background:var(--bg3);border:1px solid var(--border2);border-radius:10px;
+  margin-right:10px;position:relative;
+}
+.bu-tab{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 11px;border:none;background:transparent;cursor:pointer;
+  font-family:inherit;font-size:0.72rem;font-weight:600;letter-spacing:-0.01em;
+  color:var(--text3);border-radius:7px;
+  transition:color .18s ease,background .18s ease;white-space:nowrap;
+}
+.bu-tab:hover{color:var(--text2);}
+.bu-tab.active{
+  color:var(--bu-c,var(--accent));
+  background:color-mix(in srgb,var(--bu-c,var(--accent)) 16%,transparent);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--bu-c,var(--accent)) 40%,transparent);
+}
+.bu-tab-dot{
+  width:7px;height:7px;border-radius:50%;flex-shrink:0;
+  background:var(--bu-c,var(--text4));
+  transition:box-shadow .18s ease;
+}
+.bu-tab.active .bu-tab-dot{box-shadow:0 0 8px var(--bu-c,var(--accent));}
+.bu-tab-count{
+  font-family:var(--mono);font-size:0.62rem;opacity:0.75;
+}
+.bu-manage-btn{
+  padding:5px 8px;border:none;background:transparent;cursor:pointer;
+  color:var(--text4);font-size:0.78rem;border-radius:7px;
+  transition:color .18s ease,background .18s ease;display:none;
+}
+body.is-admin .bu-manage-btn{display:block;}
+.bu-manage-btn:hover{color:var(--text);background:var(--bg4);}
+
+/* Linha de BU dentro do label do projeto */
+.row-bu-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--mono);font-size:0.58rem;font-weight:600;
+  padding:1px 5px;border-radius:4px;letter-spacing:0.02em;
+  background:color-mix(in srgb,var(--rbu-c,var(--text4)) 18%,transparent);
+  color:var(--rbu-c,var(--text3));
+  border:1px solid color-mix(in srgb,var(--rbu-c,var(--text4)) 32%,transparent);
+}
+
+/* ═══ MODAL DE BUs ═══ */
+.bu-row{
+  display:flex;align-items:center;gap:8px;padding:8px;
+  background:var(--bg3);border:1px solid var(--border2);border-radius:9px;margin-bottom:7px;
+}
+.bu-row-dot{
+  width:15px;height:15px;border-radius:5px;cursor:pointer;flex-shrink:0;
+  border:1px solid rgba(255,255,255,0.18);
+}
+.bu-row-id{
+  font-family:var(--mono);font-size:0.62rem;color:var(--text4);
+  padding:2px 6px;background:var(--bg4);border-radius:4px;flex-shrink:0;
+}
+.bu-row-del{
+  border:none;background:transparent;color:var(--text4);cursor:pointer;
+  font-size:0.9rem;padding:2px 6px;border-radius:5px;flex-shrink:0;
+}
+.bu-row-del:hover{color:var(--red-l);background:color-mix(in srgb,var(--red-l) 14%,transparent);}
+.bu-perm-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px;}
+.bu-perm-user{margin-bottom:10px;}
+.bu-perm-nome{font-size:0.7rem;font-weight:700;color:var(--text2);}
+.bu-row-nome{flex:1;}
+input.bu-row-dot{padding:0;border:none;background:none;}
+.bu-perm-chip{
+  display:inline-flex;align-items:center;gap:5px;padding:3px 9px;
+  border-radius:20px;cursor:pointer;font-size:0.68rem;font-weight:600;
+  border:1px solid var(--border2);background:var(--bg3);color:var(--text3);
+  transition:all .16s ease;
+}
+.bu-perm-chip.on{
+  border-color:var(--bpc,var(--accent));color:var(--bpc,var(--accent));
+  background:color-mix(in srgb,var(--bpc,var(--accent)) 14%,transparent);
+}
+
+/* ═══ PAINEL DE INTELIGÊNCIA ═══ */
+.intel-section{
+  margin-bottom:16px;border:1px solid var(--border2);border-radius:14px;
+  background:var(--bg2);overflow:hidden;position:relative;
+}
+.intel-section::before{
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:0.5;
+  background:radial-gradient(700px 180px at 12% 0%,color-mix(in srgb,var(--accent) 9%,transparent),transparent 70%);
+}
+.intel-header{
+  display:flex;align-items:center;gap:9px;padding:12px 16px;cursor:pointer;
+  position:relative;z-index:1;
+}
+.intel-header-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 10px var(--accent);animation:intelPulse 2.6s ease-in-out infinite;
+}
+@keyframes intelPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.45;transform:scale(0.8)}}
+.intel-header-label{font-size:0.78rem;font-weight:800;letter-spacing:-0.01em;}
+.intel-header-sub{
+  font-family:var(--mono);font-size:0.63rem;color:var(--text4);
+}
+.intel-header-spacer{flex:1;}
+.intel-header-toggle{color:var(--text4);font-size:0.72rem;transition:transform .25s ease;}
+.intel-section.collapsed .intel-header-toggle{transform:rotate(-90deg);}
+.intel-body{
+  max-height:2400px;overflow:hidden;transition:max-height .38s cubic-bezier(.4,0,.2,1);
+  position:relative;z-index:1;
+}
+.intel-section.collapsed .intel-body{max-height:0;}
+.intel-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:11px;padding:0 16px 16px;
+}
+.intel-card{
+  background:var(--bg3);border:1px solid var(--border2);border-radius:11px;
+  padding:12px 13px;position:relative;overflow:hidden;
+}
+.intel-card-title{
+  font-size:0.63rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.07em;color:var(--text4);margin-bottom:9px;
+}
+.intel-empty{
+  font-size:0.7rem;color:var(--text4);font-style:italic;padding:6px 0;
+}
+
+/* Linha de ranking (velocidade / zumbi / risco) */
+.intel-item{
+  display:flex;align-items:center;gap:8px;padding:5px 0;
+  border-bottom:1px solid var(--border);cursor:pointer;
+}
+.intel-item:last-child{border-bottom:none;}
+.intel-item:hover .intel-item-nome{color:var(--accent);}
+.intel-item-nome{
+  flex:1;font-size:0.71rem;font-weight:600;color:var(--text2);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  transition:color .16s ease;
+}
+.intel-item-val{
+  font-family:var(--mono);font-size:0.7rem;font-weight:700;flex-shrink:0;
+}
+.intel-item-val.pos{color:var(--green-l);}
+.intel-item-val.neg{color:var(--red-l);}
+.intel-item-val.neutro{color:var(--text3);}
+
+/* Barra de health score */
+.intel-health-track{
+  width:52px;height:5px;border-radius:3px;background:var(--bg5);
+  overflow:hidden;flex-shrink:0;
+}
+.intel-health-fill{
+  height:100%;border-radius:3px;width:0;
+  transition:width .7s cubic-bezier(.4,0,.2,1);
+}
+
+/* Heatmap BU × Frente */
+.intel-heat-wrap{overflow-x:auto;}
+.intel-heat{border-collapse:separate;border-spacing:3px;width:100%;}
+.intel-heat th{
+  font-size:0.58rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.05em;color:var(--text4);padding:3px 5px;text-align:left;
+  white-space:nowrap;
+}
+.intel-heat th.rot{text-align:center;}
+.intel-heat td.lbl{
+  font-size:0.65rem;font-weight:600;color:var(--text3);
+  padding-right:6px;white-space:nowrap;max-width:110px;
+  overflow:hidden;text-overflow:ellipsis;
+}
+.heat-cell{
+  width:38px;height:30px;border-radius:6px;text-align:center;
+  font-family:var(--mono);font-size:0.66rem;font-weight:700;
+  cursor:pointer;transition:transform .16s ease,box-shadow .16s ease;
+  border:1px solid var(--border2);
+}
+.heat-cell:hover{transform:scale(1.09);box-shadow:0 3px 12px rgba(0,0,0,0.3);}
+.heat-cell.vazio{color:var(--text5,var(--text4));opacity:0.32;}
+
+/* Projeção vs prazo — barra dupla */
+.intel-proj-row{padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.intel-proj-row:last-child{border-bottom:none;}
+.intel-proj-head{display:flex;align-items:center;gap:7px;margin-bottom:4px;}
+.intel-proj-nome{
+  flex:1;font-size:0.7rem;font-weight:600;color:var(--text2);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.intel-proj-verdict{
+  font-family:var(--mono);font-size:0.62rem;font-weight:700;
+  padding:1px 6px;border-radius:4px;flex-shrink:0;
+}
+.intel-proj-verdict.ok{color:var(--green-l);background:color-mix(in srgb,var(--green-l) 15%,transparent);}
+.intel-proj-verdict.risco{color:var(--amber);background:color-mix(in srgb,var(--amber) 15%,transparent);}
+.intel-proj-verdict.estouro{color:var(--red-l);background:color-mix(in srgb,var(--red-l) 15%,transparent);}
+.intel-proj-track{
+  height:6px;border-radius:4px;background:var(--bg5);position:relative;overflow:hidden;
+}
+.intel-proj-real{
+  position:absolute;left:0;top:0;bottom:0;border-radius:4px;width:0;
+  transition:width .8s cubic-bezier(.4,0,.2,1);
+}
+.intel-proj-marker{
+  position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--text2);
+  border-radius:1px;opacity:0.75;
+}
+.intel-proj-meta{
+  display:flex;gap:9px;margin-top:3px;
+  font-family:var(--mono);font-size:0.58rem;color:var(--text4);
+}
+
+/* Responsável na etapa */
+.etapa-resp{
+  display:inline-flex;align-items:center;gap:3px;
+  font-family:var(--mono);font-size:0.6rem;
+  color:var(--text3);background:var(--bg4);
+  padding:1px 5px;border-radius:4px;
+}
+
 </style>
 </head>
 <body>
@@ -1233,6 +1451,7 @@ body.is-admin .nav-users-btn.admin-only{display:flex;}
     <div><div class="nav-title">War Room</div><div class="nav-sub">Henrique Paludo · DIMEG</div></div>
   </div>
   <div class="nav-spacer"></div>
+  <div class="bu-switch" id="bu-switch"></div>
   <button class="btn-search-nav" onclick="openSearch()" id="btn-search">
     <span>🔍</span><span>Buscar projeto...</span>
     <span class="btn-search-kbd">⌘K</span>
@@ -1259,6 +1478,31 @@ body.is-admin .nav-users-btn.admin-only{display:flex;}
   </div>
 </div>
 
+<!-- ═══ MODAL BUs ═══ -->
+<div class="modal-overlay" id="bu-overlay" onclick="closeBuModalBg(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">Business Units</div>
+      <button class="modal-close" onclick="closeBuModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="bu-list"></div>
+      <div class="etapa-add-row" style="margin-top:10px">
+        <input class="finput" id="nova-bu-nome" placeholder="Nome da BU..." style="flex:1">
+        <input class="finput" id="nova-bu-cor" type="color" value="#3EEE92" style="width:52px;padding:2px">
+        <button class="etapa-add-btn" onclick="addBu()">+ Adicionar</button>
+      </div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border2)">
+        <div class="intel-card-title">Acesso por perfil</div>
+        <div id="bu-perms"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-save" onclick="closeBuModal()">✓ Fechar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ MAIN ═══ -->
 <div class="main" id="main">
   <!-- KPI STRIP -->
@@ -1271,6 +1515,20 @@ body.is-admin .nav-users-btn.admin-only{display:flex;}
       Próximas entregas
     </div>
     <div class="upcoming-list" id="upcoming-list"></div>
+  </div>
+
+  <!-- INTELIGÊNCIA -->
+  <div class="intel-section collapsed" id="intel-section">
+    <div class="intel-header" onclick="toggleIntel()">
+      <div class="intel-header-dot"></div>
+      <span class="intel-header-label">◈ Inteligência</span>
+      <span class="intel-header-sub" id="intel-sub"></span>
+      <div class="intel-header-spacer"></div>
+      <span class="intel-header-toggle">▾</span>
+    </div>
+    <div class="intel-body">
+      <div class="intel-grid" id="intel-grid"></div>
+    </div>
   </div>
 
   <!-- AUTOMAÇÕES -->
@@ -1508,6 +1766,10 @@ body.is-admin .nav-users-btn.admin-only{display:flex;}
           <select class="fselect" id="f-lane"></select>
         </div>
         <div class="form-group">
+          <label class="flabel">BU *</label>
+          <select class="fselect" id="f-bu"></select>
+        </div>
+        <div class="form-group">
           <label class="flabel">Status</label>
           <select class="fselect" id="f-status">
             <option>Em andamento</option><option>Em planejamento</option>
@@ -1537,6 +1799,7 @@ body.is-admin .nav-users-btn.admin-only{display:flex;}
         <div class="etapa-add-row">
           <input class="finput" id="nova-etapa-nome" placeholder="Nome da etapa..." style="flex:1">
           <input class="finput etapa-ed-peso" id="nova-etapa-peso" type="number" min="1" max="100" placeholder="%" style="width:60px">
+          <input class="finput" id="nova-etapa-resp" placeholder="Responsável" style="width:120px">
           <select class="fselect etapa-ed-auto" id="nova-etapa-auto" style="width:130px">
             <option value="">Sem automação</option>
             <option value="digest">📧 Digest</option>
@@ -1586,11 +1849,28 @@ function setRBACClass(){
   document.body.classList.toggle('is-admin', isAdmin());
 }
 
-// Projetos visíveis para o usuário atual
+// Projetos visíveis por RBAC de owner — SEM o filtro de BU.
+// Usado pelo switch de BU para contar quantos existem em cada uma.
+function projetosVisiveisSemBU(){
+  let base;
+  if(isAdmin()){ base = state.projetos; }
+  else {
+    const email = (state.currentUser?.email||'').toLowerCase();
+    base = state.projetos.filter(p=>!p.owner || p.owner.toLowerCase()===email);
+  }
+  // Usuário não-admin só enxerga projetos das BUs que lhe foram atribuídas
+  if(!isAdmin()){
+    const permitidas = busPermitidas().map(b=>b.id);
+    base = base.filter(p=>!p.buId || permitidas.includes(p.buId));
+  }
+  return base;
+}
+
+// Projetos visíveis para o usuário atual, já com o filtro de BU aplicado
 function projetosVisiveis(){
-  if(isAdmin()) return state.projetos;
-  const email = (state.currentUser?.email||'').toLowerCase();
-  return state.projetos.filter(p=>!p.owner || p.owner.toLowerCase()===email);
+  const base = projetosVisiveisSemBU();
+  if(!state.filtroBU) return base;
+  return base.filter(p=>p.buId===state.filtroBU);
 }
 
 // ═══ BLOCO: USUÁRIOS ═══
@@ -1703,10 +1983,105 @@ let state = {
   collapsedLanes:[],
   etapas:[], nextEtapaId:1000,
   usuarios:[], currentUser:null,
+  bus:[], filtroBU:null,
+  intelCollapsed:true,
 };
 
+// ═══ BLOCO: BUS (Business Units) ═══
+// BUs padrão da DIMEG. São dado editável — isto é só o ponto de partida.
+const SEED_BUS = [
+  {id:'dimplus',     nome:'DIM+ Saúde',      cor:'#3EEE92', ordem:0},
+  {id:'dmg',         nome:'DMG Ocupacional', cor:'#4F7CFF', ordem:1},
+  {id:'transversal', nome:'Transversal',     cor:'#8B5CF6', ordem:2},
+];
+
+// Classificação heurística por nome — usada UMA vez, na migração dos
+// projetos legados que nasceram sem bu_id. Nunca sobrescreve valor existente.
+function inferirBu(nome){
+  const n = (nome||'').toLowerCase();
+  if(/dim\+|dimplus|dim mais|asaas|inadimpl|cart[ãa]o/.test(n)) return 'dimplus';
+  if(/dmg|ocupacional|sst|esocial|pcmso|sgg|nr-?1/.test(n))      return 'dmg';
+  return 'transversal';
+}
+
+function migrarBusLegado(){
+  let mudou = 0;
+  state.projetos.forEach(p=>{
+    if(!p.buId){ p.buId = inferirBu(p.nome); mudou++; }
+  });
+  if(mudou){
+    persistLocal();
+    // Sobe as classificações para o Sheets sem bloquear o render
+    state.projetos.forEach(p=>persist('proj', p));
+  }
+  return mudou;
+}
+
+function getBu(id){ return state.bus.find(b=>b.id===id) || null; }
+function corBu(id){ const b=getBu(id); return b?b.cor:'var(--text4)'; }
+function nomeBu(id){ const b=getBu(id); return b?b.nome:'—'; }
+
+// BUs que o usuário atual pode ver. Admin vê todas.
+function busPermitidas(){
+  if(isAdmin()) return state.bus;
+  const u = state.currentUser;
+  const lista = u && u.busPermitidas && u.busPermitidas.length ? u.busPermitidas : null;
+  if(!lista) return state.bus;
+  return state.bus.filter(b=>lista.includes(b.id));
+}
+
+// ─ Toggle na navbar ─
+function renderBuSwitch(){
+  const el = document.getElementById('bu-switch');
+  if(!el) return;
+  const visiveis = busPermitidas();
+  const _vp = projetosVisiveisSemBU();
+  const total = _vp.length;
+  let html = `<button class="bu-tab ${!state.filtroBU?'active':''}" onclick="setBU(null)">
+    <span class="bu-tab-dot"></span>Tudo<span class="bu-tab-count">${total}</span>
+  </button>`;
+  html += visiveis.map(b=>{
+    const n = _vp.filter(p=>p.buId===b.id).length;
+    return `<button class="bu-tab ${state.filtroBU===b.id?'active':''}" style="--bu-c:${b.cor}" onclick="setBU('${b.id}')">
+      <span class="bu-tab-dot"></span>${escHtml(b.nome)}<span class="bu-tab-count">${n}</span>
+    </button>`;
+  }).join('');
+  html += `<button class="bu-manage-btn" onclick="openBuModal()" title="Gerenciar BUs">⚙</button>`;
+  el.innerHTML = html;
+}
+
+// Troca de BU — persiste como preferência do perfil logado
+function setBU(buId){
+  state.filtroBU = buId;
+  savePrefBU();
+  renderAll();
+}
+
+function savePrefBU(){
+  const u = state.currentUser;
+  if(!u) return;
+  u.buPadrao = state.filtroBU || '';
+  // cache local imediato (funciona offline e entre reloads)
+  localStorage.setItem('wr_bu_'+(u.email||u.nome||'anon').toLowerCase(), u.buPadrao);
+  persistLocal();
+  // fonte de verdade: Sheets, por e-mail
+  if(u.email) persist('pref', u);
+}
+
+// Restaura a BU do perfil: Sheets primeiro, localStorage como fallback
+function restaurarPrefBU(){
+  const u = state.currentUser;
+  if(!u) return;
+  const key = 'wr_bu_'+(u.email||u.nome||'anon').toLowerCase();
+  const doSheets = u.buPadrao || '';
+  const doLocal  = localStorage.getItem(key) || '';
+  const escolha  = doSheets || doLocal || '';
+  state.filtroBU = escolha && state.bus.some(b=>b.id===escolha) ? escolha : null;
+}
+// ── FIM BLOCO ──
+
 // ═══ BLOCO: SEED ═══
-function getSeed(){return{lanes:[{id:1,nome:'Tecnologia',cor:'#4F7CFF'},{id:2,nome:'Comercial',cor:'#F97316'},{id:3,nome:'Marketing',cor:'#10B981'},{id:4,nome:'Produto DIM+',cor:'#8B5CF6'},{id:5,nome:'Parcerias',cor:'#EF4444'}],projetos:[{id:1,laneId:1,nome:'DMG ERP — CRM + Scaffold',status:'Concluído',inicio:'2026-01-01',fim:'2026-03-31',pct:100,detalhe:'Kanban drag-and-drop, auth, scaffold inicial Next.js 16 + Supabase'},{id:2,laneId:1,nome:'DMG ERP — IA + Gmail + Cadências',status:'Concluído',inicio:'2026-03-01',fim:'2026-05-31',pct:100,detalhe:'Gmail Service Account, Resend, cadências, qualificação IA, enriquecimento BrasilAPI'},{id:3,laneId:1,nome:'DMG ERP — Gantt + Usuários + Minha Conta',status:'Concluído',inicio:'2026-05-01',fim:'2026-06-12',pct:100,detalhe:'v0.21.0 — Gantt swimlanes, gestão de usuários, reset senha admin, sidebar clicável'},{id:4,laneId:1,nome:'DMG ERP — Sprint SGG + Financeiro',status:'Em planejamento',inicio:'2026-06-12',fim:'2026-12-31',pct:5,detalhe:'Migrations sgg_empresas, cron sync, contas a receber, DRE via SGG API'},{id:5,laneId:1,nome:'ERP DIM+ — Scaffold + Asaas + ClienteModal',status:'Concluído',inicio:'2026-03-01',fim:'2026-05-31',pct:100,detalhe:'Asaas webhooks, planos CRUD, ClienteModal timeline, PIX/boleto, cron sync'},{id:6,laneId:1,nome:'ERP DIM+ — Inadimplência + Whatende + Realtime',status:'Concluído',inicio:'2026-05-01',fim:'2026-06-10',pct:100,detalhe:'Kanban inadimplência, WhatsApp inbox Whatende, Realtime Supabase, produtividade'},{id:7,laneId:1,nome:'ERP DIM+ — Cobranças + Ciclo + Webhook',status:'Em andamento',inicio:'2026-06-01',fim:'2026-06-30',pct:90,detalhe:'v0.27.0 — ciclo reincidente, atribuição conversão, auto-tratativa, REPLICA IDENTITY FULL'},{id:8,laneId:1,nome:'App DIM+ 2.0',status:'Em planejamento',inicio:'2026-06-12',fim:'',pct:0,detalhe:'App mobile/PWA DIM+ Saúde — a definir stack e escopo'},{id:9,laneId:1,nome:'App DMG Ocupacional',status:'Em planejamento',inicio:'2026-06-12',fim:'',pct:0,detalhe:'App mobile/PWA DMG — a definir stack e escopo'},{id:10,laneId:2,nome:'Playbook Bíblia Comercial DMG',status:'Concluído',inicio:'2026-03-01',fim:'2026-05-22',pct:100,detalhe:'HTML single-file 120KB, 26 módulos SST + vendas consultivas, SPIN/Challenger/VERRE'},{id:11,laneId:2,nome:'Proposal Generator v3.0',status:'Concluído',inicio:'2026-02-01',fim:'2026-03-31',pct:100,detalhe:'Dual pricing COM/SEM mensalidade, radar chart, save/load state, PDF export'},{id:12,laneId:2,nome:'Contract Generator HTML',status:'Concluído',inicio:'2026-04-01',fim:'2026-04-30',pct:100,detalhe:'Gerador inline editável, localStorage, PDF export, import via Claude API'},{id:13,laneId:2,nome:'Playbook DIM+ Saúde',status:'Concluído',inicio:'2026-01-01',fim:'2026-02-28',pct:100,detalhe:'Playbook completo B2C — metodologias, scripts, funil interativo, calculadora'},{id:14,laneId:2,nome:'Kit Boas-Vindas DIM+',status:'Concluído',inicio:'2026-04-01',fim:'2026-05-15',pct:100,detalhe:'Onboarding 90 dias consultores, journey map, missões mensais, rituais, certificação'},{id:15,laneId:2,nome:'SINDIHCLOR / Sueessor deck (40k vidas)',status:'Em andamento',inicio:'2026-04-01',fim:'2026-07-31',pct:60,detalhe:'Pitch deck premium HTML para 40.000 vidas a R$45,90/vida — parceria estratégica'},{id:16,laneId:3,nome:'Keyword Research + GEO NR-1',status:'Concluído',inicio:'2026-03-01',fim:'2026-04-30',pct:100,detalhe:'Pesquisa psicossocial/NR-1, cluster semântico, GEO para LLMs, Google Ads + SEO'},{id:17,laneId:3,nome:'Market Intelligence DIM+ (11 slides)',status:'Concluído',inicio:'2026-04-01',fim:'2026-04-30',pct:100,detalhe:'Deck HTML premium — epidemiologia, benchmarking Cartão de TODOS / Dr. Consulta'},{id:18,laneId:3,nome:'Plano Expansão DMG 2026',status:'Em andamento',inicio:'2026-03-01',fim:'2026-12-31',pct:40,detalhe:'12→15→20 empresas/mês. PaP, tráfego pago, GEO, funil estruturado'},{id:19,laneId:4,nome:'Forecast Dashboard DIM+ (6 tabs)',status:'Concluído',inicio:'2026-01-01',fim:'2026-02-28',pct:100,detalhe:'Chart.js, MRR R$200k meta Jan/27, Cloudflare Worker proxy Asaas, GitHub Pages'},{id:20,laneId:4,nome:'Onboarding Consultores 90 dias',status:'Concluído',inicio:'2026-03-01',fim:'2026-04-27',pct:100,detalhe:'HTML multi-tab, jornada 3 meses, missões semanais, rituais, certificação'},{id:21,laneId:4,nome:'Treinamento Rotina vs Monotonia',status:'Concluído',inicio:'2026-05-01',fim:'2026-05-31',pct:100,detalhe:'Módulo deep-dive com papers acadêmicos, Gong/Outreach data, aplicação DIM+'},{id:22,laneId:5,nome:'Roadmap Gov Digital — Nívia/Valid',status:'Concluído',inicio:'2026-04-01',fim:'2026-05-15',pct:100,detalhe:'Gantt premium HTML, 30 iniciativas, 4 times, drag-resize, modal completo'},{id:23,laneId:5,nome:'Dashboard Dados Donos DMG',status:'Concluído',inicio:'2026-04-15',fim:'2026-04-30',pct:100,detalhe:'Visualização de dados operacionais para os sócios da DMG'}],evolucoes:[{id:1,projId:7,data:'2026-06-01',pct:60,nota:'Ciclo reincidente implementado'},{id:2,projId:7,data:'2026-06-08',pct:80,nota:'Auto-tratativa Whatende e realtime'},{id:3,projId:7,data:'2026-06-12',pct:90,nota:'v0.27.0 entregue — aguarda webhook Asaas'},{id:4,projId:15,data:'2026-04-15',pct:30,nota:'Estrutura e primeiros slides'},{id:5,projId:15,data:'2026-05-10',pct:50,nota:'Deck SINDIHCLOR v1 entregue'},{id:6,projId:15,data:'2026-06-01',pct:60,nota:'Revisão estratégica e novos dados'},{id:7,projId:18,data:'2026-04-01',pct:20,nota:'Plano estruturado e aprovado'},{id:8,projId:18,data:'2026-05-15',pct:35,nota:'PaP Itapevi rodando'},{id:9,projId:18,data:'2026-06-01',pct:40,nota:'Tráfego pago ativo'},{id:10,projId:4,data:'2026-06-12',pct:5,nota:'Sprint planejada — aguarda início'}],nextProjId:24,nextLaneId:6};}
+function getSeed(){return{bus:SEED_BUS.map(b=>({...b})),lanes:[{id:1,nome:'Tecnologia',cor:'#4F7CFF'},{id:2,nome:'Comercial',cor:'#F97316'},{id:3,nome:'Marketing',cor:'#10B981'},{id:4,nome:'Produto DIM+',cor:'#8B5CF6'},{id:5,nome:'Parcerias',cor:'#EF4444'}],projetos:[{id:1,laneId:1,nome:'DMG ERP — CRM + Scaffold',status:'Concluído',inicio:'2026-01-01',fim:'2026-03-31',pct:100,detalhe:'Kanban drag-and-drop, auth, scaffold inicial Next.js 16 + Supabase'},{id:2,laneId:1,nome:'DMG ERP — IA + Gmail + Cadências',status:'Concluído',inicio:'2026-03-01',fim:'2026-05-31',pct:100,detalhe:'Gmail Service Account, Resend, cadências, qualificação IA, enriquecimento BrasilAPI'},{id:3,laneId:1,nome:'DMG ERP — Gantt + Usuários + Minha Conta',status:'Concluído',inicio:'2026-05-01',fim:'2026-06-12',pct:100,detalhe:'v0.21.0 — Gantt swimlanes, gestão de usuários, reset senha admin, sidebar clicável'},{id:4,laneId:1,nome:'DMG ERP — Sprint SGG + Financeiro',status:'Em planejamento',inicio:'2026-06-12',fim:'2026-12-31',pct:5,detalhe:'Migrations sgg_empresas, cron sync, contas a receber, DRE via SGG API'},{id:5,laneId:1,nome:'ERP DIM+ — Scaffold + Asaas + ClienteModal',status:'Concluído',inicio:'2026-03-01',fim:'2026-05-31',pct:100,detalhe:'Asaas webhooks, planos CRUD, ClienteModal timeline, PIX/boleto, cron sync'},{id:6,laneId:1,nome:'ERP DIM+ — Inadimplência + Whatende + Realtime',status:'Concluído',inicio:'2026-05-01',fim:'2026-06-10',pct:100,detalhe:'Kanban inadimplência, WhatsApp inbox Whatende, Realtime Supabase, produtividade'},{id:7,laneId:1,nome:'ERP DIM+ — Cobranças + Ciclo + Webhook',status:'Em andamento',inicio:'2026-06-01',fim:'2026-06-30',pct:90,detalhe:'v0.27.0 — ciclo reincidente, atribuição conversão, auto-tratativa, REPLICA IDENTITY FULL'},{id:8,laneId:1,nome:'App DIM+ 2.0',status:'Em planejamento',inicio:'2026-06-12',fim:'',pct:0,detalhe:'App mobile/PWA DIM+ Saúde — a definir stack e escopo'},{id:9,laneId:1,nome:'App DMG Ocupacional',status:'Em planejamento',inicio:'2026-06-12',fim:'',pct:0,detalhe:'App mobile/PWA DMG — a definir stack e escopo'},{id:10,laneId:2,nome:'Playbook Bíblia Comercial DMG',status:'Concluído',inicio:'2026-03-01',fim:'2026-05-22',pct:100,detalhe:'HTML single-file 120KB, 26 módulos SST + vendas consultivas, SPIN/Challenger/VERRE'},{id:11,laneId:2,nome:'Proposal Generator v3.0',status:'Concluído',inicio:'2026-02-01',fim:'2026-03-31',pct:100,detalhe:'Dual pricing COM/SEM mensalidade, radar chart, save/load state, PDF export'},{id:12,laneId:2,nome:'Contract Generator HTML',status:'Concluído',inicio:'2026-04-01',fim:'2026-04-30',pct:100,detalhe:'Gerador inline editável, localStorage, PDF export, import via Claude API'},{id:13,laneId:2,nome:'Playbook DIM+ Saúde',status:'Concluído',inicio:'2026-01-01',fim:'2026-02-28',pct:100,detalhe:'Playbook completo B2C — metodologias, scripts, funil interativo, calculadora'},{id:14,laneId:2,nome:'Kit Boas-Vindas DIM+',status:'Concluído',inicio:'2026-04-01',fim:'2026-05-15',pct:100,detalhe:'Onboarding 90 dias consultores, journey map, missões mensais, rituais, certificação'},{id:15,laneId:2,nome:'SINDIHCLOR / Sueessor deck (40k vidas)',status:'Em andamento',inicio:'2026-04-01',fim:'2026-07-31',pct:60,detalhe:'Pitch deck premium HTML para 40.000 vidas a R$45,90/vida — parceria estratégica'},{id:16,laneId:3,nome:'Keyword Research + GEO NR-1',status:'Concluído',inicio:'2026-03-01',fim:'2026-04-30',pct:100,detalhe:'Pesquisa psicossocial/NR-1, cluster semântico, GEO para LLMs, Google Ads + SEO'},{id:17,laneId:3,nome:'Market Intelligence DIM+ (11 slides)',status:'Concluído',inicio:'2026-04-01',fim:'2026-04-30',pct:100,detalhe:'Deck HTML premium — epidemiologia, benchmarking Cartão de TODOS / Dr. Consulta'},{id:18,laneId:3,nome:'Plano Expansão DMG 2026',status:'Em andamento',inicio:'2026-03-01',fim:'2026-12-31',pct:40,detalhe:'12→15→20 empresas/mês. PaP, tráfego pago, GEO, funil estruturado'},{id:19,laneId:4,nome:'Forecast Dashboard DIM+ (6 tabs)',status:'Concluído',inicio:'2026-01-01',fim:'2026-02-28',pct:100,detalhe:'Chart.js, MRR R$200k meta Jan/27, Cloudflare Worker proxy Asaas, GitHub Pages'},{id:20,laneId:4,nome:'Onboarding Consultores 90 dias',status:'Concluído',inicio:'2026-03-01',fim:'2026-04-27',pct:100,detalhe:'HTML multi-tab, jornada 3 meses, missões semanais, rituais, certificação'},{id:21,laneId:4,nome:'Treinamento Rotina vs Monotonia',status:'Concluído',inicio:'2026-05-01',fim:'2026-05-31',pct:100,detalhe:'Módulo deep-dive com papers acadêmicos, Gong/Outreach data, aplicação DIM+'},{id:22,laneId:5,nome:'Roadmap Gov Digital — Nívia/Valid',status:'Concluído',inicio:'2026-04-01',fim:'2026-05-15',pct:100,detalhe:'Gantt premium HTML, 30 iniciativas, 4 times, drag-resize, modal completo'},{id:23,laneId:5,nome:'Dashboard Dados Donos DMG',status:'Concluído',inicio:'2026-04-15',fim:'2026-04-30',pct:100,detalhe:'Visualização de dados operacionais para os sócios da DMG'}],evolucoes:[{id:1,projId:7,data:'2026-06-01',pct:60,nota:'Ciclo reincidente implementado'},{id:2,projId:7,data:'2026-06-08',pct:80,nota:'Auto-tratativa Whatende e realtime'},{id:3,projId:7,data:'2026-06-12',pct:90,nota:'v0.27.0 entregue — aguarda webhook Asaas'},{id:4,projId:15,data:'2026-04-15',pct:30,nota:'Estrutura e primeiros slides'},{id:5,projId:15,data:'2026-05-10',pct:50,nota:'Deck SINDIHCLOR v1 entregue'},{id:6,projId:15,data:'2026-06-01',pct:60,nota:'Revisão estratégica e novos dados'},{id:7,projId:18,data:'2026-04-01',pct:20,nota:'Plano estruturado e aprovado'},{id:8,projId:18,data:'2026-05-15',pct:35,nota:'PaP Itapevi rodando'},{id:9,projId:18,data:'2026-06-01',pct:40,nota:'Tráfego pago ativo'},{id:10,projId:4,data:'2026-06-12',pct:5,nota:'Sprint planejada — aguarda início'}],nextProjId:24,nextLaneId:6};}
 
 // ═══ BLOCO: GOOGLE SHEETS BRIDGE ═══
 async function _gs(action,payload){
@@ -1728,6 +2103,16 @@ async function loadSheets(){
     if(d.nextLaneId)state.nextLaneId=d.nextLaneId;
     if(d.etapas)state.etapas=d.etapas;
     if(d.nextEtapaId)state.nextEtapaId=d.nextEtapaId;
+    if(d.bus&&d.bus.length)state.bus=d.bus;
+    if(d.usuarios)state.usuarios=d.usuarios;
+    // Sheets é fonte de verdade das preferências do perfil
+    if(state.currentUser&&d.usuarios){
+      const me=d.usuarios.find(u=>(u.email||'').toLowerCase()===(state.currentUser.email||'').toLowerCase());
+      if(me){state.currentUser.buPadrao=me.buPadrao||'';state.currentUser.busPermitidas=me.busPermitidas||[];}
+    }
+    if(!state.bus.length)state.bus=SEED_BUS.map(b=>({...b}));
+    migrarBusLegado();
+    restaurarPrefBU();
     setSyncState('online','Online · '+_agora());
     return true;
   }catch(e){setSyncState('offline','Offline');return false;}
@@ -1742,12 +2127,15 @@ async function persist(type,data){
       case 'lane':action='upsert_lane';payload={id:data.id,nome:data.nome,cor:data.cor,ordem:state.lanes.findIndex(l=>l.id===data.id)};break;
       case 'lane_order':action='save_all';payload={lanes:state.lanes.map((l,i)=>({...l,ordem:i}))};break;
       case 'del_lane':action='delete_lane';payload={id:data.id,projIds:state.projetos.filter(p=>p.laneId===data.id).map(p=>p.id)};break;
-      case 'proj':action='upsert_proj';payload={id:data.id,lane_id:data.laneId,nome:data.nome,status:data.status,inicio:data.inicio||'',fim:data.fim||'',pct:data.pct,detalhe:data.detalhe||''};break;
+      case 'proj':action='upsert_proj';payload={id:data.id,lane_id:data.laneId,bu_id:data.buId||'',nome:data.nome,status:data.status,inicio:data.inicio||'',fim:data.fim||'',pct:data.pct,detalhe:data.detalhe||'',owner:data.owner||''};break;
       case 'del_proj':action='delete_proj';payload={id:data.id};break;
       case 'evo':action='add_evolucao';payload={id:data.id,proj_id:data.projId,data:data.data,pct:data.pct,nota:data.nota||''};break;
       case 'meta':action='set_meta';payload={next_proj_id:state.nextProjId,next_lane_id:state.nextLaneId};break;
-      case 'etapa':action='upsert_etapa';payload={id:data.id,proj_id:data.projId,nome:data.nome,peso:data.peso,status:data.status,data_fim:data.dataFim||'',automacao_id:data.automacaoId||'',ordem:data.ordem||0};break;
+      case 'etapa':action='upsert_etapa';payload={id:data.id,proj_id:data.projId,nome:data.nome,peso:data.peso,status:data.status,data_fim:data.dataFim||'',automacao_id:data.automacaoId||'',ordem:data.ordem||0,responsavel:data.responsavel||''};break;
       case 'del_etapa':action='delete_etapa';payload={id:data.id};break;
+      case 'bu':action='upsert_bu';payload={id:data.id,nome:data.nome,cor:data.cor,ordem:state.bus.findIndex(b=>b.id===data.id)};break;
+      case 'del_bu':action='delete_bu';payload={id:data.id};break;
+      case 'pref':action='set_pref';payload={email:data.email,nome:data.nome||'',role:data.role||'user',buPadrao:data.buPadrao||'',busPermitidas:data.busPermitidas||[]};break;
       case 'meta_etapa':action='set_meta';payload={next_etapa_id:state.nextEtapaId};break;
       default:action='save_all';payload={lanes:state.lanes,projetos:state.projetos,evolucoes:state.evolucoes,etapas:state.etapas,nextProjId:state.nextProjId,nextLaneId:state.nextLaneId,nextEtapaId:state.nextEtapaId};
     }
@@ -1860,7 +2248,7 @@ function checkSetup(){
   } else {
     const cfg=JSON.parse(raw);
     applyConfig(cfg);
-    state.currentUser={nome:cfg.nome,email:cfg.email||'',role:cfg.role||( ADMIN_EMAILS.includes((cfg.email||'').toLowerCase())?'admin':'user')};
+    state.currentUser={nome:cfg.nome,email:cfg.email||'',role:cfg.role||( ADMIN_EMAILS.includes((cfg.email||'').toLowerCase())?'admin':'user'),buPadrao:'',busPermitidas:[]};
     setRBACClass();
     initUsuarios();
     const dataKey=_dataKey(cfg);
@@ -1870,8 +2258,13 @@ function checkSetup(){
     if(saved){
       const d=JSON.parse(saved);
       Object.assign(state,{lanes:d.lanes,projetos:d.projetos,evolucoes:d.evolucoes,etapas:d.etapas||[],
+        bus:(d.bus&&d.bus.length)?d.bus:[],
         nextProjId:d.nextProjId,nextLaneId:d.nextLaneId,nextEtapaId:d.nextEtapaId||1000});
     }
+    // BUs sempre existem — sem elas o switch não renderiza e o filtro fica órfão
+    if(!state.bus.length) state.bus=SEED_BUS.map(b=>({...b}));
+    migrarBusLegado();
+    restaurarPrefBU();
     // Restaura Sheets URL do usuário
     const sheetsUrl=localStorage.getItem('sheetsUrl_'+dataKey)||cfg.sheets||'';
     if(sheetsUrl){state.sheetsUrl=sheetsUrl;loadSheets().then(ok=>{if(ok)renderAll();});}
@@ -1881,6 +2274,7 @@ function persistLocal(){
   if(!state.dataKey)return;
   localStorage.setItem(state.dataKey,JSON.stringify({
     lanes:state.lanes,projetos:state.projetos,evolucoes:state.evolucoes,etapas:state.etapas,
+    bus:state.bus,
     nextProjId:state.nextProjId,nextLaneId:state.nextLaneId,nextEtapaId:state.nextEtapaId
   }));
 }
@@ -1907,7 +2301,7 @@ function calcKPIs(){
     if(!p.fim)return false;
     return new Date(p.fim)<hoje && p.pct<100;
   }).length;
-  const pctMedio=total?Math.round(state.projetos.reduce((s,p)=>s+p.pct,0)/total):0;
+  const pctMedio=total?Math.round(_vp.reduce((s,p)=>s+p.pct,0)/total):0;
   return{total,andamento,concluido,planejado,atrasado,pctMedio};
 }
 function renderKPIs(){
@@ -2024,6 +2418,9 @@ function renderPcEtapas(projId, color){
     const autoBadge = e.automacaoId
       ? `<span class="etapa-auto-badge" title="Automação: ${e.automacaoId}">⚡ ${e.automacaoId}</span>`
       : '';
+    const respBadge = e.responsavel
+      ? `<span class="etapa-resp" title="Responsável">👤 ${escHtml(e.responsavel)}</span>`
+      : '';
     return `<div class="etapa-item ${e.status}" style="--etapa-color:${color}">
       <button class="etapa-check" onclick="toggleEtapaStatus(${e.id})">${e.status==='concluido'?'✓':''}</button>
       <div class="etapa-info">
@@ -2031,6 +2428,7 @@ function renderPcEtapas(projId, color){
         <div class="etapa-meta">
           <span class="etapa-peso">${e.peso}%</span>
           ${prazoStr}
+          ${respBadge}
           ${autoBadge}
         </div>
       </div>
@@ -2175,13 +2573,15 @@ function addEtapaFromModal(){
   if(!nome) return;
   const peso = Math.max(1,Math.min(100,parseInt(document.getElementById('nova-etapa-peso').value)||20));
   const autoId = document.getElementById('nova-etapa-auto').value;
+  const resp = (document.getElementById('nova-etapa-resp')?.value||'').trim();
   const ets = state.etapas.filter(e=>e.projId===projId);
-  const nova={id:state.nextEtapaId++, projId, nome, peso, status:'pendente', dataFim:'', automacaoId:autoId, ordem:ets.length};
+  const nova={id:state.nextEtapaId++, projId, nome, peso, status:'pendente', dataFim:'', automacaoId:autoId, ordem:ets.length, responsavel:resp};
   state.etapas.push(nova);
   persist('etapa',nova);persist('meta_etapa');
   document.getElementById('nova-etapa-nome').value='';
   document.getElementById('nova-etapa-peso').value='';
   document.getElementById('nova-etapa-auto').value='';
+  const _r=document.getElementById('nova-etapa-resp'); if(_r)_r.value='';
   renderEtapasEditor();persistLocal();
 }
 
@@ -2189,6 +2589,7 @@ function updateEtapaNome(id,v){const e=state.etapas.find(x=>x.id===id);if(e&&v.t
 function updateEtapaPeso(id,v){const e=state.etapas.find(x=>x.id===id);if(e){e.peso=Math.max(1,Math.min(100,parseInt(v)||1));persist('etapa',e);renderEtapasEditor();persistLocal();}}
 function updateEtapaFim(id,v){const e=state.etapas.find(x=>x.id===id);if(e){e.dataFim=v||'';persist('etapa',e);persistLocal();}}
 function updateEtapaAuto(id,v){const e=state.etapas.find(x=>x.id===id);if(e){e.automacaoId=v;persist('etapa',e);persistLocal();}}
+function updateEtapaResp(id,v){const e=state.etapas.find(x=>x.id===id);if(e){e.responsavel=(v||'').trim();persist('etapa',e);persistLocal();}}
 
 // ─ Toast ─
 function showToast(msg, type='info'){
@@ -2827,10 +3228,10 @@ function renderGantt(){
     html+=`<button class="lane-btn del" onclick="confirmDelLane(${lane.id})">🗑</button>`;
     html+=`</div>`;
     // Lane subtitle (segunda linha com counts)
-    const _ativos=${projetos.filter(p=>p.status==='Em andamento').length};
-    const _conc=${projetos.filter(p=>p.status==='Concluído').length};
-    const _plan=${projetos.filter(p=>p.status==='Em planejamento').length};
-    const _atras=${projetos.filter(p=>isAtrasado(p)).length};
+    const _ativos=projetos.filter(p=>p.status==='Em andamento').length;
+    const _conc=projetos.filter(p=>p.status==='Concluído').length;
+    const _plan=projetos.filter(p=>p.status==='Em planejamento').length;
+    const _atras=projetos.filter(p=>isAtrasado(p)).length;
     html+=`<div class="lane-subtitle" style="--lc:${lc}">
       ${_ativos?`<span class="lst-chip" style="color:var(--green-l)">●${_ativos} ativo${_ativos!==1?'s':''}</span>`:''}
       ${_conc?`<span class="lst-chip" style="color:var(--text3)">✓${_conc} concluído${_conc!==1?'s':''}</span>`:''}
@@ -2858,6 +3259,10 @@ function renderGantt(){
       html+=`<div class="gantt-row-label" ondblclick="rowLabelDblClick(event,${proj.id})">`;
       html+=`<div class="row-accent" style="background:${lc}"></div>`;
       html+=`<div class="row-name" onclick="openPreview(${proj.id})" data-proj-id="${proj.id}">${escHtml(proj.nome)}</div>`;
+      // Tag de BU só aparece na visão "Tudo" — dentro de uma BU seria ruído
+      if(!state.filtroBU&&proj.buId){
+        html+=`<span class="row-bu-tag" style="--rbu-c:${corBu(proj.buId)}">${escHtml(nomeBu(proj.buId))}</span>`;
+      }
       // Owner badge — admin vê de quem é o projeto
       const _ownerBadge = isAdmin()&&proj.owner&&proj.owner!==(state.currentUser?.email||state.currentUser?.nome||'')
         ? `<span class="owner-badge">${proj.owner.split('@')[0]}</span>` : '';
@@ -2929,6 +3334,262 @@ function renderGantt(){
   renderChips();
   renderKPIs();
 }
+
+// ═══ BLOCO: INTELIGENCIA ═══
+// Toda a análise sai de EVOLUCOES + ETAPAS + datas dos projetos.
+// Nenhuma chamada externa, nenhuma credencial.
+
+const DIAS_ZUMBI = 21;   // sem evolução registrada → projeto parado
+const MS_DIA = 86400000;
+
+function _hoje0(){ const d=new Date(); d.setHours(0,0,0,0); return d; }
+function _diasEntre(a,b){ return Math.round((b-a)/MS_DIA); }
+
+// ─ Velocidade: pontos de % por semana, medida na série de evoluções ─
+function calcVelocidade(projId){
+  const evs = state.evolucoes.filter(e=>e.projId===projId&&e.data)
+    .sort((a,b)=>new Date(a.data)-new Date(b.data));
+  if(evs.length<2) return null;
+  const p0=evs[0], p1=evs[evs.length-1];
+  const dias=_diasEntre(new Date(p0.data), new Date(p1.data));
+  if(dias<=0) return null;
+  return ((p1.pct-p0.pct)/dias)*7;
+}
+
+// ─ Dias desde a última evolução registrada ─
+function diasSemEvolucao(projId){
+  const evs=state.evolucoes.filter(e=>e.projId===projId&&e.data);
+  if(!evs.length) return null;
+  const ultima=evs.reduce((m,e)=>{const d=new Date(e.data);return d>m?d:m;},new Date(0));
+  return _diasEntre(ultima,_hoje0());
+}
+
+// ─ Projeção: no ritmo atual, quando chega a 100%? ─
+function calcProjecao(proj){
+  if(proj.pct>=100) return null;
+  const v=calcVelocidade(proj.id);
+  const prazoD=proj.fim?new Date(proj.fim):null;
+
+  // Sem ritmo mensurável: se o prazo já passou, isso não é "não dá pra prever" —
+  // é estouro confirmado, e é o caso que mais precisa aparecer.
+  if(!v||v<=0){
+    if(prazoD&&prazoD<_hoje0()){
+      return {previsto:null,v:v||0,folga:_diasEntre(_hoje0(),prazoD),verdict:'estouro',semRitmo:true};
+    }
+    return null;
+  }
+  const restante=100-proj.pct;
+  const semanas=restante/v;
+  const previsto=new Date(_hoje0().getTime()+semanas*7*MS_DIA);
+  if(!prazoD) return {previsto,v,folga:null,verdict:'ok'};
+  const folga=_diasEntre(previsto,prazoD);   // >0 = sobra, <0 = estoura
+  const verdict = folga<0?'estouro':folga<14?'risco':'ok';
+  return {previsto,v,folga,verdict};
+}
+
+// ─ Health score 0-100: prazo × ritmo × frescor ─
+function calcHealth(proj){
+  if(proj.status==='Concluído') return 100;
+  let score=100;
+  const hoje=_hoje0();
+
+  // Componente prazo
+  if(proj.fim){
+    const dias=_diasEntre(hoje,new Date(proj.fim));
+    if(dias<0) score-=40;                    // já estourou
+    else if(dias<7&&proj.pct<80) score-=22;  // vence e não está perto
+    else if(dias<21&&proj.pct<50) score-=12;
+  }
+  // Componente ritmo
+  const v=calcVelocidade(proj.id);
+  if(v!==null){ if(v<=0) score-=25; else if(v<3) score-=10; }
+  // Componente frescor
+  const sem=diasSemEvolucao(proj.id);
+  if(sem===null) score-=15;
+  else if(sem>DIAS_ZUMBI) score-=25;
+  else if(sem>10) score-=10;
+  // Pausado é decisão, não doença — penalidade leve
+  if(proj.status==='Pausado') score-=8;
+
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+function corHealth(s){
+  if(s>=75) return 'var(--green-l)';
+  if(s>=50) return 'var(--amber)';
+  return 'var(--red-l)';
+}
+
+function toggleIntel(){
+  const el=document.getElementById('intel-section');
+  el.classList.toggle('collapsed');
+  state.intelCollapsed=el.classList.contains('collapsed');
+  localStorage.setItem('wr_intel_collapsed', state.intelCollapsed?'1':'0');
+  if(!state.intelCollapsed) renderIntel();
+}
+
+function renderIntel(){
+  const grid=document.getElementById('intel-grid');
+  const sub=document.getElementById('intel-sub');
+  if(!grid) return;
+
+  const projs=projetosVisiveis().filter(p=>p.status!=='Concluído');
+  const escopo=state.filtroBU?nomeBu(state.filtroBU):'todas as BUs';
+
+  if(sub) sub.textContent=`${projs.length} ativos · ${escopo}`;
+  if(state.intelCollapsed){ grid.innerHTML=''; return; }
+
+  if(!projs.length){
+    grid.innerHTML='<div class="intel-card"><div class="intel-empty">Nenhum projeto ativo neste recorte.</div></div>';
+    return;
+  }
+
+  grid.innerHTML =
+      cardVelocidade(projs)
+    + cardProjecao(projs)
+    + cardZumbis(projs)
+    + cardHealth(projs)
+    + cardHeatmap();
+
+  // Animação das barras de health — duplo rAF força a transição
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    grid.querySelectorAll('.intel-health-fill').forEach(f=>{f.style.width=f.dataset.pct+'%';});
+    grid.querySelectorAll('.intel-proj-real').forEach(f=>{f.style.width=f.dataset.pct+'%';});
+  }));
+}
+
+function cardVelocidade(projs){
+  const arr=projs.map(p=>({p,v:calcVelocidade(p.id)}))
+    .filter(x=>x.v!==null)
+    .sort((a,b)=>b.v-a.v);
+  if(!arr.length){
+    return `<div class="intel-card"><div class="intel-card-title">Velocidade · pts/semana</div>
+      <div class="intel-empty">Precisa de 2+ evoluções registradas por projeto.</div></div>`;
+  }
+  const linhas=arr.slice(0,7).map(({p,v})=>{
+    const cls=v>0?'pos':v<0?'neg':'neutro';
+    const sinal=v>0?'+':'';
+    return `<div class="intel-item" onclick="openPreview(${p.id})">
+      <span class="intel-item-nome">${escHtml(p.nome)}</span>
+      <span class="intel-item-val ${cls}">${sinal}${v.toFixed(1)}</span>
+    </div>`;
+  }).join('');
+  const parados=arr.filter(x=>x.v<=0).length;
+  return `<div class="intel-card">
+    <div class="intel-card-title">Velocidade · pts/semana</div>
+    ${linhas}
+    ${parados?`<div class="intel-empty">${parados} projeto(s) sem avanço no período.</div>`:''}
+  </div>`;
+}
+
+function cardProjecao(projs){
+  const arr=projs.map(p=>({p,pr:calcProjecao(p)}))
+    .filter(x=>x.pr)
+    .sort((a,b)=>{
+      if(a.pr.semRitmo!==b.pr.semRitmo) return a.pr.semRitmo?-1:1;
+      return (a.pr.folga??999)-(b.pr.folga??999);
+    });
+  if(!arr.length){
+    return `<div class="intel-card"><div class="intel-card-title">Projeção vs prazo</div>
+      <div class="intel-empty">Sem ritmo positivo suficiente para projetar.</div></div>`;
+  }
+  const linhas=arr.slice(0,6).map(({p,pr})=>{
+    const label = pr.semRitmo?`${Math.abs(pr.folga)}d vencido`
+      : pr.folga===null?'sem prazo'
+      : pr.folga<0?`${Math.abs(pr.folga)}d depois`
+      : `${pr.folga}d de folga`;
+    const dt=pr.previsto?pr.previsto.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}):'—';
+    return `<div class="intel-proj-row" onclick="openPreview(${p.id})">
+      <div class="intel-proj-head">
+        <span class="intel-proj-nome">${escHtml(p.nome)}</span>
+        <span class="intel-proj-verdict ${pr.verdict}">${label}</span>
+      </div>
+      <div class="intel-proj-track">
+        <div class="intel-proj-real" data-pct="${p.pct}" style="background:${corBu(p.buId)}"></div>
+        <div class="intel-proj-marker" style="left:${Math.min(99,p.pct)}%"></div>
+      </div>
+      <div class="intel-proj-meta">
+        <span>hoje ${p.pct}%</span><span>·</span>
+        <span>${pr.semRitmo?'sem ritmo para projetar':'100% em '+dt}</span>
+        <span>·</span><span>${pr.v.toFixed(1)} pts/sem</span>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="intel-card">
+    <div class="intel-card-title">Projeção vs prazo</div>${linhas}
+  </div>`;
+}
+
+function cardZumbis(projs){
+  const arr=projs.map(p=>({p,d:diasSemEvolucao(p.id)}))
+    .filter(x=>x.d===null||x.d>DIAS_ZUMBI)
+    .sort((a,b)=>(b.d??9999)-(a.d??9999));
+  if(!arr.length){
+    return `<div class="intel-card"><div class="intel-card-title">Projetos parados</div>
+      <div class="intel-empty">Nenhum. Todos com evolução nos últimos ${DIAS_ZUMBI} dias.</div></div>`;
+  }
+  const linhas=arr.slice(0,8).map(({p,d})=>`
+    <div class="intel-item" onclick="openPreview(${p.id})">
+      <span class="intel-item-nome">${escHtml(p.nome)}</span>
+      <span class="intel-item-val neg">${d===null?'nunca':d+'d'}</span>
+    </div>`).join('');
+  return `<div class="intel-card">
+    <div class="intel-card-title">Parados · sem evolução</div>${linhas}
+  </div>`;
+}
+
+function cardHealth(projs){
+  const arr=projs.map(p=>({p,s:calcHealth(p)})).sort((a,b)=>a.s-b.s);
+  const media=Math.round(arr.reduce((s,x)=>s+x.s,0)/arr.length);
+  const linhas=arr.slice(0,8).map(({p,s})=>`
+    <div class="intel-item" onclick="openPreview(${p.id})">
+      <span class="intel-item-nome">${escHtml(p.nome)}</span>
+      <span class="intel-health-track">
+        <span class="intel-health-fill" data-pct="${s}" style="background:${corHealth(s)}"></span>
+      </span>
+      <span class="intel-item-val" style="color:${corHealth(s)}">${s}</span>
+    </div>`).join('');
+  return `<div class="intel-card">
+    <div class="intel-card-title">Health score · média ${media}</div>${linhas}
+  </div>`;
+}
+
+// Heatmap BU × Frente — calor = risco médio (100 - health), não volume
+function cardHeatmap(){
+  const bus=busPermitidas();
+  const lanes=state.lanes;
+  if(!bus.length||!lanes.length) return '';
+  const base=projetosVisiveisSemBU().filter(p=>p.status!=='Concluído');
+
+  const head=`<tr><th></th>${bus.map(b=>`<th class="rot" style="color:${b.cor}">${escHtml(b.nome.substring(0,10))}</th>`).join('')}</tr>`;
+  const linhas=lanes.map(l=>{
+    const cels=bus.map(b=>{
+      const ps=base.filter(p=>p.laneId===l.id&&p.buId===b.id);
+      if(!ps.length) return `<td><div class="heat-cell vazio">·</div></td>`;
+      const risco=Math.round(ps.reduce((s,p)=>s+(100-calcHealth(p)),0)/ps.length);
+      const cor=risco>=50?'var(--red-l)':risco>=25?'var(--amber)':'var(--green-l)';
+      const alpha=Math.max(10,Math.min(70,risco));
+      return `<td><div class="heat-cell"
+        style="background:color-mix(in srgb,${cor} ${alpha}%,transparent);color:${cor}"
+        title="${escHtml(l.nome)} × ${escHtml(b.nome)} — ${ps.length} projeto(s), risco médio ${risco}"
+        onclick="heatClick(${l.id},'${b.id}')">${ps.length}</div></td>`;
+    }).join('');
+    return `<tr><td class="lbl" style="color:${l.cor}">${escHtml(l.nome)}</td>${cels}</tr>`;
+  }).join('');
+
+  return `<div class="intel-card" style="grid-column:1/-1">
+    <div class="intel-card-title">Risco por frente × BU — número = projetos, cor = risco médio</div>
+    <div class="intel-heat-wrap"><table class="intel-heat">${head}${linhas}</table></div>
+  </div>`;
+}
+
+function heatClick(laneId,buId){
+  state.filtroLane=laneId;
+  state.filtroBU=buId;
+  savePrefBU();
+  renderAll();
+  document.getElementById('gantt-body')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+// ── FIM BLOCO ──
 
 // ═══ BLOCO: SPARKLINES ═══
 function drawSparkline(canvas,points,currentPct,color){
@@ -3090,17 +3751,129 @@ function moveTooltip(e){
 }
 function hideTooltip(){document.getElementById('tooltip').classList.remove('show');}
 
+// ═══ BLOCO: BU MODAL (CRUD + permissões) ═══
+function _slugBu(nome){
+  return (nome||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/\+/g,'plus').replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'').substring(0,20) || ('bu'+Date.now());
+}
+
+function openBuModal(){
+  if(!isAdmin()){showToast('Só admin gerencia BUs','error');return;}
+  renderBuList();
+  renderBuPerms();
+  document.getElementById('bu-overlay').classList.add('open');
+}
+function closeBuModal(){document.getElementById('bu-overlay').classList.remove('open');renderAll();}
+function closeBuModalBg(e){if(e.target===e.currentTarget)closeBuModal();}
+
+function renderBuList(){
+  const el=document.getElementById('bu-list');
+  if(!el)return;
+  if(!state.bus.length){el.innerHTML='<div class="intel-empty">Nenhuma BU cadastrada.</div>';return;}
+  el.innerHTML=state.bus.map(b=>{
+    const n=state.projetos.filter(p=>p.buId===b.id).length;
+    return `<div class="bu-row">
+      <input class="bu-row-dot" type="color" value="${b.cor}" onchange="updateBuCor('${b.id}',this.value)">
+      <input class="finput bu-row-nome" value="${escHtml(b.nome)}" onblur="updateBuNome('${b.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()">
+      <span class="bu-row-id">${b.id}</span>
+      <span class="bu-row-id">${n}p</span>
+      <button class="bu-row-del" onclick="deleteBu('${b.id}')" title="Remover BU">×</button>
+    </div>`;
+  }).join('');
+}
+
+function addBu(){
+  const nome=document.getElementById('nova-bu-nome').value.trim();
+  if(!nome){showToast('Nome obrigatório','error');return;}
+  const cor=document.getElementById('nova-bu-cor').value||'#4F7CFF';
+  let id=_slugBu(nome);
+  if(state.bus.some(b=>b.id===id)) id=id+'-'+(state.bus.length+1);
+  const nova={id,nome,cor,ordem:state.bus.length};
+  state.bus.push(nova);
+  persist('bu',nova);
+  document.getElementById('nova-bu-nome').value='';
+  renderBuList();renderBuPerms();renderBuSwitch();
+  showToast('BU criada','success');
+}
+
+function updateBuNome(id,v){
+  const b=getBu(id);
+  if(b&&v.trim()&&b.nome!==v.trim()){b.nome=v.trim();persist('bu',b);renderBuSwitch();}
+}
+function updateBuCor(id,v){
+  const b=getBu(id);
+  if(b){b.cor=v;persist('bu',b);renderBuList();renderBuSwitch();}
+}
+
+function deleteBu(id){
+  const b=getBu(id);
+  if(!b)return;
+  const n=state.projetos.filter(p=>p.buId===id).length;
+  const msg=n?`Remover "${b.nome}"?\n\n${n} projeto(s) ficam SEM BU — nenhum é apagado.`:`Remover "${b.nome}"?`;
+  if(!confirm(msg))return;
+  state.bus=state.bus.filter(x=>x.id!==id);
+  state.projetos.forEach(p=>{if(p.buId===id)p.buId='';});
+  if(state.filtroBU===id){state.filtroBU=null;savePrefBU();}
+  persist('del_bu',{id});
+  renderBuList();renderBuPerms();renderAll();
+  showToast('BU removida','success');
+}
+
+// ─ Permissões de BU por usuário ─
+function renderBuPerms(){
+  const el=document.getElementById('bu-perms');
+  if(!el)return;
+  const users=(state.usuarios&&state.usuarios.length)?state.usuarios:getUsuarios();
+  if(!users.length){el.innerHTML='<div class="intel-empty">Nenhum usuário cadastrado ainda.</div>';return;}
+  el.innerHTML=users.map(u=>{
+    const email=(u.email||'').toLowerCase();
+    const perm=u.busPermitidas||[];
+    const ehAdmin=u.role==='admin'||ADMIN_EMAILS.includes(email);
+    const chips=state.bus.map(b=>{
+      const on=ehAdmin||perm.includes(b.id);
+      return `<span class="bu-perm-chip ${on?'on':''}" style="--bpc:${b.cor}"
+        onclick="${ehAdmin?'':`toggleBuPerm('${email}','${b.id}')`}">
+        ${escHtml(b.nome)}</span>`;
+    }).join('');
+    return `<div class="bu-perm-user">
+      <div class="bu-perm-nome">
+        ${escHtml(u.nome||email)} ${ehAdmin?'<span class="bu-row-id">admin · vê tudo</span>':''}
+      </div>
+      <div class="bu-perm-grid">${chips}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleBuPerm(email,buId){
+  const users=(state.usuarios&&state.usuarios.length)?state.usuarios:getUsuarios();
+  const u=users.find(x=>(x.email||'').toLowerCase()===email);
+  if(!u)return;
+  u.busPermitidas=u.busPermitidas||[];
+  const i=u.busPermitidas.indexOf(buId);
+  if(i>=0)u.busPermitidas.splice(i,1); else u.busPermitidas.push(buId);
+  state.usuarios=users;
+  persist('pref',u);
+  renderBuPerms();
+}
+// ── FIM BLOCO ──
+
 // ═══ BLOCO: MODAL ═══
 function openModal(laneId,projId){
   state.editingProjId=projId||null;
   const laneSelect=document.getElementById('f-lane');
   laneSelect.innerHTML=state.lanes.map(l=>`<option value="${l.id}" ${l.id===(laneId||state.lanes[0]?.id)?'selected':''}>${escHtml(l.nome)}</option>`).join('');
+  const buSelect=document.getElementById('f-bu');
+  const _busOk=busPermitidas();
+  // Default: a BU do filtro ativo — cria dentro do contexto que o usuário está vendo
+  const _buDefault=state.filtroBU||_busOk[0]?.id||'';
+  buSelect.innerHTML=_busOk.map(b=>`<option value="${b.id}" ${b.id===_buDefault?'selected':''}>${escHtml(b.nome)}</option>`).join('');
   document.getElementById('modal-title').textContent=projId?'Editar Projeto':'Novo Projeto';
   if(projId){
     const p=state.projetos.find(x=>x.id===projId);
     if(p){
       document.getElementById('f-nome').value=p.nome;
       document.getElementById('f-lane').value=p.laneId;
+      if(p.buId)document.getElementById('f-bu').value=p.buId;
       document.getElementById('f-status').value=p.status;
       document.getElementById('f-inicio').value=p.inicio||'';
       document.getElementById('f-fim').value=p.fim||'';
@@ -3122,6 +3895,7 @@ function saveModal(){
   const nome=document.getElementById('f-nome').value.trim();
   if(!nome){alert('Nome obrigatório');return;}
   const laneId=parseInt(document.getElementById('f-lane').value);
+  const buId=document.getElementById('f-bu').value||'';
   const status=document.getElementById('f-status').value;
   const inicio=document.getElementById('f-inicio').value;
   const fim=document.getElementById('f-fim').value;
@@ -3129,13 +3903,13 @@ function saveModal(){
   const detalhe=document.getElementById('f-detalhe').value.trim();
   if(state.editingProjId){
     const p=state.projetos.find(x=>x.id===state.editingProjId);
-    if(p){Object.assign(p,{nome,laneId,status,inicio,fim,pct,detalhe});persist('proj',p);}
+    if(p){Object.assign(p,{nome,laneId,buId,status,inicio,fim,pct,detalhe});persist('proj',p);}
   } else {
-    const novo={id:state.nextProjId++,laneId,nome,status,inicio,fim,pct,detalhe,owner:state.currentUser?.email||state.currentUser?.nome||''};
+    const novo={id:state.nextProjId++,laneId,buId,nome,status,inicio,fim,pct,detalhe,owner:state.currentUser?.email||state.currentUser?.nome||''};
     state.projetos.push(novo);persist('proj',novo);persist('meta');
   }
   closeModal();
-  renderGantt();
+  renderAll();
   if(state.editingProjId&&state.previewProjId===state.editingProjId)openPreview(state.editingProjId);
 }
 
@@ -3271,7 +4045,7 @@ function adjustColor(hex,amt){
   r=Math.max(0,Math.min(255,r+amt));g=Math.max(0,Math.min(255,g+amt));b=Math.max(0,Math.min(255,b+amt));
   return'#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
-function renderAll(){renderGantt();renderUpcoming();renderAutomacoes();}
+function renderAll(){renderBuSwitch();renderGantt();renderUpcoming();renderIntel();renderAutomacoes();}
 
 // ═══ BLOCO: GLOBAL EVENTS ═══
 document.addEventListener('click',e=>{
@@ -3304,6 +4078,9 @@ document.addEventListener('keydown',e=>{
 // ═══ BLOCO: INIT ═══
 function init(){
   // T0 - theme persistence
+  state.intelCollapsed=localStorage.getItem('wr_intel_collapsed')!=='0';
+  const _is=document.getElementById('intel-section');
+  if(_is)_is.classList.toggle('collapsed',state.intelCollapsed);
   const savedTheme=localStorage.getItem('theme')||'dark';
   document.documentElement.setAttribute('data-theme',savedTheme);
   document.getElementById('theme-btn').textContent=savedTheme==='dark'?'☀':'🌙';
@@ -3324,7 +4101,8 @@ function init(){
   setInterval(async()=>{
     if(!state.sheetsUrl)return;
     try{
-      await loadFromSheets();
+      await loadSheets();
+      renderAll();
     }catch(e){
       // Silencia erro de polling — não interrompe o usuário
     }
