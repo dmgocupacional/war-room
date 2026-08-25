@@ -92,7 +92,7 @@ function doPost(e) {
     // Isentas: login (precisa rodar para obter token), setup (idempotente,
     // só cria abas) e as ações do app mobile, que ainda não envia token.
     // Remova SEM_TOKEN_MOBILE quando o mobile for atualizado.
-    const SEM_TOKEN = ['login', 'setup'];
+    const SEM_TOKEN = ['login', 'setup', 'get_config'];
     const SEM_TOKEN_MOBILE = ['start_sessao', 'end_sessao', 'get_sessoes_hoje'];
     if (getConfig('auth_required') === '1' &&
         SEM_TOKEN.indexOf(action) < 0 &&
@@ -120,6 +120,8 @@ function doPost(e) {
       case 'upsert_bu':     return jsonOk(handleUpsertBu(payload));
       case 'delete_bu':     return jsonOk(handleDeleteBu(payload));
       case 'set_pref':      return jsonOk(handleSetPref(payload));
+      case 'get_config':    return jsonOk({ ok: true, authRequired: getConfig('auth_required') === '1' });
+      case 'set_config':    return jsonOk(handleSetConfig(payload));
       case 'upsert_etapa': return jsonOk(handleUpsertEtapa(payload));
       case 'delete_etapa': return jsonOk(handleDeleteEtapa(payload));
       case 'run_digest':    return jsonOk(handleDigest(payload));
@@ -766,6 +768,22 @@ function handleCriarUsuario(payload) {
   return { ok: true };
 }
 // ── FIM BLOCO ──
+
+// Liga/desliga o modo privado. Exige token de admin — senão qualquer
+// um poderia DESLIGAR o gate e abrir o backend.
+function handleSetConfig(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const email = validarToken(payload && payload.token);
+  if (!email) return { ok: false, error: 'Faça login novamente' };
+  const u = _findInStaging(ss, 'USUARIOS', 'email', email);
+  if (!u || String(u['role']) !== 'admin') return { ok: false, error: 'Só admin altera a configuração' };
+
+  if (payload.authRequired !== undefined) {
+    setConfig('auth_required', payload.authRequired ? '1' : '0');
+    log_('WARN', 'auth_required = ' + (payload.authRequired ? '1' : '0') + ' por ' + email);
+  }
+  return { ok: true, authRequired: getConfig('auth_required') === '1' };
+}
 
 // ═══ BLOCO: INTEGRACOES (proxy — segredos ficam aqui, nunca no HTML) ═══
 // O token é lido de Script Properties. O front pede a métrica e recebe
