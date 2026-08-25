@@ -2195,8 +2195,16 @@ async function loadSheets(){
   if(!state.sheetsUrl)return false;
   try{
     setSyncState('syncing','Carregando...');
-    const r=await fetch(state.sheetsUrl+'?action=load');
+    const _q='?action=load'+(state.token?'&token='+encodeURIComponent(state.token):'');
+    const r=await fetch(state.sheetsUrl+_q);
     const d=await r.json();
+    // Gate do backend recusou: derruba para o login em vez de falhar mudo
+    if(d&&d.ok===false&&/Sessão expirada/i.test(d.error||'')){
+      setSessao(null);state.token=null;
+      setSyncState('offline','Sessão expirada');
+      abrirLogin();_loginMsg('Sua sessão expirou. Entre novamente.','info');
+      return false;
+    }
     if(!d.ok&&d.error)throw new Error(d.error);
     if(d.lanes)state.lanes=d.lanes;
     if(d.projetos)state.projetos=d.projetos;

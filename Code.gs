@@ -65,6 +65,13 @@ const SCHEMA = {
 function doGet(e) {
   const action = (e.parameter && e.parameter.action) || 'load';
   try {
+    // O gate vale no GET também: sem ele, ?action=load devolveria o
+    // portfólio inteiro para qualquer um que tivesse a URL.
+    if (getConfig('auth_required') === '1' &&
+        ['ping', 'get_sessoes_hoje'].indexOf(action) < 0 &&
+        !validarToken(e.parameter && e.parameter.token)) {
+      return jsonOk({ ok: false, error: 'Sessão expirada — faça login novamente' });
+    }
     if (action === 'load')              return jsonOk(handleLoad());
     if (action === 'ping')              return jsonOk({ ok: true, ts: new Date().toISOString() });
     if (action === 'get_sessoes_hoje')  return jsonOk(handleGetSessoesHoje(e.parameter));
@@ -80,12 +87,18 @@ function doPost(e) {
     const action = body.action || '';
     const payload = body.payload || {};
 
-    // Gate de sessão: só liga quando CONFIG.auth_required = 1.
-    // Desligado por padrão para não derrubar o app mobile, que ainda
-    // não envia token. Ligue depois de atualizar o mobile.
+    // Gate de sessão. Com CONFIG.auth_required = 1, toda escrita exige
+    // token válido — quem achar a URL não consegue ler nem gravar.
+    // Isentas: login (precisa rodar para obter token), setup (idempotente,
+    // só cria abas) e as ações do app mobile, que ainda não envia token.
+    // Remova SEM_TOKEN_MOBILE quando o mobile for atualizado.
+    const SEM_TOKEN = ['login', 'setup'];
+    const SEM_TOKEN_MOBILE = ['start_sessao', 'end_sessao', 'get_sessoes_hoje'];
     if (getConfig('auth_required') === '1' &&
-        ['login', 'setup'].indexOf(action) < 0 &&
+        SEM_TOKEN.indexOf(action) < 0 &&
+        SEM_TOKEN_MOBILE.indexOf(action) < 0 &&
         !validarToken(payload.token)) {
+      log_('WARN', 'Bloqueado sem token: ' + action);
       return jsonOk({ ok: false, error: 'Sessão expirada — faça login novamente' });
     }
 
