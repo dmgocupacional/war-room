@@ -4,44 +4,60 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>War Room · Henrique Paludo</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800;900&family=Nunito:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 /* ═══ RESET ═══ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow-x:hidden;}
 
-/* ═══ TEMA DARK ═══ */
+/* ═══ TEMA DARK — paleta DIM+ SAÚDE (brand book Luís Fonseca) ═══ */
+/* Navy #202745, verde #3EEE92, azul-céu #ACD1FF, cinza #A5A6A5, off-white #F1F2F1.
+   Os fundos descem do navy da marca, não de um cinza-azulado genérico. */
 :root,[data-theme="dark"]{
-  --bg:#080B12;--bg2:#0E1219;--bg3:#141A24;--bg4:#1C2433;--bg5:#232D3F;--bg6:#2A3549;
-  --text:#EEF2FF;--text2:#B0BCDA;--text3:#6B7DA0;--text4:#3A4560;
-  --border:rgba(100,130,200,0.08);--border2:rgba(100,130,200,0.16);--border3:rgba(100,130,200,0.28);
-  --shadow:0 4px 24px rgba(0,0,0,0.6);--shadow-lg:0 12px 48px rgba(0,0,0,0.75);
-  --card-hover:rgba(100,130,200,0.06);
+  --bg:#0B0F1D;--bg2:#111730;--bg3:#171E3B;--bg4:#1F2749;--bg5:#2A3358;--bg6:#36416B;
+  --text:#F1F2F1;--text2:#AEB9DC;--text3:#6E7CA6;--text4:#3D486B;
+  --border:rgba(172,209,255,0.08);--border2:rgba(172,209,255,0.16);--border3:rgba(172,209,255,0.30);
+  --shadow:0 4px 24px rgba(0,0,0,0.62);--shadow-lg:0 12px 48px rgba(0,0,0,0.78);
+  --card-hover:rgba(172,209,255,0.06);
 }
 /* ═══ TEMA LIGHT ═══ */
+/* Sobre off-white, verde e azul-céu da marca não têm contraste para texto.
+   Fundos e barras seguem vibrantes; só os acentos de TEXTO escurecem. */
 [data-theme="light"]{
-  --bg:#F0F3FA;--bg2:#FFFFFF;--bg3:#F5F8FF;--bg4:#EBF0FB;--bg5:#DDE4F5;--bg6:#CDD7EF;
-  --text:#0A0F1E;--text2:#2A3558;--text3:#5B6A8A;--text4:#A0AABF;
-  --border:rgba(50,70,150,0.09);--border2:rgba(50,70,150,0.17);--border3:rgba(50,70,150,0.28);
-  --shadow:0 2px 12px rgba(20,40,100,0.10);--shadow-lg:0 8px 36px rgba(20,40,100,0.18);
-  --card-hover:rgba(50,70,150,0.04);
-  --grain:0.012;
+  --bg:#F1F2F1;--bg2:#FFFFFF;--bg3:#F7F8FA;--bg4:#E8EBF2;--bg5:#DDE2ED;--bg6:#C8CFDF;
+  --text:#161C33;--text2:#39436B;--text3:#5A6488;--text4:#8F98B2;
+  --border:rgba(32,39,69,0.10);--border2:rgba(32,39,69,0.18);--border3:rgba(32,39,69,0.30);
+  --shadow:0 2px 12px rgba(32,39,69,0.10);--shadow-lg:0 8px 36px rgba(32,39,69,0.18);
+  --card-hover:rgba(32,39,69,0.04);
+  --grain:0.014;
+  --accent:#2A6BB8;--accent-dim:rgba(42,107,184,0.14);
+  --green:#0A7540;--green-l:#0A7540;--green-dim:rgba(10,117,64,0.14);
+  --blue-l:#2A6BB8;
+  --amber:#9A6206;--amber-l:#9A6206;
+  --purple:#5B4BC4;--purple-l:#5B4BC4;
+  --red:#C2352F;--red-l:#C2352F;
+  --cyan:#0E6E86;--cyan-l:#0E6E86;
 }
-/* ═══ BRAND ═══ */
+/* ═══ BRAND — DIM+ SAÚDE ═══ */
 :root{
-  --accent:#4F7CFF;--accent-dim:rgba(79,124,255,0.15);--accent-glow:0 0 24px rgba(79,124,255,0.45);
-  --green:#10B981;--green-dim:rgba(16,185,129,0.15);--green-l:#34D399;
-  --orange:#F97316;--orange-dim:rgba(249,115,22,0.15);--orange-l:#FB923C;
-  --purple:#8B5CF6;--purple-dim:rgba(139,92,246,0.15);--purple-l:#A78BFA;
-  --red:#EF4444;--red-dim:rgba(239,68,68,0.15);--red-l:#F87171;
-  --amber:#F59E0B;--amber-dim:rgba(245,158,11,0.15);--amber-l:#FCD34D;
-  --cyan:#06B6D4;--cyan-dim:rgba(6,182,212,0.15);--cyan-l:#22D3EE;
-  --font:"Sora","SF Pro Display",system-ui,sans-serif;
-  --font-body:"Inter",system-ui,sans-serif;
+  --navy:#202745;--navy2:#2A3358;--navy3:#161C33;
+  --accent:#ACD1FF;--accent-dim:rgba(172,209,255,0.15);--accent-glow:0 0 24px rgba(172,209,255,0.42);
+  --blue:#ACD1FF;--blue-l:#ACD1FF;
+  --green:#3EEE92;--green-dim:rgba(62,238,146,0.15);--green-l:#3EEE92;
+  --orange:#FFC46B;--orange-dim:rgba(255,196,107,0.15);--orange-l:#FFC46B;
+  --purple:#9D8DF1;--purple-dim:rgba(157,141,241,0.15);--purple-l:#9D8DF1;
+  --red:#FF6B6B;--red-dim:rgba(255,107,107,0.15);--red-l:#FF6B6B;
+  --amber:#FFC46B;--amber-dim:rgba(255,196,107,0.15);--amber-l:#FFC46B;
+  --cyan:#7FD8E8;--cyan-dim:rgba(127,216,232,0.15);--cyan-l:#7FD8E8;
+  --gray:#A5A6A5;--off:#F1F2F1;
+  /* Congenial é a fonte oficial, mas não está no Google Fonts; Nunito é o
+     fallback declarado no próprio brand book. Sora sustenta o display. */
+  --font:"Sora","Nunito",system-ui,sans-serif;
+  --font-body:"Nunito","Inter",system-ui,sans-serif;
   --mono:"JetBrains Mono",monospace;
   --radius:8px;--radius-lg:14px;--radius-xl:22px;--tr:all 0.18s ease;
   --nav-h:56px;--label-w:260px;--preview-w:360px;
-  --grain:0.035;
+  --grain:0.038;
 }
 
 /* ═══ BASE ═══ */
@@ -51,16 +67,24 @@ body::before{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
   opacity:var(--grain);
 }
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.55;
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(62,238,146,.10), transparent 62%),
+    radial-gradient(1100px 600px at 92% 4%, rgba(172,209,255,.10), transparent 60%);
+}
+[data-theme="light"] body::after{opacity:.34;}
+::selection{background:var(--green);color:var(--navy);}
 h1,h2,h3,.nav-title,.kpi-val,.kpi-value,.modal-title,.pc-name,.sh-title{font-family:var(--font)!important;}
 
 /* ═══ NAVBAR ═══ */
 .navbar{
   position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:100;
   display:flex;align-items:center;gap:12px;padding:0 20px;
-  background:rgba(8,11,18,0.9);backdrop-filter:blur(16px);
+  background:rgba(11,15,29,0.90);backdrop-filter:blur(16px) saturate(1.4);
   border-bottom:1px solid var(--border2);transition:background 0.25s;
 }
-[data-theme="light"] .navbar{background:rgba(240,243,250,0.94);}
+[data-theme="light"] .navbar{background:rgba(241,242,241,0.94);}
 .nav-logo{display:flex;align-items:center;gap:10px;}
 .nav-logo-mark{
   width:32px;height:32px;border-radius:9px;
@@ -1765,8 +1789,8 @@ body.dragging-bar *{cursor:grabbing !important;}
   background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 100%);
   border:1px solid var(--border2);overflow:hidden;box-shadow:var(--shadow);}
 .hero::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.7;
-  background:radial-gradient(620px 300px at 8% -30%,rgba(79,124,255,.16),transparent 62%),
-             radial-gradient(680px 320px at 96% 0%,rgba(16,185,129,.13),transparent 60%);}
+  background:radial-gradient(620px 300px at 8% -30%,rgba(172,209,255,.17),transparent 62%),
+             radial-gradient(680px 320px at 96% 0%,rgba(62,238,146,.14),transparent 60%);}
 .hero-in{position:relative;z-index:1;}
 .hero-eyebrow{font-size:9.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;
   color:var(--text3);margin-bottom:11px;}
@@ -1821,7 +1845,7 @@ body.dragging-bar *{cursor:grabbing !important;}
 .kb-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
   background:linear-gradient(180deg,var(--kc) 0%,var(--kc)30 100%);}
 .kb-card.atrasado{animation:kbIn .34s both,kbAtraso 2.4s 0.4s infinite;}
-@keyframes kbAtraso{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}50%{box-shadow:0 0 0 2px rgba(239,68,68,.34),0 0 20px rgba(239,68,68,.18)}}
+@keyframes kbAtraso{0%,100%{box-shadow:0 0 0 0 rgba(255,107,107,0)}50%{box-shadow:0 0 0 2px rgba(255,107,107,.36),0 0 20px rgba(255,107,107,.20)}}
 
 .kbc-top{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
 .kbc-bu{font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
@@ -2611,12 +2635,12 @@ body.dragging-bar *{cursor:grabbing !important;}
 <script>
 // ═══ BLOCO: CONSTANTES ═══
 const MONTH_NAMES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-const COLORS=['#4F7CFF','#8B5CF6','#F97316','#10B981','#EF4444','#F59E0B','#06B6D4','#EC4899','#6366F1','#84CC16','#FB923C','#34D399','#F87171','#FCD34D','#22D3EE'];
+const COLORS=['#ACD1FF','#3EEE92','#9D8DF1','#FFC46B','#FF6B6B','#7FD8E8','#A5A6A5','#F1F2F1','#7C8FD9','#5ED9B0','#E8A0D0','#FFD9A0','#B9C6E8','#2A3358','#8EE0C8'];
 const STATUS_CFG = {
-  'Em andamento':    {bg:'rgba(16,185,129,0.15)',text:'#34D399',border:'#10B981',icon:'●'},
-  'Concluído':       {bg:'rgba(16,185,129,0.22)',text:'#6EE7B7',border:'#34D399',icon:'✓'},
-  'Em planejamento': {bg:'rgba(79,124,255,0.15)', text:'#818CF8',border:'#4F7CFF',icon:'◐'},
-  'Pausado':         {bg:'rgba(100,116,139,0.15)',text:'#94A3B8',border:'#64748B',icon:'⏸'},
+  'Em andamento':    {bg:'rgba(62,238,146,0.15)', text:'#3EEE92',border:'#3EEE92',icon:'●'},
+  'Concluído':       {bg:'rgba(157,141,241,0.20)',text:'#9D8DF1',border:'#9D8DF1',icon:'✓'},
+  'Em planejamento': {bg:'rgba(172,209,255,0.15)',text:'#ACD1FF',border:'#ACD1FF',icon:'◐'},
+  'Pausado':         {bg:'rgba(165,166,165,0.15)',text:'#A5A6A5',border:'#A5A6A5',icon:'⏸'},
 };
 const KPI_CFG = [
   {key:'total',     label:'Projetos',    icon:'📁', color:'var(--accent)',  filterStatus:null},
@@ -2791,8 +2815,8 @@ let state = {
 // BUs padrão da DIMEG. São dado editável — isto é só o ponto de partida.
 const SEED_BUS = [
   {id:'dimplus',     nome:'DIM+ Saúde',      cor:'#3EEE92', ordem:0},
-  {id:'dmg',         nome:'DMG Ocupacional', cor:'#4F7CFF', ordem:1},
-  {id:'transversal', nome:'Transversal',     cor:'#8B5CF6', ordem:2},
+  {id:'dmg',         nome:'DMG Ocupacional', cor:'#ACD1FF', ordem:1},
+  {id:'transversal', nome:'Transversal',     cor:'#9D8DF1', ordem:2},
 ];
 
 // Classificação heurística por nome — usada UMA vez, na migração dos
@@ -2881,7 +2905,7 @@ function restaurarPrefBU(){
 // ── FIM BLOCO ──
 
 // ═══ BLOCO: SEED ═══
-function getSeed(){return{bus:SEED_BUS.map(b=>({...b})),lanes:[{id:1,nome:'Tecnologia',cor:'#4F7CFF'},{id:2,nome:'Comercial',cor:'#F97316'},{id:3,nome:'Marketing',cor:'#10B981'},{id:4,nome:'Produto DIM+',cor:'#8B5CF6'},{id:5,nome:'Parcerias',cor:'#EF4444'}],projetos:[{id:1,laneId:1,nome:'DMG ERP — CRM + Scaffold',status:'Concluído',inicio:'2026-01-01',fim:'2026-03-31',pct:100,detalhe:'Kanban drag-and-drop, auth, scaffold inicial Next.js 16 + Supabase'},{id:2,laneId:1,nome:'DMG ERP — IA + Gmail + Cadências',status:'Concluído',inicio:'2026-03-01',fim:'2026-05-31',pct:100,detalhe:'Gmail Service Account, Resend, cadências, qualificação IA, enriquecimento BrasilAPI'},{id:3,laneId:1,nome:'DMG ERP — Gantt + Usuários + Minha Conta',status:'Concluído',inicio:'2026-05-01',fim:'2026-06-12',pct:100,detalhe:'v0.21.0 — Gantt swimlanes, gestão de usuários, reset senha admin, sidebar clicável'},{id:4,laneId:1,nome:'DMG ERP — Sprint SGG + Financeiro',status:'Em planejamento',inicio:'2026-06-12',fim:'2026-12-31',pct:5,detalhe:'Migrations sgg_empresas, cron sync, contas a receber, DRE via SGG API'},{id:5,laneId:1,nome:'ERP DIM+ — Scaffold + Asaas + ClienteModal',status:'Concluído',inicio:'2026-03-01',fim:'2026-05-31',pct:100,detalhe:'Asaas webhooks, planos CRUD, ClienteModal timeline, PIX/boleto, cron sync'},{id:6,laneId:1,nome:'ERP DIM+ — Inadimplência + Whatende + Realtime',status:'Concluído',inicio:'2026-05-01',fim:'2026-06-10',pct:100,detalhe:'Kanban inadimplência, WhatsApp inbox Whatende, Realtime Supabase, produtividade'},{id:7,laneId:1,nome:'ERP DIM+ — Cobranças + Ciclo + Webhook',status:'Em andamento',inicio:'2026-06-01',fim:'2026-06-30',pct:90,detalhe:'v0.27.0 — ciclo reincidente, atribuição conversão, auto-tratativa, REPLICA IDENTITY FULL'},{id:8,laneId:1,nome:'App DIM+ 2.0',status:'Em planejamento',inicio:'2026-06-12',fim:'',pct:0,detalhe:'App mobile/PWA DIM+ Saúde — a definir stack e escopo'},{id:9,laneId:1,nome:'App DMG Ocupacional',status:'Em planejamento',inicio:'2026-06-12',fim:'',pct:0,detalhe:'App mobile/PWA DMG — a definir stack e escopo'},{id:10,laneId:2,nome:'Playbook Bíblia Comercial DMG',status:'Concluído',inicio:'2026-03-01',fim:'2026-05-22',pct:100,detalhe:'HTML single-file 120KB, 26 módulos SST + vendas consultivas, SPIN/Challenger/VERRE'},{id:11,laneId:2,nome:'Proposal Generator v3.0',status:'Concluído',inicio:'2026-02-01',fim:'2026-03-31',pct:100,detalhe:'Dual pricing COM/SEM mensalidade, radar chart, save/load state, PDF export'},{id:12,laneId:2,nome:'Contract Generator HTML',status:'Concluído',inicio:'2026-04-01',fim:'2026-04-30',pct:100,detalhe:'Gerador inline editável, localStorage, PDF export, import via Claude API'},{id:13,laneId:2,nome:'Playbook DIM+ Saúde',status:'Concluído',inicio:'2026-01-01',fim:'2026-02-28',pct:100,detalhe:'Playbook completo B2C — metodologias, scripts, funil interativo, calculadora'},{id:14,laneId:2,nome:'Kit Boas-Vindas DIM+',status:'Concluído',inicio:'2026-04-01',fim:'2026-05-15',pct:100,detalhe:'Onboarding 90 dias consultores, journey map, missões mensais, rituais, certificação'},{id:15,laneId:2,nome:'SINDIHCLOR / Sueessor deck (40k vidas)',status:'Em andamento',inicio:'2026-04-01',fim:'2026-07-31',pct:60,detalhe:'Pitch deck premium HTML para 40.000 vidas a R$45,90/vida — parceria estratégica'},{id:16,laneId:3,nome:'Keyword Research + GEO NR-1',status:'Concluído',inicio:'2026-03-01',fim:'2026-04-30',pct:100,detalhe:'Pesquisa psicossocial/NR-1, cluster semântico, GEO para LLMs, Google Ads + SEO'},{id:17,laneId:3,nome:'Market Intelligence DIM+ (11 slides)',status:'Concluído',inicio:'2026-04-01',fim:'2026-04-30',pct:100,detalhe:'Deck HTML premium — epidemiologia, benchmarking Cartão de TODOS / Dr. Consulta'},{id:18,laneId:3,nome:'Plano Expansão DMG 2026',status:'Em andamento',inicio:'2026-03-01',fim:'2026-12-31',pct:40,detalhe:'12→15→20 empresas/mês. PaP, tráfego pago, GEO, funil estruturado'},{id:19,laneId:4,nome:'Forecast Dashboard DIM+ (6 tabs)',status:'Concluído',inicio:'2026-01-01',fim:'2026-02-28',pct:100,detalhe:'Chart.js, MRR R$200k meta Jan/27, Cloudflare Worker proxy Asaas, GitHub Pages'},{id:20,laneId:4,nome:'Onboarding Consultores 90 dias',status:'Concluído',inicio:'2026-03-01',fim:'2026-04-27',pct:100,detalhe:'HTML multi-tab, jornada 3 meses, missões semanais, rituais, certificação'},{id:21,laneId:4,nome:'Treinamento Rotina vs Monotonia',status:'Concluído',inicio:'2026-05-01',fim:'2026-05-31',pct:100,detalhe:'Módulo deep-dive com papers acadêmicos, Gong/Outreach data, aplicação DIM+'},{id:22,laneId:5,nome:'Roadmap Gov Digital — Nívia/Valid',status:'Concluído',inicio:'2026-04-01',fim:'2026-05-15',pct:100,detalhe:'Gantt premium HTML, 30 iniciativas, 4 times, drag-resize, modal completo'},{id:23,laneId:5,nome:'Dashboard Dados Donos DMG',status:'Concluído',inicio:'2026-04-15',fim:'2026-04-30',pct:100,detalhe:'Visualização de dados operacionais para os sócios da DMG'}],evolucoes:[{id:1,projId:7,data:'2026-06-01',pct:60,nota:'Ciclo reincidente implementado'},{id:2,projId:7,data:'2026-06-08',pct:80,nota:'Auto-tratativa Whatende e realtime'},{id:3,projId:7,data:'2026-06-12',pct:90,nota:'v0.27.0 entregue — aguarda webhook Asaas'},{id:4,projId:15,data:'2026-04-15',pct:30,nota:'Estrutura e primeiros slides'},{id:5,projId:15,data:'2026-05-10',pct:50,nota:'Deck SINDIHCLOR v1 entregue'},{id:6,projId:15,data:'2026-06-01',pct:60,nota:'Revisão estratégica e novos dados'},{id:7,projId:18,data:'2026-04-01',pct:20,nota:'Plano estruturado e aprovado'},{id:8,projId:18,data:'2026-05-15',pct:35,nota:'PaP Itapevi rodando'},{id:9,projId:18,data:'2026-06-01',pct:40,nota:'Tráfego pago ativo'},{id:10,projId:4,data:'2026-06-12',pct:5,nota:'Sprint planejada — aguarda início'}],nextProjId:24,nextLaneId:6};}
+function getSeed(){return{bus:SEED_BUS.map(b=>({...b})),lanes:[{id:1,nome:'Tecnologia',cor:'#ACD1FF'},{id:2,nome:'Comercial',cor:'#FFC46B'},{id:3,nome:'Marketing',cor:'#3EEE92'},{id:4,nome:'Produto DIM+',cor:'#9D8DF1'},{id:5,nome:'Parcerias',cor:'#FF6B6B'}],projetos:[{id:1,laneId:1,nome:'DMG ERP — CRM + Scaffold',status:'Concluído',inicio:'2026-01-01',fim:'2026-03-31',pct:100,detalhe:'Kanban drag-and-drop, auth, scaffold inicial Next.js 16 + Supabase'},{id:2,laneId:1,nome:'DMG ERP — IA + Gmail + Cadências',status:'Concluído',inicio:'2026-03-01',fim:'2026-05-31',pct:100,detalhe:'Gmail Service Account, Resend, cadências, qualificação IA, enriquecimento BrasilAPI'},{id:3,laneId:1,nome:'DMG ERP — Gantt + Usuários + Minha Conta',status:'Concluído',inicio:'2026-05-01',fim:'2026-06-12',pct:100,detalhe:'v0.21.0 — Gantt swimlanes, gestão de usuários, reset senha admin, sidebar clicável'},{id:4,laneId:1,nome:'DMG ERP — Sprint SGG + Financeiro',status:'Em planejamento',inicio:'2026-06-12',fim:'2026-12-31',pct:5,detalhe:'Migrations sgg_empresas, cron sync, contas a receber, DRE via SGG API'},{id:5,laneId:1,nome:'ERP DIM+ — Scaffold + Asaas + ClienteModal',status:'Concluído',inicio:'2026-03-01',fim:'2026-05-31',pct:100,detalhe:'Asaas webhooks, planos CRUD, ClienteModal timeline, PIX/boleto, cron sync'},{id:6,laneId:1,nome:'ERP DIM+ — Inadimplência + Whatende + Realtime',status:'Concluído',inicio:'2026-05-01',fim:'2026-06-10',pct:100,detalhe:'Kanban inadimplência, WhatsApp inbox Whatende, Realtime Supabase, produtividade'},{id:7,laneId:1,nome:'ERP DIM+ — Cobranças + Ciclo + Webhook',status:'Em andamento',inicio:'2026-06-01',fim:'2026-06-30',pct:90,detalhe:'v0.27.0 — ciclo reincidente, atribuição conversão, auto-tratativa, REPLICA IDENTITY FULL'},{id:8,laneId:1,nome:'App DIM+ 2.0',status:'Em planejamento',inicio:'2026-06-12',fim:'',pct:0,detalhe:'App mobile/PWA DIM+ Saúde — a definir stack e escopo'},{id:9,laneId:1,nome:'App DMG Ocupacional',status:'Em planejamento',inicio:'2026-06-12',fim:'',pct:0,detalhe:'App mobile/PWA DMG — a definir stack e escopo'},{id:10,laneId:2,nome:'Playbook Bíblia Comercial DMG',status:'Concluído',inicio:'2026-03-01',fim:'2026-05-22',pct:100,detalhe:'HTML single-file 120KB, 26 módulos SST + vendas consultivas, SPIN/Challenger/VERRE'},{id:11,laneId:2,nome:'Proposal Generator v3.0',status:'Concluído',inicio:'2026-02-01',fim:'2026-03-31',pct:100,detalhe:'Dual pricing COM/SEM mensalidade, radar chart, save/load state, PDF export'},{id:12,laneId:2,nome:'Contract Generator HTML',status:'Concluído',inicio:'2026-04-01',fim:'2026-04-30',pct:100,detalhe:'Gerador inline editável, localStorage, PDF export, import via Claude API'},{id:13,laneId:2,nome:'Playbook DIM+ Saúde',status:'Concluído',inicio:'2026-01-01',fim:'2026-02-28',pct:100,detalhe:'Playbook completo B2C — metodologias, scripts, funil interativo, calculadora'},{id:14,laneId:2,nome:'Kit Boas-Vindas DIM+',status:'Concluído',inicio:'2026-04-01',fim:'2026-05-15',pct:100,detalhe:'Onboarding 90 dias consultores, journey map, missões mensais, rituais, certificação'},{id:15,laneId:2,nome:'SINDIHCLOR / Sueessor deck (40k vidas)',status:'Em andamento',inicio:'2026-04-01',fim:'2026-07-31',pct:60,detalhe:'Pitch deck premium HTML para 40.000 vidas a R$45,90/vida — parceria estratégica'},{id:16,laneId:3,nome:'Keyword Research + GEO NR-1',status:'Concluído',inicio:'2026-03-01',fim:'2026-04-30',pct:100,detalhe:'Pesquisa psicossocial/NR-1, cluster semântico, GEO para LLMs, Google Ads + SEO'},{id:17,laneId:3,nome:'Market Intelligence DIM+ (11 slides)',status:'Concluído',inicio:'2026-04-01',fim:'2026-04-30',pct:100,detalhe:'Deck HTML premium — epidemiologia, benchmarking Cartão de TODOS / Dr. Consulta'},{id:18,laneId:3,nome:'Plano Expansão DMG 2026',status:'Em andamento',inicio:'2026-03-01',fim:'2026-12-31',pct:40,detalhe:'12→15→20 empresas/mês. PaP, tráfego pago, GEO, funil estruturado'},{id:19,laneId:4,nome:'Forecast Dashboard DIM+ (6 tabs)',status:'Concluído',inicio:'2026-01-01',fim:'2026-02-28',pct:100,detalhe:'Chart.js, MRR R$200k meta Jan/27, Cloudflare Worker proxy Asaas, GitHub Pages'},{id:20,laneId:4,nome:'Onboarding Consultores 90 dias',status:'Concluído',inicio:'2026-03-01',fim:'2026-04-27',pct:100,detalhe:'HTML multi-tab, jornada 3 meses, missões semanais, rituais, certificação'},{id:21,laneId:4,nome:'Treinamento Rotina vs Monotonia',status:'Concluído',inicio:'2026-05-01',fim:'2026-05-31',pct:100,detalhe:'Módulo deep-dive com papers acadêmicos, Gong/Outreach data, aplicação DIM+'},{id:22,laneId:5,nome:'Roadmap Gov Digital — Nívia/Valid',status:'Concluído',inicio:'2026-04-01',fim:'2026-05-15',pct:100,detalhe:'Gantt premium HTML, 30 iniciativas, 4 times, drag-resize, modal completo'},{id:23,laneId:5,nome:'Dashboard Dados Donos DMG',status:'Concluído',inicio:'2026-04-15',fim:'2026-04-30',pct:100,detalhe:'Visualização de dados operacionais para os sócios da DMG'}],evolucoes:[{id:1,projId:7,data:'2026-06-01',pct:60,nota:'Ciclo reincidente implementado'},{id:2,projId:7,data:'2026-06-08',pct:80,nota:'Auto-tratativa Whatende e realtime'},{id:3,projId:7,data:'2026-06-12',pct:90,nota:'v0.27.0 entregue — aguarda webhook Asaas'},{id:4,projId:15,data:'2026-04-15',pct:30,nota:'Estrutura e primeiros slides'},{id:5,projId:15,data:'2026-05-10',pct:50,nota:'Deck SINDIHCLOR v1 entregue'},{id:6,projId:15,data:'2026-06-01',pct:60,nota:'Revisão estratégica e novos dados'},{id:7,projId:18,data:'2026-04-01',pct:20,nota:'Plano estruturado e aprovado'},{id:8,projId:18,data:'2026-05-15',pct:35,nota:'PaP Itapevi rodando'},{id:9,projId:18,data:'2026-06-01',pct:40,nota:'Tráfego pago ativo'},{id:10,projId:4,data:'2026-06-12',pct:5,nota:'Sprint planejada — aguarda início'}],nextProjId:24,nextLaneId:6};}
 
 // ═══ BLOCO: GOOGLE SHEETS BRIDGE ═══
 async function _gs(action,payload){
@@ -3917,7 +3941,7 @@ const AUTOMACOES_CFG = [
     icon: '📧',
     trigger: 'Seg · 08:00',
     desc: 'Email para Thiago com % por lane, atrasados e concluídos na semana.',
-    color: '#4F7CFF',
+    color: '#ACD1FF',
     gsAction: 'run_digest',
     triggerCode: `// Apps Script → Acionadores → + Adicionar
 // Função: enviarDigestSemanal
@@ -3929,7 +3953,7 @@ const AUTOMACOES_CFG = [
     icon: '⚠️',
     trigger: 'Diário · 09:00',
     desc: 'Detecta projetos com fim < hoje e progresso < 100%. Registra no LOG.',
-    color: '#EF4444',
+    color: '#FF6B6B',
     gsAction: 'run_alerta',
     triggerCode: `// Apps Script → Acionadores → + Adicionar
 // Função: verificarAtrasos
@@ -3941,7 +3965,7 @@ const AUTOMACOES_CFG = [
     icon: '📊',
     trigger: 'Diário · 06:00',
     desc: 'Recalcula KPIs (total, andamento, concluídos, % médio) na aba MARTS.',
-    color: '#10B981',
+    color: '#3EEE92',
     gsAction: 'run_marts',
     triggerCode: `// Apps Script → Acionadores → + Adicionar
 // Função: atualizarMarts
@@ -3953,7 +3977,7 @@ const AUTOMACOES_CFG = [
     icon: '📸',
     trigger: 'Dia 1 · 07:00',
     desc: 'Copia STAGING_PROJETOS → aba SNAPSHOT_YYYY_MM. Histórico imutável.',
-    color: '#8B5CF6',
+    color: '#9D8DF1',
     gsAction: 'run_snapshot',
     triggerCode: `// Apps Script → Acionadores → + Adicionar
 // Função: snapshotMensal
@@ -4642,7 +4666,7 @@ function renderGantt(){
       const c=document.getElementById('sp-'+proj.id);
       if(!c)return;
       const lane=state.lanes.find(l=>l.id===proj.laneId);
-      const color=lane?lane.cor:'#4F7CFF';
+      const color=lane?lane.cor:'#ACD1FF';
       const evos=state.evolucoes.filter(e=>e.projId===proj.id).sort((a,b)=>a.data.localeCompare(b.data));
       drawSparkline(c,evos.map(e=>e.pct),proj.pct,color);
     });
@@ -5005,7 +5029,7 @@ function openPopover(e,projId){
   const proj=state.projetos.find(p=>p.id===projId);
   if(!proj)return;
   const lane=state.lanes.find(l=>l.id===proj.laneId);
-  const color=lane?lane.cor:'#4F7CFF';
+  const color=lane?lane.cor:'#ACD1FF';
   const pop=document.getElementById('popover-evo');
   document.getElementById('pevo-dot').style.background=color;
   document.getElementById('pevo-name').textContent=proj.nome;
@@ -5132,7 +5156,7 @@ function renderBuList(){
 function addBu(){
   const nome=document.getElementById('nova-bu-nome').value.trim();
   if(!nome){showToast('Nome obrigatório','error');return;}
-  const cor=document.getElementById('nova-bu-cor').value||'#4F7CFF';
+  const cor=document.getElementById('nova-bu-cor').value||'#ACD1FF';
   let id=_slugBu(nome);
   if(state.bus.some(b=>b.id===id)) id=id+'-'+(state.bus.length+1);
   const nova={id,nome,cor,ordem:state.bus.length};
@@ -5594,6 +5618,8 @@ function renderHero(){
       ${atr?`<span class="hpill r">${atr} atrasados</span>`:''}
       <span class="hpill">${etTot.length} etapas</span>
       <span class="hpill">${okrsVisiveis().length} OKRs no trimestre</span>
+      <span class="hpill g">acesso facilitado</span>
+      <span class="hpill b">cuidado integrado</span>
     </div></div>`;
 }
 
@@ -5601,10 +5627,10 @@ function renderHero(){
 // A coluna É o status do projeto. Não existe campo paralelo: arrastar
 // escreve em proj.status, que é o mesmo que o Gantt e o preview leem.
 const KB_COLS = [
-  {status:'Em planejamento', cor:'#818CF8'},
-  {status:'Em andamento',    cor:'#34D399'},
-  {status:'Pausado',         cor:'#94A3B8'},
-  {status:'Concluído',       cor:'#6EE7B7'},
+  {status:'Em planejamento', cor:'#ACD1FF'},
+  {status:'Em andamento',    cor:'#3EEE92'},
+  {status:'Pausado',         cor:'#A5A6A5'},
+  {status:'Concluído',       cor:'#9D8DF1'},
 ];
 
 function etapasDo(projId){
@@ -5886,8 +5912,8 @@ function renderOKR(){
 function krRow(k,cf){
   const pct = calcKr(k);
   const esp = pctTrimestre((state.okrs.find(o=>o.id===k.okrId)||{}).trimestre);
-  const c1 = pct>=esp-8 ? '#10B981' : pct>=esp-25 ? '#F59E0B' : '#EF4444';
-  const c2 = pct>=esp-8 ? '#34D399' : pct>=esp-25 ? '#FCD34D' : '#F87171';
+  const c1 = pct>=esp-8 ? '#25C978' : pct>=esp-25 ? '#D99A3E' : '#E05555';
+  const c2 = pct>=esp-8 ? '#3EEE92' : pct>=esp-25 ? '#FFC46B' : '#FF6B6B';
   const isPort = k.tipo==='port';
 
   const valTxt = isPort
@@ -6074,7 +6100,7 @@ function _heatCor(v,max){
   if(!v) return {bg:'var(--bg3)', fg:'var(--text4)'};
   const t = max ? v/max : 0;
   const a = (0.14 + t*0.42).toFixed(2);
-  return {bg:`rgba(79,124,255,${a})`, fg: t>0.5 ? '#EEF2FF' : 'var(--text2)'};
+  return {bg:`rgba(172,209,255,${a})`, fg: t>0.5 ? '#0B0F1D' : 'var(--text2)'};
 }
 
 function renderMatrizBuStatus(){
@@ -6213,8 +6239,8 @@ function renderMatrizLaneTri(){
         const c=cel(l.id,t);
         const atr=c.filter(p=>isAtrasado(p)).length;
         const h=_heatCor(c.length,max);
-        const bg = atr ? `rgba(239,68,68,${(0.16+atr/Math.max(1,c.length)*0.4).toFixed(2)})` : h.bg;
-        return `<td><div class="mx-cell ${c.length?'':'zero'}" style="background:${bg};color:${atr?'#FCA5A5':h.fg}"
+        const bg = atr ? `rgba(255,107,107,${(0.16+atr/Math.max(1,c.length)*0.4).toFixed(2)})` : h.bg;
+        return `<td><div class="mx-cell ${c.length?'':'zero'}" style="background:${bg};color:${atr?'#FFB4B4':h.fg}"
           title="${escHtml(l.nome)} · ${t}${atr?` · ${atr} atrasado(s)`:''}">
           <b>${c.length}</b><span>${atr?atr+' atras.':(c.length?'no prazo':'—')}</span></div></td>`;
       }).join('')}
