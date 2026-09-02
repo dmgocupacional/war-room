@@ -58,6 +58,13 @@ const SCHEMA = {
     'bu_padrao', 'bus_permitidas',
     'senha_hash', 'salt', 'ultimo_login', 'cargo'
   ],
+  OKRS: [
+    'id', 'bu_id', 'trimestre', 'titulo', 'ordem'
+  ],
+  KRS: [
+    'id', 'okr_id', 'titulo', 'tipo', 'peso',
+    'meta', 'atual', 'unidade', 'proj_ids', 'ordem'
+  ],
   SESSOES_TRABALHO: [
     'id', 'etapa_id', 'proj_id', 'user_email',
     'inicio_iso', 'fim_iso', 'duracao_min', 'nota', 'dispositivo'
@@ -135,6 +142,10 @@ function doPost(e) {
       case 'set_config':    return jsonOk(handleSetConfig(payload));
       case 'upsert_tarefa': return jsonOk(handleUpsertTarefa(payload));
       case 'delete_tarefa': return jsonOk(handleDeleteTarefa(payload));
+      case 'upsert_okr':    return jsonOk(handleUpsertOkr(payload));
+      case 'delete_okr':    return jsonOk(handleDeleteOkr(payload));
+      case 'upsert_kr':     return jsonOk(handleUpsertKr(payload));
+      case 'delete_kr':     return jsonOk(handleDeleteKr(payload));
       case 'upsert_etapa': return jsonOk(handleUpsertEtapa(payload));
       case 'delete_etapa': return jsonOk(handleDeleteEtapa(payload));
       case 'run_digest':    return jsonOk(handleDigest(payload));
@@ -190,8 +201,27 @@ function handleLoad() {
   const tarefas = _readStaging(ss, 'TAREFAS').map(_parseTarefa).sort((a,b)=>(a.ordem||0)-(b.ordem||0));
   const nextTarefaId = tarefas.length ? Math.max.apply(null, tarefas.map(t=>t.id)) + 1 : 5000;
   const nextEtapaId = parseInt(getConfig('next_etapa_id') || '1000');
+
+  const okrs = _readStaging(ss, 'OKRS').map(r => ({
+    id:_toInt(r['id']), buId:String(r['bu_id']||''), trimestre:String(r['trimestre']||''),
+    titulo:String(r['titulo']||''), ordem:_toInt(r['ordem'])
+  })).sort((a,b)=>(a.ordem||0)-(b.ordem||0));
+
+  // proj_ids vive como CSV na planilha para continuar legível a olho nu;
+  // o front sempre trabalha com array de números.
+  const krs = _readStaging(ss, 'KRS').map(r => ({
+    id:_toInt(r['id']), okrId:_toInt(r['okr_id']), titulo:String(r['titulo']||''),
+    tipo:String(r['tipo']||'port'), peso:_toInt(r['peso'])||1,
+    meta:Number(r['meta'])||0, atual:Number(r['atual'])||0, unidade:String(r['unidade']||''),
+    projIds:String(r['proj_ids']||'').split(',').map(x=>parseInt(x,10)).filter(x=>!isNaN(x)),
+    ordem:_toInt(r['ordem'])
+  })).sort((a,b)=>(a.ordem||0)-(b.ordem||0));
+
+  const nextOkrId = okrs.length ? Math.max.apply(null, okrs.map(o=>o.id)) + 1 : 1;
+  const nextKrId  = krs.length  ? Math.max.apply(null, krs.map(k=>k.id))  + 1 : 1;
   log_('INFO', 'Load: ' + lanes.length + 'L / ' + projetos.length + 'P / ' + evolucoes.length + 'E / ' + etapas.length + 'Et');
   return { bus, lanes, projetos, evolucoes, etapas, tarefas, usuarios,
+           okrs, krs, nextOkrId, nextKrId,
            nextProjId, nextLaneId, nextEtapaId, nextTarefaId };
 }
 // ── FIM BLOCO ──
@@ -268,6 +298,8 @@ function handleAddEvolucao(payload) {
 function handleSetMeta(payload) {
   if (payload.next_proj_id) setConfig('next_proj_id', payload.next_proj_id, 'Próximo ID de projeto');
   if (payload.next_lane_id) setConfig('next_lane_id', payload.next_lane_id, 'Próximo ID de lane');
+  if (payload.next_okr_id) setConfig('next_okr_id', payload.next_okr_id, 'Próximo ID de objetivo');
+  if (payload.next_kr_id) setConfig('next_kr_id', payload.next_kr_id, 'Próximo ID de KR');
   return { ok: true };
 }
 
@@ -275,6 +307,25 @@ function handleSaveAll(payload) {
   // Bulk save — usado para sincronização inicial / force sync
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
+  if (payload.okrs) {
+    _clearStaging(ss, 'OKRS');
+    payload.okrs.forEach((o, i) => {
+      const data = { id:o.id, bu_id:o.buId||'', trimestre:o.trimestre||'',
+                     titulo:o.titulo||'', ordem:i };
+      appendRaw('OKRS', data, 'gantt');
+      upsertStaging(ss, 'OKRS', data, 'id');
+    });
+  }
+  if (payload.krs) {
+    _clearStaging(ss, 'KRS');
+    payload.krs.forEach((k, i) => {
+      const data = { id:k.id, okr_id:k.okrId, titulo:k.titulo||'', tipo:k.tipo||'port',
+                     peso:k.peso||1, meta:k.meta||0, atual:k.atual||0,
+                     unidade:k.unidade||'', proj_ids:(k.projIds||[]).join(','), ordem:i };
+      appendRaw('KRS', data, 'gantt');
+      upsertStaging(ss, 'KRS', data, 'id');
+    });
+  }
   if (payload.tarefas) {
     _clearStaging(ss, 'TAREFAS');
     payload.tarefas.forEach((t, i) => {
@@ -661,6 +712,54 @@ function jsonErr(msg) {
 // ── FIM BLOCO ──
 
 
+
+// ═══ BLOCO: OKRS E KRS ═══
+function handleUpsertOkr(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const data = {
+    id: payload.id, bu_id: payload.bu_id || '',
+    trimestre: payload.trimestre || '', titulo: payload.titulo || '',
+    ordem: payload.ordem || 0
+  };
+  appendRaw('OKRS', data, 'gantt');
+  upsertStaging(ss, 'OKRS', data, 'id');
+  log_('INFO', 'Upsert okr id=' + data.id + ' bu=' + data.bu_id + ' tri=' + data.trimestre);
+  return { ok: true };
+}
+
+// Apagar um objetivo tem que levar os KRs junto, senão sobram órfãos
+// que o front nunca mais exibe mas que continuam ocupando a planilha.
+function handleDeleteOkr(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  _deleteFromStaging(ss, 'OKRS', 'id', [payload.id]);
+  const krIds = payload.krIds || [];
+  if (krIds.length) _deleteFromStaging(ss, 'KRS', 'id', krIds);
+  log_('INFO', 'Delete okr id=' + payload.id + ' (+' + krIds.length + ' KRs)');
+  return { ok: true };
+}
+
+function handleUpsertKr(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const data = {
+    id: payload.id, okr_id: payload.okr_id,
+    titulo: payload.titulo || '', tipo: payload.tipo || 'port',
+    peso: payload.peso || 1, meta: payload.meta || 0,
+    atual: payload.atual || 0, unidade: payload.unidade || '',
+    proj_ids: payload.proj_ids || '', ordem: payload.ordem || 0
+  };
+  appendRaw('KRS', data, 'gantt');
+  upsertStaging(ss, 'KRS', data, 'id');
+  log_('INFO', 'Upsert kr id=' + data.id + ' okr=' + data.okr_id + ' tipo=' + data.tipo);
+  return { ok: true };
+}
+
+function handleDeleteKr(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  _deleteFromStaging(ss, 'KRS', 'id', [payload.id]);
+  log_('INFO', 'Delete kr id=' + payload.id);
+  return { ok: true };
+}
+// ── FIM BLOCO ──
 
 function handleUpsertEtapa(payload) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
